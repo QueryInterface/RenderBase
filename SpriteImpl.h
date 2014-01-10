@@ -6,6 +6,7 @@
 class SpriteDX9 : public ISprite {
 public:
 	SpriteDX9(RenderContextDX9* renderContext);
+    virtual ~SpriteDX9();
 	// IHandle
 	virtual void Release();
 	// IRenderable

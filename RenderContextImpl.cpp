@@ -15,6 +15,9 @@ EventCallbackHandle::EventCallbackHandle(WindowContextWin* windowContext, list< 
     , _iter(iter) {
 }
 
+EventCallbackHandle::~EventCallbackHandle() {
+}
+
 void EventCallbackHandle::Release() {
     if (_windowContext) {
         std::lock_guard<std::mutex> lock(_windowContext->_callbackMutex);
@@ -30,6 +33,10 @@ RenderContextBuilder::RenderContextBuilder()
     , _height(480) 
     , _apiType(RC_API_DX) 
     , _title("Window") {
+}
+
+RenderContextBuilder::~RenderContextBuilder() {
+
 }
 
 void RenderContextBuilder::Release() {
@@ -270,6 +277,9 @@ Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, uint32_t width, uint
     VE_ERROR_IF(FAILED(hr), L"Failed texture creation with parameters: width(%d), height(%d), format(%d), flags(%d)", _width, _height, _format, _flags);
 }
 
+Texture2DDX9::~Texture2DDX9() {
+}
+
 void Texture2DDX9::Release() {
     delete this;
 }
@@ -326,6 +336,9 @@ RenderContextDX9::RenderContextDX9(const RenderContextBuilder* builder) {
     VE_ERROR_IF(FAILED(hr), L"Failed to create device");
     hr = _device->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_ALPHA);
     VE_ERROR_IF(FAILED(hr), L"Failed to set render state for device %p", _device);
+}
+
+RenderContextDX9::~RenderContextDX9() {
 }
 
 void RenderContextDX9::Release() {

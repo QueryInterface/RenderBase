@@ -20,6 +20,8 @@ class WindowContextWin;
 class EventCallbackHandle : public IHandle {
 public:
     EventCallbackHandle(WindowContextWin* windowContext, list< shared_ptr<EventCallback> >::iterator& iter);
+    virtual ~EventCallbackHandle();
+    // IHandle
     virtual void Release();
 private:
     WindowContextWin*                           _windowContext;
@@ -29,6 +31,7 @@ private:
 class RenderContextBuilder : public IRenderContextBuilder {
 public:
     RenderContextBuilder();
+    virtual ~RenderContextBuilder();
     // IHandle
     virtual void Release();
     // IWindowSetup
@@ -92,6 +95,7 @@ class Texture2DDX9 : public ITexture2D {
 public:
     Texture2DDX9(RenderContextDX9* renderContext, const std::wstring& texPath);
     Texture2DDX9(RenderContextDX9* renderContext, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags);
+    virtual ~Texture2DDX9();
     // IHandle
     virtual void        Release();
     // ITexture2D
@@ -117,6 +121,7 @@ private:
 class RenderContextDX9 : public IRenderContext {
 public:
     RenderContextDX9(const RenderContextBuilder* builder);
+    virtual ~RenderContextDX9();
     // IHandle
     virtual void Release();
     // IRenderContext

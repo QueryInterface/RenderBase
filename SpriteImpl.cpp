@@ -115,6 +115,9 @@ SpriteDX9::SpriteDX9(RenderContextDX9* renderContext)
     D3DXMatrixIdentity(&_resultMatrix);
 }
 
+SpriteDX9::~SpriteDX9() {
+}
+
 void SpriteDX9::Release() {
     delete this;
 }
