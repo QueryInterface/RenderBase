@@ -23,7 +23,7 @@ private:
 
 class CompiledStringDX9 : public ICompiledString {
 public:
-    CompiledStringDX9(IFont* font, const Vector3<float>& color, const std::wstring& text);
+    CompiledStringDX9(std::shared_ptr<IFontAtlas> fontAtlas, const Vector3<float>& color, const std::wstring& text);
     virtual ~CompiledStringDX9();
     // IHandle
     virtual void            Release();
@@ -32,10 +32,35 @@ public:
     // ICompiledString
     virtual void            SetPosition(uint32_t x, uint32_t y);
     virtual std::wstring    GetText() const;
+    // CompiledStringDX9
+    virtual void            OnFontAtlasSizeChange(float xRatio, float yRatio); 
 private:
-    std::wstring    _text;
-    Vector3<float>  _color;
+    std::wstring                    _text;
+    Vector3<float>                  _color;
+    std::shared_ptr<FontAtlasDX9>   _fontAtlas;
 };
+
+ICompiledString* CreateCompiledString(std::shared_ptr<IFontAtlas> fontAtlas, const Vector3<float>& color, const std::wstring& text);
+
+class FontAtlasDX9 : public IFontAtlas {
+public:
+    FontAtlasDX9(RenderContextDX9* renderContext);
+    virtual ~FontAtlasDX9();
+    // IFontAtlas
+    virtual void SetFont(IFont* font);
+    virtual void RegisterOnSizeChangeCallback(const OnSizeChangeCallback_TYPE& f);
+    // FontAtlasDX9
+    CComPtr<Direct3DTexture9> GetTexture() const;
+private:
+    IFont*                                  _font;
+    uint32_t                                _atlasWidth;
+    uint32_t                                _atlasHeight;
+    CComPtr<Direct3DTexture9>               _atlas;
+    std::list<OnSizeChangeCallback_TYPE>    _onSizeChangeCallbacks;
+    RenderContextDX9*                       _renderContext;
+};
+
+std::shared_ptr<IFontAtlas> CreateFontAtlas(IRenderContext* renderContext);
 
 class CompiledStringBuilder : public ICompiledStringBuilder {
 public:
@@ -44,11 +69,11 @@ public:
     // IHandle
     virtual void                Release();
     // ICompiledStringBuilder
-    virtual void                SetFont(const IFont* font) = 0;
-    virtual void                SetColor(const Vector3<float>& color) = 0;
-    virtual ICompiledString*    CompileString(const std::wstring& text) = 0;
+    virtual void                SetFont(const IFont* font);
+    virtual void                SetColor(const Vector3<float>& color);
+    virtual ICompiledString*    CompileString(const std::wstring& text);
 private:
-    const IFont*    _font;
-    Vector3<float>  _color;
-    IRenderContext* _renderContext;
+    std::shared_ptr<IFontAtlas> _fontAtlas;
+    Vector3<float>              _color;
+    IRenderContext*             _renderContext;
 }

@@ -34,17 +34,20 @@ include_directories(Utils)
 # Define source groups
 set (INTERFACE_FILES
     Includes/RenderContext.h
-    Includes/Sprite.h)
+    Includes/Sprite.h
+    Includes/FontRenderer.h)
 
 set (HEADER_FILES
     Includes/common.h
     TypeAdapter.h
     RenderContextImpl.h
-    SpriteImpl.h)
+    SpriteImpl.h
+    FontRendererImpl.h)
 
 set (SOURCE_FILES
     RenderContextImpl.cpp
     SpriteImpl.cpp
+    FontRendererImpl.cpp
     main.cpp)
 
 # Form executable

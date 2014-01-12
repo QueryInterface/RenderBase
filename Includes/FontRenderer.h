@@ -1,6 +1,8 @@
 #pragma once
 #include "RenderContext.h"
 
+typedef std::function<void(float xRatio, float yRatio)> OnSizeChangeCallback_TYPE;
+
 struct IFont : public IHandle {
     struct Glyph {
         vector<uint8_t> Data;
@@ -23,6 +25,11 @@ struct ICompiledString
     , public IRenderable {
     virtual void            SetPosition(uint32_t x, uint32_t y) = 0;
     virtual std::wstring    GetText() const = 0;
+};
+
+struct IFontAtlas {
+    virtual void SetFont(IFont* font) = 0;
+    virtual void RegisterOnSizeChangeCallback(const OnSizeChangeCallback_TYPE& f) = 0;
 };
 
 struct ICompiledStringBuilder : public IHandle {
