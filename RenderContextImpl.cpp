@@ -256,6 +256,7 @@ Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, const std::wstring& 
     HRESULT hr = D3DXCreateTextureFromFileW(renderContext->GetDevice(), texPath.c_str(), &_texture);
     VE_ERROR_IF(FAILED(hr), L"Failed texture creation with path %s", texPath.c_str());
     D3DSURFACE_DESC surfaceDesc;
+    _numMipLevels = _texture->GetLevelCount();
     _texture->GetLevelDesc(0, &surfaceDesc);
     _width = surfaceDesc.Width;
     _height = surfaceDesc.Height;
@@ -263,17 +264,19 @@ Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, const std::wstring& 
     _pixelSize = adapter_fmt_size::To(_format);
 }
 
-Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags) 
+Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, uint32_t numMips, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags) 
     : _renderContext(renderContext) 
     , _width(width)
     , _height(height)
     , _format(format)
-    , _flags(flags) {
+    , _flags(flags)
+    , _lockedLevel(0)
+    , _numMipLevels(numMips) {
     CComPtr<IDirect3DDevice9>& device = _renderContext->GetDevice();
     DWORD usage = D3DUSAGE_DYNAMIC;
     if (flags & TEX_FLAG_RENDER_TARGET) usage |= D3DUSAGE_RENDERTARGET;
     if (!(flags & TEX_FLAG_READ) && (flags & TEX_FLAG_WRITE)) usage |= D3DUSAGE_WRITEONLY;
-    HRESULT hr = device->CreateTexture(_width, _height, 1, usage, adapter_dx_fmt::To(_format), D3DPOOL_DEFAULT, &_texture, NULL);
+    HRESULT hr = device->CreateTexture(_width, _height, numMips, usage, adapter_dx_fmt::To(_format), D3DPOOL_DEFAULT, &_texture, NULL);
     VE_ERROR_IF(FAILED(hr), L"Failed texture creation with parameters: width(%d), height(%d), format(%d), flags(%d)", _width, _height, _format, _flags);
 }
 
@@ -282,6 +285,10 @@ Texture2DDX9::~Texture2DDX9() {
 
 void Texture2DDX9::Release() {
     delete this;
+}
+
+uint32_t Texture2DDX9::GetNumMipLevels() const {
+    return _numMipLevels;
 }
 
 uint32_t Texture2DDX9::GetWidth() const {
@@ -300,14 +307,26 @@ TEX_FORMAT Texture2DDX9::GetFormat() const {
     return _format;
 }
 
+uint32_t Texture2DDX9::GetPixelSize() const {
+    return _pixelSize;
+}
+
 TEX_FLAGS Texture2DDX9::GetFlags() const {
     return _flags;
 }
 
-void Texture2DDX9::Lock(void** outData, uint32_t outPitch) {
+void Texture2DDX9::Lock(uint32_t level, void** outData, uint32_t& outPitch) {
+    _lockedLevel = level;
+    D3DLOCKED_RECT rect;
+    HRESULT hr = _texture->LockRect(_lockedLevel, &rect, NULL, 0); 
+    VE_ERROR_IF(FAILED(hr), L"Failed to lock texture %p", _texture.p);
+    outPitch = rect.Pitch;
+    *outData = rect.pBits;
 }
 
 void Texture2DDX9::Unlock() {
+    HRESULT hr = _texture->UnlockRect(_lockedLevel);
+    VE_ERROR_IF(hr, L"Failed to unlock texture", _texture.p);
 }
 
 CComPtr<IDirect3DTexture9>& Texture2DDX9::GetPointer() {
@@ -358,9 +377,9 @@ ITexture2D* RenderContextDX9::CreateTexture2D(const std::wstring& texPath) {
     }
 }
 
-ITexture2D* RenderContextDX9::CreateTexture2D(uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags) {
+ITexture2D* RenderContextDX9::CreateTexture2D(uint32_t mips, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags) {
     try {
-        return new Texture2DDX9(this, width, height, format, flags);
+        return new Texture2DDX9(this, mips, width, height, format, flags);
     }
     catch (...) {
         return nullptr;
@@ -382,6 +401,18 @@ void RenderContextDX9::Clear(uint32_t flags, uint8_t r, uint8_t g, uint8_t b, ui
 
 void RenderContextDX9::Present() {
     _device->Present(NULL, NULL, NULL, NULL);
+}
+
+ID3DXBuffer* RenderContextDX9::CompileShader(const string& shaderSource, const string& entryPoint, const string& profile, ID3DXConstantTable** outConstantTable) const {
+    ID3DXBuffer* binaryShader = nullptr;
+    CComPtr<ID3DXBuffer> shaderErrors = nullptr;
+    DWORD flags = 0;
+#ifdef _DEBUG
+    flags = D3DXSHADER_DEBUG;
+#endif
+    HRESULT hr = D3DXCompileShader(shaderSource.c_str(), shaderSource.length(), nullptr, nullptr, entryPoint.c_str(), profile.c_str(), flags, &binaryShader, &shaderErrors, outConstantTable); 
+    VE_WARNING_IF(hr, L"Failed to compile shader with message: %S", (char*)shaderErrors->GetBufferPointer());
+    return binaryShader;
 }
 
 #endif //_WIN32

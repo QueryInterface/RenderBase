@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include "RenderContextImpl.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4018)
+
 void adapters_init();
 
 template <typename T0, typename T1>
@@ -74,10 +77,14 @@ void adapters_init() {
 #ifdef _WIN32
     adapter_dx_fmt::add(TEX_FORMAT_A8R8G8B8, D3DFMT_A8R8G8B8);
     adapter_dx_fmt::add(TEX_FORMAT_X8R8G8B8, D3DFMT_X8R8G8B8);
+    adapter_dx_fmt::add(TEX_FORMAT_A8, D3DFMT_A8);
 #endif //_WIN32
     // Pixel sizes
     adapter_fmt_size::add(TEX_FORMAT_A8R8G8B8, 32);
     adapter_fmt_size::add(TEX_FORMAT_X8R8G8B8, 32);
+    adapter_fmt_size::add(TEX_FORMAT_A8, 8);
     // Texture creation flags
     once = false;    
 }
+
+#pragma warning (pop)

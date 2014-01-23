@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(MeshRenderer)
+project(RenderBase)
 
 # Global variables
 set(3RDPARTY_DIR 3rdParty)

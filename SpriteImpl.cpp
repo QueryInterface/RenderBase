@@ -103,10 +103,10 @@ SpriteDX9::SpriteDX9(RenderContextDX9* renderContext)
     VE_ERROR_IF(FAILED(hr), L"Failed to unlock vertex buffer");
     // Create shaders
     CComPtr<ID3DXBuffer> shaderBinary;
-    shaderBinary = compileShader(g_vertexShaderSourceDX9, "vs_main", "vs_2_0", &_vsConstantTable);
+    shaderBinary = _renderContext->CompileShader(g_vertexShaderSourceDX9, "vs_main", "vs_2_0", &_vsConstantTable);
     hr = device->CreateVertexShader((DWORD*)shaderBinary->GetBufferPointer(), &_vertexShader);             
     VE_ERROR_IF(FAILED(hr), L"Failed to create vertex shader");
-    shaderBinary = compileShader(g_pixelShaderSourceDX9, "ps_main", "ps_2_0", &_psConstantTable);
+    shaderBinary = _renderContext->CompileShader(g_pixelShaderSourceDX9, "ps_main", "ps_2_0", &_psConstantTable);
     hr = device->CreatePixelShader((DWORD*)shaderBinary->GetBufferPointer(), &_pixelShader);               
     VE_ERROR_IF(FAILED(hr), L"Failed to create pixel shader");
     // Set transformation matrix to identity
@@ -134,7 +134,8 @@ void SpriteDX9::Render() {
     device->SetTexture(0, texture);
     device->SetVertexDeclaration(_vertexDeclaration);
     device->SetStreamSource(0, _vertexBuffer, 0, sizeof(Vertex));
-    device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+    device->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+    device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     device->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
     device->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
     device->SetRenderState(D3DRS_BLENDOP,D3DBLENDOP_ADD);
@@ -170,7 +171,7 @@ inline void SpriteDX9::SetTexture(ITexture2D* texture) {
     _texture = dynamic_cast<Texture2DDX9*>(texture);
 }
 
-inline void SpriteDX9::SetTextureCoords(const Rect& rect) {
+inline void SpriteDX9::SetTextureCoords(const Rect<float>& rect) {
     _textureCoords = rect;
 }
 
@@ -202,20 +203,8 @@ inline ITexture2D* SpriteDX9::GetTexture() const {
     return _texture;
 }
 
-inline Rect SpriteDX9::GetTextureCoords() const {
+inline Rect<float> SpriteDX9::GetTextureCoords() const {
     return _textureCoords;
-}
-
-ID3DXBuffer* SpriteDX9::compileShader(const std::string& shaderSource, const std::string& entryPoint, const std::string& profile, ID3DXConstantTable** outConstantTable) const {
-    ID3DXBuffer* binaryShader = nullptr;
-    CComPtr<ID3DXBuffer> shaderErrors = nullptr;
-    DWORD flags = 0;
-#ifdef _DEBUG
-    flags = D3DXSHADER_DEBUG;
-#endif
-    HRESULT hr = D3DXCompileShader(shaderSource.c_str(), shaderSource.length(), nullptr, nullptr, entryPoint.c_str(), profile.c_str(), flags, &binaryShader, &shaderErrors, outConstantTable); 
-    VE_WARNING_IF(hr, L"Failed to compile shader with message: %S", (char*)shaderErrors->GetBufferPointer());
-    return binaryShader;
 }
 
 void SpriteDX9::updateRelativeDimensions() {

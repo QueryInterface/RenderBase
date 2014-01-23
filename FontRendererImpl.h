@@ -1,29 +1,41 @@
 #pragma once
 #include "FontRenderer.h"
+#include "RenderContextImpl.h"
+#include "ft2build.h"
+#include <map>
+#include <memory>
+#include FT_FREETYPE_H
 
-class FontFT : public IFont {
+class FontAtlas;
+typedef shared_ptr<FontAtlas> FontAtlasPtr;
+
+class FontFT : public IFontDecl {
 public:
     FontFT(const std::string& name, uint32_t size);
     virtual ~FontFT();
     // IHandle
     virtual void Release();
     // FontFT
-    virtual bool        GetGlyph(wchar_t c, Glyph& outGlyph);
+    virtual bool        GetGlyph(wchar_t c, IFontDecl::Glyph& outGlyph);
     virtual std::string GetName() const;
+    virtual uint32_t    GetLineSpace() const;
     virtual uint32_t    GetSize() const;
+    virtual uint32_t    GetKerning(wchar_t c0, wchar_t c1) const;
 private:
-    std::string                     _name;
-    uint32_t                        _size;
-    FT_Library                      _fontLibrary;
-    FT_Face                         _face;
-    std::map<wchar_t, IFont::Glyph> _glyphs;
+    std::string                         _name;
+    uint32_t                            _lineSpace;
+    bool                                _kerningEnabled;
+    uint32_t                            _size;
+    FT_Library                          _fontLibrary;
+    FT_Face                             _face;
+    std::map<wchar_t, IFontDecl::Glyph> _glyphs;
 
-    std::string findFont(const std::string& fontName);
+    std::wstring findFont(const std::string& fontName);
 };
 
 class CompiledStringDX9 : public ICompiledString {
 public:
-    CompiledStringDX9(std::shared_ptr<IFontAtlas> fontAtlas, const Vector3<float>& color, const std::wstring& text);
+    CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, FontAtlasPtr fontAtlas, const std::wstring& text);
     virtual ~CompiledStringDX9();
     // IHandle
     virtual void            Release();
@@ -31,49 +43,55 @@ public:
     virtual void            Render();
     // ICompiledString
     virtual void            SetPosition(uint32_t x, uint32_t y);
+    virtual void            SetColor(const Vector3<float>& color);
     virtual std::wstring    GetText() const;
-    // CompiledStringDX9
-    virtual void            OnFontAtlasSizeChange(float xRatio, float yRatio); 
 private:
-    std::wstring                    _text;
-    Vector3<float>                  _color;
-    std::shared_ptr<FontAtlasDX9>   _fontAtlas;
+    struct Vertex {
+        float X, Y;
+        float U, V;
+    };
+    std::vector<Vertex>     _vertices;
+
+    std::wstring            _text;
+    Vector2<float>       _position;
+    Vector3<float>          _color;
+    IFontDecl*              _font;
+    FontAtlasPtr            _fontAtlas;
+    RenderContextDX9*       _renderContext;
+
+    CComPtr<IDirect3DVertexDeclaration9>    _vertexDeclaration;
+    CComPtr<IDirect3DVertexBuffer9>         _vertexBuffer;
+    CComPtr<IDirect3DVertexShader9>         _vertexShader;
+    CComPtr<IDirect3DPixelShader9>          _pixelShader;
+    CComPtr<ID3DXConstantTable>             _vsConstantTable;
+    CComPtr<ID3DXConstantTable>             _psConstantTable;
 };
 
-ICompiledString* CreateCompiledString(std::shared_ptr<IFontAtlas> fontAtlas, const Vector3<float>& color, const std::wstring& text);
-
-class FontAtlasDX9 : public IFontAtlas {
+class FontAtlas {
 public:
-    FontAtlasDX9(RenderContextDX9* renderContext);
-    virtual ~FontAtlasDX9();
-    // IFontAtlas
-    virtual void SetFont(IFont* font);
-    virtual void RegisterOnSizeChangeCallback(const OnSizeChangeCallback_TYPE& f);
+    FontAtlas(IRenderContext* renderContext);
+    virtual ~FontAtlas();
     // FontAtlasDX9
-    CComPtr<Direct3DTexture9> GetTexture() const;
+    ITexture2D* GetTexture() const;
+    Rect<float> GetTextureCoords(const IFontDecl::Glyph& glyph);
 private:
-    IFont*                                  _font;
-    uint32_t                                _atlasWidth;
-    uint32_t                                _atlasHeight;
-    CComPtr<Direct3DTexture9>               _atlas;
-    std::list<OnSizeChangeCallback_TYPE>    _onSizeChangeCallbacks;
-    RenderContextDX9*                       _renderContext;
+    ITexture2D*                 _atlas;
+    IRenderContext*             _renderContext;
 };
 
-std::shared_ptr<IFontAtlas> CreateFontAtlas(IRenderContext* renderContext);
-
-class CompiledStringBuilder : public ICompiledStringBuilder {
+class FontRenderer : public IFontRenderer {
 public:
-    CompiledStringBuilder(IRenderContext* renderContext);
-    virtual ~CompiledStringBuilder();
+    FontRenderer(IRenderContext* renderContext);
+    virtual ~FontRenderer();
     // IHandle
     virtual void                Release();
     // ICompiledStringBuilder
-    virtual void                SetFont(const IFont* font);
+    virtual void                SetFont(IFontDecl* font);
     virtual void                SetColor(const Vector3<float>& color);
     virtual ICompiledString*    CompileString(const std::wstring& text);
 private:
-    std::shared_ptr<IFontAtlas> _fontAtlas;
+    IFontDecl*                  _font;
+    FontAtlasPtr                _fontAtlas;
     Vector3<float>              _color;
     IRenderContext*             _renderContext;
-}
+};

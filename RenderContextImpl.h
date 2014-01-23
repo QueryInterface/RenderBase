@@ -38,12 +38,12 @@ public:
     virtual void            SetWidth(uint32_t width);
     virtual void            SetHeight(uint32_t height);
     virtual void            SetTitle(const std::string& name);
-	virtual void            SetFullscreen(bool fullscreen);
+    virtual void            SetFullscreen(bool fullscreen);
     virtual uint32_t        GetWidth() const;
     virtual uint32_t        GetHeight() const;
     virtual std::string     GetTitle() const;
     virtual bool            IsFullscreen() const;
-	// IRenderContextBuilder
+    // IRenderContextBuilder
     virtual void            SetApiType(RC_API_TYPE apiType);
     virtual RC_API_TYPE     GetApiType() const;
     virtual IRenderContext* GetResult();
@@ -51,7 +51,7 @@ private:
     uint32_t        _width;
     uint32_t        _height;
     std::string    _title;
-    bool 			_fullscreen;
+    bool            _fullscreen;
     RC_API_TYPE     _apiType;
 };
 
@@ -86,7 +86,7 @@ private:
     uint32_t                        _width;
     uint32_t                        _height;
     std::string                     _title;
-    bool 			                _fullscreen;
+    bool                            _fullscreen;
 };
 #endif //_WIN32
 
@@ -94,17 +94,19 @@ private:
 class Texture2DDX9 : public ITexture2D {
 public:
     Texture2DDX9(RenderContextDX9* renderContext, const std::wstring& texPath);
-    Texture2DDX9(RenderContextDX9* renderContext, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags);
+    Texture2DDX9(RenderContextDX9* renderContext, uint32_t numMips, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags);
     virtual ~Texture2DDX9();
     // IHandle
     virtual void        Release();
     // ITexture2D
+    virtual uint32_t    GetNumMipLevels() const;
     virtual uint32_t    GetWidth() const;
     virtual uint32_t    GetHeight() const;
     virtual uint32_t    GetSize() const;
     virtual TEX_FORMAT  GetFormat() const;
+    virtual uint32_t    GetPixelSize() const;
     virtual TEX_FLAGS   GetFlags() const;
-    virtual void        Lock(void** outData, uint32_t outPitch);
+    virtual void        Lock(uint32_t level, void** outData, uint32_t& outPitch);
     virtual void        Unlock();
     // Texture2DDX9
     CComPtr<IDirect3DTexture9>& GetPointer();
@@ -116,6 +118,8 @@ private:
     uint32_t                    _pixelSize;
     TEX_FORMAT                  _format;
     TEX_FLAGS                   _flags;
+    uint32_t                    _numMipLevels;
+    uint32_t                    _lockedLevel;
 };
 
 class RenderContextDX9 : public IRenderContext {
@@ -125,16 +129,18 @@ public:
     // IHandle
     virtual void Release();
     // IRenderContext
-    virtual IWindowContext* 	GetWindowContext();
+    virtual IWindowContext*     GetWindowContext();
     virtual ITexture2D*         CreateTexture2D(const std::wstring& texPath);
-    virtual ITexture2D*         CreateTexture2D(uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags);
+    virtual ITexture2D*         CreateTexture2D(uint32_t mips, uint32_t width, uint32_t height, TEX_FORMAT format, TEX_FLAGS flags);
     virtual void                Clear(uint32_t flags, uint8_t r, uint8_t g, uint8_t b, uint8_t a, float depth, uint8_t stencil);
     virtual void                Present();
     // RenderContextDX9
-    CComPtr<IDirect3DDevice9>& 	GetDevice();
+    CComPtr<IDirect3DDevice9>&  GetDevice();
+    ID3DXBuffer*                CompileShader(const string& shaderSource, const string& entryPoint, const string& profile, ID3DXConstantTable** outConstantTable = nullptr) const;
 private:
     unique_ptr<WindowContextWin>    _windowContext;
     CComPtr<IDirect3D9>             _d3d;          
     CComPtr<IDirect3DDevice9>       _device;
+
 };
 #endif //_WIN32
