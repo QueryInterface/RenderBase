@@ -21,7 +21,7 @@ FontFT::FontFT(const std::string& name, uint32_t size)
     VE_ERROR_IF(FT_Init_FreeType(&_fontLibrary), L"Failed to init font");
     VE_ERROR_IF(FT_New_Face(_fontLibrary, fontPathA.c_str(), 0, &_face), L"Failed to create font %S", name.c_str());
     // TODO: FT_Set_Char_Size here isntead for dpi support
-    VE_ERROR_IF(FT_Set_Pixel_Sizes(_face, 0, _size), L"Failed to set font size %d", _size);
+    VE_ERROR_IF(FT_Set_Char_Size(_face, 0, _size * 64, 300, 300), L"");
     _kerningEnabled = (bool)FT_HAS_KERNING(_face);
     _lineSpace = _face->height;
 }
@@ -154,53 +154,54 @@ std::wstring FontFT::findFont(const std::string& fontName) {
 /// CompileStringDX9 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static const std::string g_vertexShaderSourceDX9 = 
-    "struct VS_INPUT {                                      \n\
-        float2 Position : POSITION;                         \n\
-        float2 TexCoord : TEXCOORD0;                        \n\
-    };                                                      \n\
-                                                            \n\
-    struct VS_OUTPUT {                                      \n\
-        float4 Position : POSITION;                         \n\
-        float2 TexCoord : TEXCOORD0;                        \n\
-    };                                                      \n\
-                                                            \n\
-    float2  g_shift;                                        \n\
-    float   g_w;      //Screen width                        \n\
-    float   g_h;      //Screen height                       \n\
-                                                            \n\
-    VS_OUTPUT vs_main (VS_INPUT input) {                    \n\
-        VS_OUTPUT output;                                   \n\
-        float x = input.Position / g_w - 1.0f + g_shift.x;  \n\
-        float y = input.Position / g_h- 1.0f + g_shift.y;   \n\
-        output.Position = float4(x, y, 0.5, 1.0);           \n\
-        output.TexCoord = input.TexCoord;                   \n\
-        return output;                                      \n\
-    }                                                       \n";
+    "struct VS_INPUT {                                          \n\
+        float2 Position : POSITION;                             \n\
+        float2 TexCoord : TEXCOORD0;                            \n\
+    };                                                          \n\
+                                                                \n\
+    struct VS_OUTPUT {                                          \n\
+        float4 Position : POSITION;                             \n\
+        float2 TexCoord : TEXCOORD0;                            \n\
+    };                                                          \n\
+                                                                \n\
+    float2  g_shift;                                            \n\
+    float   g_w;      //Screen width                            \n\
+    float   g_h;      //Screen height                           \n\
+                                                                \n\
+    VS_OUTPUT vs_main (VS_INPUT input) {                        \n\
+        VS_OUTPUT output;                                       \n\
+        float x = (input.Position.x + g_shift.x) / g_w - 1.0f;  \n\
+        float y = (input.Position.y - g_shift.y) / g_h + 1.0f;  \n\
+        output.Position = float4(x, y, 0.5, 1.0);               \n\
+        output.TexCoord = input.TexCoord;                       \n\
+        return output;                                          \n\
+    }                                                           \n";
 
 static const std::string g_pixelShaderSourceDX9 = 
-    "struct PS_INPUT {                                      \n\
-        float4 Position : POSITION;                         \n\
-        float2 TexCoord : TEXCOORD0;                        \n\
-    };                                                      \n\
-                                                            \n\
-    struct PS_OUTPUT {                                      \n\
-        float4 Color : COLOR0;                              \n\
-    };                                                      \n\
-                                                            \n\
-    sampler2D Tex0;                                         \n\
-    float4    Color;                                        \n\
-                                                            \n\
-    PS_OUTPUT ps_main(PS_INPUT input ) {                    \n\
-        PS_OUTPUT output;                                   \n\
-        float4 texColor = tex2D(Tex0, input.TexCoord);      \n\
-        output.Color = Color * texColor;                    \n\
-        return output;                                      \n\
-    }                                                       \n";
+    "struct PS_INPUT {                                          \n\
+        float4 Position : POSITION;                             \n\
+        float2 TexCoord : TEXCOORD0;                            \n\
+    };                                                          \n\
+                                                                \n\
+    struct PS_OUTPUT {                                          \n\
+        float4 Color : COLOR0;                                  \n\
+    };                                                          \n\
+                                                                \n\
+    sampler2D Tex0;                                             \n\
+    float4    Color;                                            \n\
+                                                                \n\
+    PS_OUTPUT ps_main(PS_INPUT input ) {                        \n\
+        PS_OUTPUT output;                                       \n\
+        float4 t = tex2D(Tex0, input.TexCoord);                 \n\
+        output.Color = float4(1.0f,1.0f,1.0f,1.0f);             \n\
+        return output;                                          \n\
+    }                                                           \n";
 CompiledStringDX9::CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, FontAtlasPtr fontAtlas, const std::wstring& text) 
     : _renderContext(renderContext)
     , _font(font)
     , _fontAtlas(fontAtlas)
-    , _text(text) {
+    , _text(text)
+    , _position(0, 0) {
     HRESULT hr = S_OK;
     float penX = 0.;
     float penY = 0.;
@@ -216,22 +217,28 @@ CompiledStringDX9::CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl*
         // 1st triangle
         v.X = penX + glyph.OriginX;                   v.U = texCoords.Left;
         v.Y = penY - glyph.OriginY;                   v.V = texCoords.Top;
+        v.Y = -v.Y;
         _vertices.push_back(v);
         v.X = penX + glyph.OriginX + glyph.Width;     v.U = texCoords.Right;
         v.Y = penY - glyph.OriginY;                   v.V = texCoords.Top;
+        v.Y = -v.Y;
         _vertices.push_back(v);
         v.X = penX + glyph.OriginX;                   v.U = texCoords.Left;
         v.Y = penY - glyph.OriginY + glyph.Height;    v.V = texCoords.Bottom;
+        v.Y = -v.Y;
         _vertices.push_back(v);
         // 2nd triangle
         v.X = penX + glyph.OriginX;                   v.U = texCoords.Left;
         v.Y = penY - glyph.OriginY + glyph.Height;    v.V = texCoords.Bottom;
+        v.Y = -v.Y;
         _vertices.push_back(v);
         v.X = penX + glyph.OriginX + glyph.Width;     v.U = texCoords.Right;
         v.Y = penY - glyph.OriginY;                   v.V = texCoords.Top;
+        v.Y = -v.Y;
         _vertices.push_back(v);
         v.X = penX + glyph.OriginX + glyph.Width;     v.U = texCoords.Right;
-        v.Y = penY - glyph.OriginX + glyph.Height;    v.V = texCoords.Bottom;
+        v.Y = penY - glyph.OriginY + glyph.Height;    v.V = texCoords.Bottom;
+        v.Y = -v.Y;
         _vertices.push_back(v);
 
         penX += glyph.StepX;
@@ -239,19 +246,20 @@ CompiledStringDX9::CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl*
     // Create vertex declaration
     D3DVERTEXELEMENT9 elements[] = {
         {0, 0,  D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-        {0, 16, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,  0},
+        {0, 8, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD,  0},
         D3DDECL_END()
     };
     CComPtr<IDirect3DDevice9> device = _renderContext->GetDevice();
     hr = device->CreateVertexDeclaration(elements, &_vertexDeclaration);                                   
     VE_ERROR_IF(FAILED(hr), L"Failed to create vertex declaration");
     // Create vertex buffer
-    hr = device->CreateVertexBuffer(sizeof(_vertices), 0, 0, D3DPOOL_DEFAULT, &_vertexBuffer, NULL);      
+    uint32_t bufferSize = _vertices.size() * sizeof(Vertex);
+    hr = device->CreateVertexBuffer(bufferSize, 0, 0, D3DPOOL_DEFAULT, &_vertexBuffer, NULL);      
     VE_ERROR_IF(FAILED(hr), L"Failed to create vertex buffer");
     void* pData = nullptr;
-    hr = _vertexBuffer->Lock(0, sizeof(_vertices), &pData, 0);                                            
+    hr = _vertexBuffer->Lock(0, bufferSize, &pData, 0);                                            
     VE_ERROR_IF(FAILED(hr), L"Failed to lock vertex buffer %p", _vertexBuffer); 
-    memcpy(pData, _vertices.data(), _vertices.size() * sizeof(Vertex));
+    memcpy(pData, _vertices.data(), bufferSize);
     hr = _vertexBuffer->Unlock();                                                                          
     VE_ERROR_IF(FAILED(hr), L"Failed to unlock vertex buffer");
     // Create shaders
@@ -288,7 +296,7 @@ void CompiledStringDX9::Render() {
     device->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
     device->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
     device->SetRenderState(D3DRS_BLENDOP,D3DBLENDOP_ADD);
-    device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, _vertices.size() / 3);
+    device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, _vertices.size() / 3);
     device->EndScene();    
 }
 

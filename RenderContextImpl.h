@@ -1,4 +1,8 @@
 #pragma once
+#ifdef _DEBUG
+#define D3D_DEBUG_INFO
+#endif // _DEBUG
+
 #include "RenderContext.h"
 #include <list>
 #include <set>

@@ -9,10 +9,10 @@ struct IFontDecl : public IHandle {
         std::vector<uint8_t>    Data;
         uint32_t                Width;
         uint32_t                Height;
-        uint32_t                OriginX;
-        uint32_t                OriginY;
-        uint32_t                StepX;
-        uint32_t                StepY;
+        int32_t                 OriginX;
+        int32_t                 OriginY;
+        int32_t                 StepX;
+        int32_t                 StepY;
 
         IFontDecl*              Font;
         wchar_t                 Symbol;

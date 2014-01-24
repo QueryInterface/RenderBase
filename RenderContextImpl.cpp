@@ -275,7 +275,6 @@ Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, uint32_t numMips, ui
     CComPtr<IDirect3DDevice9>& device = _renderContext->GetDevice();
     DWORD usage = D3DUSAGE_DYNAMIC;
     if (flags & TEX_FLAG_RENDER_TARGET) usage |= D3DUSAGE_RENDERTARGET;
-    if (!(flags & TEX_FLAG_READ) && (flags & TEX_FLAG_WRITE)) usage |= D3DUSAGE_WRITEONLY;
     HRESULT hr = device->CreateTexture(_width, _height, numMips, usage, adapter_dx_fmt::To(_format), D3DPOOL_DEFAULT, &_texture, NULL);
     VE_ERROR_IF(FAILED(hr), L"Failed texture creation with parameters: width(%d), height(%d), format(%d), flags(%d)", _width, _height, _format, _flags);
 }
