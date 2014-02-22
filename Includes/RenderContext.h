@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "common.h"
 
 using std::shared_ptr;
 using std::string;
@@ -99,5 +100,8 @@ struct IRenderContextBuilder
     virtual RC_API_TYPE     GetApiType() const = 0;
     virtual IRenderContext* GetResult() = 0;
 
-    static IRenderContextBuilder* Create();
+    static LIB_EXPORT IRenderContextBuilder* CALLING_CONVENTION Create();
 };
+
+
+

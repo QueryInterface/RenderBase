@@ -23,5 +23,5 @@ struct ISprite
     virtual ITexture2D*	    GetTexture() const = 0;
     virtual Rect<float>	    GetTextureCoords() const = 0;
 
-    static ISprite* Create(IRenderContext* renderContext);
+    static LIB_EXPORT ISprite* CALLING_CONVENTION Create(IRenderContext* renderContext);
 };

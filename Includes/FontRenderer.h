@@ -23,7 +23,7 @@ struct IFontDecl : public IHandle {
     virtual uint32_t    GetSize() const = 0;
     virtual uint32_t    GetKerning(wchar_t c0, wchar_t c1) const = 0;
 
-    static IFontDecl* Create(const std::string& name, uint32_t size);
+    static LIB_EXPORT IFontDecl* CALLING_CONVENTION Create(const std::string& name, uint32_t size);
 };
 
 struct ICompiledString 
@@ -39,5 +39,5 @@ struct IFontRenderer : public IHandle {
     virtual void                SetColor(const Vector3<float>& color) = 0;
     virtual ICompiledString*    CompileString(const std::wstring& text) = 0;
 
-    static IFontRenderer*      Create(IRenderContext* renderContext);
+    static LIB_EXPORT IFontRenderer* CALLING_CONVENTION Create(IRenderContext* renderContext);
 };
