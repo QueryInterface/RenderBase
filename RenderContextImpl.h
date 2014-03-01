@@ -111,7 +111,7 @@ public:
     virtual uint32_t    GetPixelSize() const;
     virtual TEX_FLAGS   GetFlags() const;
     virtual void        Lock(uint32_t level, void** outData, uint32_t& outPitch);
-    virtual void        Unlock();
+    virtual void        Unlock(uint32_t level);
     // Texture2DDX9
     CComPtr<IDirect3DTexture9>& GetPointer();
 private:
@@ -123,7 +123,6 @@ private:
     TEX_FORMAT                  _format;
     TEX_FLAGS                   _flags;
     uint32_t                    _numMipLevels;
-    uint32_t                    _lockedLevel;
 };
 
 class RenderContextDX9 : public IRenderContext {

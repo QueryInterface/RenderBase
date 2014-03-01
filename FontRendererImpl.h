@@ -4,10 +4,10 @@
 #include "ft2build.h"
 #include <map>
 #include <memory>
+#include "Tree2D.h"
 #include FT_FREETYPE_H
 
 class FontAtlas;
-typedef shared_ptr<FontAtlas> FontAtlasPtr;
 
 class FontFT : public IFontDecl {
 public:
@@ -35,7 +35,7 @@ private:
 
 class CompiledStringDX9 : public ICompiledString {
 public:
-    CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, FontAtlasPtr fontAtlas, const std::wstring& text);
+    CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, const std::wstring& text);
     virtual ~CompiledStringDX9();
     // IHandle
     virtual void            Release();
@@ -53,10 +53,9 @@ private:
     std::vector<Vertex>     _vertices;
 
     std::wstring            _text;
-    Vector2<float>       _position;
-    Vector3<float>          _color;
+    Vector2<float>          _position;
+    Vector4<float>          _color;
     IFontDecl*              _font;
-    FontAtlasPtr            _fontAtlas;
     RenderContextDX9*       _renderContext;
 
     CComPtr<IDirect3DVertexDeclaration9>    _vertexDeclaration;
@@ -65,6 +64,8 @@ private:
     CComPtr<IDirect3DPixelShader9>          _pixelShader;
     CComPtr<ID3DXConstantTable>             _vsConstantTable;
     CComPtr<ID3DXConstantTable>             _psConstantTable;
+
+    static FontAtlas*       _fontAtlas;
 };
 
 class FontAtlas {
@@ -75,23 +76,10 @@ public:
     ITexture2D* GetTexture() const;
     Rect<float> GetTextureCoords(const IFontDecl::Glyph& glyph);
 private:
-    ITexture2D*                 _atlas;
-    IRenderContext*             _renderContext;
-};
-
-class FontRenderer : public IFontRenderer {
-public:
-    FontRenderer(IRenderContext* renderContext);
-    virtual ~FontRenderer();
-    // IHandle
-    virtual void                Release();
-    // ICompiledStringBuilder
-    virtual void                SetFont(IFontDecl* font);
-    virtual void                SetColor(const Vector3<float>& color);
-    virtual ICompiledString*    CompileString(const std::wstring& text);
-private:
-    IFontDecl*                  _font;
-    FontAtlasPtr                _fontAtlas;
-    Vector3<float>              _color;
-    IRenderContext*             _renderContext;
+    uint32_t                                _width;
+    uint32_t                                _height;
+    ITexture2D*                             _atlas;
+    IRenderContext*                         _renderContext;
+    std::map<IFontDecl::Glyph, Rect<float>> _texCoordsMap;
+    Tree2D                                  _tree2d;
 };

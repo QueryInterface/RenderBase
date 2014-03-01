@@ -77,7 +77,7 @@ struct ITexture2D : public IHandle {
     virtual uint32_t    GetPixelSize() const = 0;
     virtual TEX_FLAGS   GetFlags() const = 0;
     virtual void        Lock(uint32_t level, void** outData, uint32_t& outPitch) = 0;
-    virtual void        Unlock() = 0;
+    virtual void        Unlock(uint32_t level) = 0;
 };
 
 struct IRenderContext : public IHandle {

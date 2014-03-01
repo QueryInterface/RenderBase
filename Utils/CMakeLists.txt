@@ -7,4 +7,5 @@ add_library(Utils
     Utils.cpp
 	ErrorHandler.h
 	ErrorHandler.cpp
+    Tree2D.h
 	MathBasics.h)

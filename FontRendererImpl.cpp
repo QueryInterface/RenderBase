@@ -2,6 +2,7 @@
 #include "ErrorHandler.h"
 #include <sstream>
 #include "RenderContextImpl.h"
+#include <assert.h>
 
 IFontDecl* IFontDecl::Create(const std::string& name, uint32_t size) {
     return new FontFT(name, size);
@@ -154,54 +155,60 @@ std::wstring FontFT::findFont(const std::string& fontName) {
 /// CompileStringDX9 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 static const std::string g_vertexShaderSourceDX9 = 
-    "struct VS_INPUT {                                          \n\
-        float2 Position : POSITION;                             \n\
-        float2 TexCoord : TEXCOORD0;                            \n\
-    };                                                          \n\
-                                                                \n\
-    struct VS_OUTPUT {                                          \n\
-        float4 Position : POSITION;                             \n\
-        float2 TexCoord : TEXCOORD0;                            \n\
-    };                                                          \n\
-                                                                \n\
-    float2  g_shift;                                            \n\
-    float   g_w;      //Screen width                            \n\
-    float   g_h;      //Screen height                           \n\
-                                                                \n\
-    VS_OUTPUT vs_main (VS_INPUT input) {                        \n\
-        VS_OUTPUT output;                                       \n\
-        float x = (input.Position.x + g_shift.x) / g_w - 1.0f;  \n\
-        float y = (input.Position.y - g_shift.y) / g_h + 1.0f;  \n\
-        output.Position = float4(x, y, 0.5, 1.0);               \n\
-        output.TexCoord = input.TexCoord;                       \n\
-        return output;                                          \n\
-    }                                                           \n";
+    "struct VS_INPUT {                                                  \n\
+        float2 Position : POSITION;                                     \n\
+        float2 TexCoord : TEXCOORD0;                                    \n\
+    };                                                                  \n\
+                                                                        \n\
+    struct VS_OUTPUT {                                                  \n\
+        float4 Position : POSITION;                                     \n\
+        float2 TexCoord : TEXCOORD0;                                    \n\
+    };                                                                  \n\
+                                                                        \n\
+    float2  g_shift;                                                    \n\
+    float   g_w;      //Screen width                                    \n\
+    float   g_h;      //Screen height                                   \n\
+                                                                        \n\
+    VS_OUTPUT vs_main (VS_INPUT input) {                                \n\
+        VS_OUTPUT output;                                               \n\
+        float x = (input.Position.x + g_shift.x) / g_w - 1.0f;          \n\
+        float y = (input.Position.y - g_shift.y) / g_h + 1.0f;          \n\
+        output.Position = float4(x, y, 0.5, 1.0);                       \n\
+        output.TexCoord = input.TexCoord;                               \n\
+        return output;                                                  \n\
+    }                                                                   \n";
 
 static const std::string g_pixelShaderSourceDX9 = 
-    "struct PS_INPUT {                                          \n\
-        float4 Position : POSITION;                             \n\
-        float2 TexCoord : TEXCOORD0;                            \n\
-    };                                                          \n\
-                                                                \n\
-    struct PS_OUTPUT {                                          \n\
-        float4 Color : COLOR0;                                  \n\
-    };                                                          \n\
-                                                                \n\
-    sampler2D Tex0;                                             \n\
-    float4    Color;                                            \n\
-                                                                \n\
-    PS_OUTPUT ps_main(PS_INPUT input ) {                        \n\
-        PS_OUTPUT output;                                       \n\
-        float4 t = tex2D(Tex0, input.TexCoord);                 \n\
-        output.Color = float4(1.0f,1.0f,1.0f,1.0f);             \n\
-        return output;                                          \n\
-    }                                                           \n";
-CompiledStringDX9::CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, FontAtlasPtr fontAtlas, const std::wstring& text) 
+    "struct PS_INPUT {                                                  \n\
+        float4 Position : POSITION;                                     \n\
+        float2 TexCoord : TEXCOORD0;                                    \n\
+    };                                                                  \n\
+                                                                        \n\
+    struct PS_OUTPUT {                                                  \n\
+        float4 Color : COLOR0;                                          \n\
+    };                                                                  \n\
+                                                                        \n\
+    sampler2D Tex0;                                                     \n\
+    float4    Color;                                                    \n\
+                                                                        \n\
+    PS_OUTPUT ps_main(PS_INPUT input ) {                                \n\
+        PS_OUTPUT output;                                               \n\
+        float4 t = tex2D(Tex0, input.TexCoord);                         \n\
+        output.Color = float4(Color.x*t.w,Color.y*t.w,Color.z*t.w,1.0f);\n\
+        return output;                                                  \n\
+    }                                                                   \n";
+
+FontAtlas* CompiledStringDX9::_fontAtlas = nullptr;
+
+CompiledStringDX9::CompiledStringDX9(RenderContextDX9* renderContext, IFontDecl* font, const std::wstring& text) 
     : _renderContext(renderContext)
     , _font(font)
-    , _fontAtlas(fontAtlas)
     , _text(text)
-    , _position(0, 0) {
+    , _position(0, 0)
+    , _color(1.0f, 1.0f, 1.0f, 1.0f) {
+    if (!_fontAtlas) {
+        _fontAtlas = new FontAtlas(renderContext);
+    }
     HRESULT hr = S_OK;
     float penX = 0.;
     float penY = 0.;
@@ -306,20 +313,40 @@ void CompiledStringDX9::SetPosition(uint32_t x, uint32_t y) {
 }
 
 void CompiledStringDX9::SetColor(const Vector3<float>& color) {
-    _color = color;
+    _color.x = color.x,
+    _color.y = color.y;
+    _color.z = color.z;
 }
 
 std::wstring CompiledStringDX9::GetText() const {
     return _text;
 }
 
+ICompiledString* ICompiledString::Create(IRenderContext* renderContext, IFontDecl* font, const std::wstring& text) {
+    RenderContextDX9* renderContextDX9 = dynamic_cast<RenderContextDX9*>(renderContext);
+    if (renderContextDX9) {
+        return new CompiledStringDX9(renderContextDX9, font, text);
+    }    
+    return nullptr;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// FontAtlasDX9 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool operator < (const IFontDecl::Glyph& g0, const IFontDecl::Glyph& g1) {
+    if (g0.Font < g1.Font) return true;
+    if (g0.Font > g1.Font) return false;
+    if (g0.Symbol < g1.Symbol) return true;
+    return false;
+}
+
 FontAtlas::FontAtlas(IRenderContext* renderContext) 
     : _renderContext(renderContext) 
-    , _atlas(nullptr) {
-    _atlas = _renderContext->CreateTexture2D(1, 512, 512, TEX_FORMAT_A8, TEX_FLAG_WRITE);
+    , _width(512)
+    , _height(512)
+    , _atlas(nullptr)
+    , _tree2d(_width, _height) {
+    _atlas = _renderContext->CreateTexture2D(1, _width, _height, TEX_FORMAT_A8, TEX_FLAG_WRITE);
     VE_ERROR_IF(_atlas == nullptr, L"Failed to create texture atlas");
 }
 
@@ -332,48 +359,36 @@ inline ITexture2D* FontAtlas::GetTexture() const {
 }
 
 Rect<float> FontAtlas::GetTextureCoords(const IFontDecl::Glyph& glyph) {
-    Rect<float> r;
-    r.Bottom = r.Left = r.Right = r.Top = 0.;
-    return r;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// FontRenrerer //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FontRenderer::FontRenderer(IRenderContext* renderContext) 
-    : _color(1., 1., 1.)
-    , _renderContext(renderContext) {
-    RenderContextDX9* renderContextDX9 = dynamic_cast<RenderContextDX9*>(renderContext);
-    if (renderContextDX9) {
-        _fontAtlas = std::make_shared<FontAtlas>(renderContextDX9);
+    auto iter = _texCoordsMap.find(glyph);
+    if (iter != _texCoordsMap.end()) {
+        return iter->second;
     }
-}
+    // Data is now found in map
+    Tree2D::TreeRect treeRect;
+    if (!_tree2d.FillRect(glyph.Width, glyph.Height, treeRect)) {
+        VE_ERROR(L"Failed to allocate glyph space in font atlas");
+    }
+    assert(glyph.Width == treeRect.Width);
+    assert(glyph.Height == treeRect.Height);
+    uint8_t* data = nullptr;
+    uint32_t pitch = 0;
+    uint32_t pixelSize = (_atlas->GetPixelSize() >> 3);
+    _atlas->Lock(0, (void**)&data, pitch);
+    uint32_t startOffset = treeRect.Y * pitch + treeRect.X * pixelSize;
+    for (uint32_t h = 0; h < glyph.Height; ++h) {
+        for (uint32_t w = 0; w < glyph.Width; ++w) {
+            for (uint32_t p = 0; p < pixelSize; ++p) {
+                data[startOffset + pitch*h + w*pixelSize + p] = glyph.Data[glyph.Width*h + w];
+            }
+        }
+    }
+    _atlas->Unlock(0);
 
-FontRenderer::~FontRenderer() {
-}
-
-void FontRenderer::Release() {
-    delete this;
-}
-
-inline void FontRenderer::SetFont(IFontDecl* font) {
-    _font = font;
-}
-
-void FontRenderer::SetColor(const Vector3<float>& color) {
-    _color = color;
-}
-
-ICompiledString* FontRenderer::CompileString(const std::wstring& text) {
-    ICompiledString* string;
-    RenderContextDX9* renderContextDX9 = dynamic_cast<RenderContextDX9*>(_renderContext);
-    if (renderContextDX9) {
-        string = new CompiledStringDX9(renderContextDX9, _font, _fontAtlas, text);
-    } 
-    string->SetColor(_color);
-    return string;
-}
-
-IFontRenderer* IFontRenderer::Create(IRenderContext* renderContext) {
-    return new FontRenderer(renderContext);
+    Rect<float> r;
+    r.Left = (float)treeRect.X / _width;
+    r.Top = (float)treeRect.Y / _height;
+    r.Right = (float)(treeRect.X + treeRect.Width) / _width;
+    r.Bottom = (float)(treeRect.Y + treeRect.Height)/ _height;
+    _texCoordsMap[glyph] = r;
+    return r;
 }

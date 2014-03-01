@@ -270,13 +270,13 @@ Texture2DDX9::Texture2DDX9(RenderContextDX9* renderContext, uint32_t numMips, ui
     , _height(height)
     , _format(format)
     , _flags(flags)
-    , _lockedLevel(0)
     , _numMipLevels(numMips) {
     CComPtr<IDirect3DDevice9>& device = _renderContext->GetDevice();
     DWORD usage = D3DUSAGE_DYNAMIC;
     if (flags & TEX_FLAG_RENDER_TARGET) usage |= D3DUSAGE_RENDERTARGET;
     HRESULT hr = device->CreateTexture(_width, _height, numMips, usage, adapter_dx_fmt::To(_format), D3DPOOL_DEFAULT, &_texture, NULL);
     VE_ERROR_IF(FAILED(hr), L"Failed texture creation with parameters: width(%d), height(%d), format(%d), flags(%d)", _width, _height, _format, _flags);
+    _pixelSize = adapter_fmt_size::To(_format);
 }
 
 Texture2DDX9::~Texture2DDX9() {
@@ -315,16 +315,15 @@ TEX_FLAGS Texture2DDX9::GetFlags() const {
 }
 
 void Texture2DDX9::Lock(uint32_t level, void** outData, uint32_t& outPitch) {
-    _lockedLevel = level;
     D3DLOCKED_RECT rect;
-    HRESULT hr = _texture->LockRect(_lockedLevel, &rect, NULL, 0); 
+    HRESULT hr = _texture->LockRect(level, &rect, NULL, 0); 
     VE_ERROR_IF(FAILED(hr), L"Failed to lock texture %p", _texture.p);
     outPitch = rect.Pitch;
     *outData = rect.pBits;
 }
 
-void Texture2DDX9::Unlock() {
-    HRESULT hr = _texture->UnlockRect(_lockedLevel);
+void Texture2DDX9::Unlock(uint32_t level) {
+    HRESULT hr = _texture->UnlockRect(level);
     VE_ERROR_IF(hr, L"Failed to unlock texture", _texture.p);
 }
 

@@ -32,12 +32,6 @@ struct ICompiledString
     virtual void            SetPosition(uint32_t x, uint32_t y) = 0;
     virtual void            SetColor(const Vector3<float>& color) = 0;
     virtual std::wstring    GetText() const = 0;
-};
 
-struct IFontRenderer : public IHandle {
-    virtual void                SetFont(IFontDecl* font) = 0;
-    virtual void                SetColor(const Vector3<float>& color) = 0;
-    virtual ICompiledString*    CompileString(const std::wstring& text) = 0;
-
-    static LIB_EXPORT IFontRenderer* CALLING_CONVENTION Create(IRenderContext* renderContext);
+    static LIB_EXPORT ICompiledString* CALLING_CONVENTION Create(IRenderContext* renderContext, IFontDecl* font, const std::wstring& text);
 };
