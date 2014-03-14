@@ -33,21 +33,14 @@ include_directories(Utils)
 
 # Define source groups
 set (INTERFACE_FILES
-    Includes/RenderContext.h
-    Includes/Sprite.h
-    Includes/FontRenderer.h)
+    Includes/RenderContext.h)
 
 set (HEADER_FILES
     Includes/common.h
-    TypeAdapter.h
-    RenderContextImpl.h
-    SpriteImpl.h
-    FontRendererImpl.h)
+    RenderContextImpl.h)
 
 set (SOURCE_FILES
-    RenderContextImpl.cpp
-    SpriteImpl.cpp
-    FontRendererImpl.cpp)
+    RenderContextImpl.cpp)
 
 # Form executable
 add_library(RenderBase SHARED
