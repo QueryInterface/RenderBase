@@ -27,6 +27,7 @@ endif()
 
 # Include directories
 include_directories(SYSTEM ${DX_DIR}\\Include)
+include_directories(${3RDPARTY_DIR}/gtest-1.6.0/include)
 include_directories(${3RDPARTY_DIR}/freetype/include)
 include_directories(Includes)
 include_directories(Utils)
@@ -62,6 +63,7 @@ set_property (TARGET RenderBase PROPERTY FOLDER "Libraries")
 set_property (TARGET Utils      PROPERTY FODLER "Libraries")
 set_property (TARGET freetype   PROPERTY FOLDER "3rdParty/freetype")
 set_property (TARGET dist       PROPERTY FOLDER "3rdParty/freetype")
+set_property (TARGET gtest      PROPERTY FOLDER "3rdParty/gtest")
 
 # Set output folder
 set_target_properties(RenderBase    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
@@ -69,6 +71,8 @@ set_target_properties(RenderBase    PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)
 set_target_properties(AppShell      PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 set_target_properties(freetype      PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 set_target_properties(Utils         PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
+set_target_properties(gtest         PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
+
 
 # Create layout for files inside VS/XCode
 source_group ("_Interfaces" FILES ${INTERFACE_FILES})

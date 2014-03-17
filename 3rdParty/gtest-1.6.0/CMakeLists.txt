@@ -29,6 +29,8 @@ if (COMMAND pre_project_set_up_hermetic_build)
   pre_project_set_up_hermetic_build()
 endif()
 
+add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
+
 ########################################################################
 #
 # Project-wide settings
