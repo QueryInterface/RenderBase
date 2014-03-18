@@ -21,7 +21,7 @@ protected:
     };
 
 protected:
-	std::unique_ptr<ModelConstructor> m_Constructor;
+    std::unique_ptr<ModelConstructor> m_Constructor;
     VertexList m_vertices;
 };
 

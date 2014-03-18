@@ -10,9 +10,9 @@ int ModelConstructor::GetModel(VertexList& out_Vertices)
 
 bool ModelConstructor::SetPrimitive(PrimitiveType type, int x, int y, int z, ElementDirection direction)
 {
-	type; 
-	x;y;z; 
-	direction; 
+    type; 
+    x;y;z; 
+    direction; 
     return false;
 }
 
