@@ -98,14 +98,14 @@ private:
 
 class RenderContextGLES2 : public IRenderContext {
 public:
-    RenderContextGLES2(const RenderContextBuilder* builder);
-    virtual ~RenderContextGLES2();
+	RenderContextGLES2(const RenderContextBuilder* builder) {builder;}
+	virtual ~RenderContextGLES2() {};
     // IHandle
-    virtual void        Release();
+	virtual void        Release() {};
     // IRenderContext
-    virtual IWindow*    GetWindow();
-    virtual void        Clear(uint32_t flags, uint8_t r, uint8_t g, uint8_t b, uint8_t a, float depth, uint8_t stencil);
-    virtual void        Present();
+	virtual IWindow*    GetWindow() {return nullptr;};
+	virtual void        Clear(uint32_t flags, uint8_t r, uint8_t g, uint8_t b, uint8_t a, float depth, uint8_t stencil) {flags;r;g;b;a;depth;stencil;};
+	virtual void        Present() {};
 private:
     unique_ptr<IWindow> _windowContext;
 
