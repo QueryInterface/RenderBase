@@ -29,8 +29,6 @@ if (COMMAND pre_project_set_up_hermetic_build)
   pre_project_set_up_hermetic_build()
 endif()
 
-add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
-
 ########################################################################
 #
 # Project-wide settings
@@ -70,8 +68,8 @@ link_directories(${gtest_BINARY_DIR}/src)
 # are used for other targets, to ensure that gtest can be compiled by a user
 # aggressive about warnings.
 cxx_library(gtest "${cxx_strict}" src/gtest-all.cc)
-cxx_library(gtest_main "${cxx_strict}" src/gtest_main.cc)
-target_link_libraries(gtest_main gtest)
+#cxx_library(gtest_main "${cxx_strict}" src/gtest_main.cc)
+#target_link_libraries(gtest_main gtest)
 
 ########################################################################
 #
