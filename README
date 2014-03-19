@@ -5,3 +5,5 @@ You may list project types by command:
 build.py -l
 
 Code will be placed to _build/<project_type> directory
+
+Example: build.py -t "Visual Studio"
