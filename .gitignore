@@ -214,3 +214,5 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 3rdParty/freetype/include/ftconfig.h
+_build
+3rdParty/_unpack

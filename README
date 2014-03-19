@@ -1,0 +1,7 @@
+To generate code run the following command:
+build.py -t <project_type>
+
+You may list project types by command:
+build.py -l
+
+Code will be placed to _build/<project_type> directory

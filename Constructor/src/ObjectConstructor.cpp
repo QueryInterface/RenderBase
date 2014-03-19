@@ -1,8 +1,7 @@
 #include "ObjectConstructor.h"
 
 using namespace Constructor;
-
-bool ObjectConstructor::SetPrimitive(PrimitiveType type, Vector3D & position, Vector3D & direction = Vector3D())
+bool ObjectConstructor::SetPrimitive(PrimitiveType type, const Vector3D& position, const Vector3D& direction)
 {
 	type; 
 	position; 
