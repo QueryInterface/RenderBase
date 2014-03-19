@@ -49,8 +49,8 @@ class Builder:
         print "INFO: Build is not implemented yet!"
 
     def Clean(self):
-        shutil.rmtree("./_build")
-        shutil.rmtree("./3rdParty/_unpack")
+        shutil.rmtree("./_build", ignore_errors=True)
+        shutil.rmtree("./3rdParty/_unpack", ignore_errors=True)
 
     def __unpack(self, module):
         # Unpack qt
