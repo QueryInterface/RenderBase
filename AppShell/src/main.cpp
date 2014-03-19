@@ -1,6 +1,4 @@
 #include "RenderContext.h"
-#include "Sprite.h"
-#include "FontRenderer.h"
 #include "Utils.h"
 
 int main() {
