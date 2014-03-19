@@ -47,7 +47,7 @@ endif()
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
-include_directories(QT_INCLUDE_PATH)
+include_directories(${QT_INCLUDE_PATH})
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
