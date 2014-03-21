@@ -7,3 +7,5 @@ build.py -l
 Code will be placed to _build/<project_type> directory
 
 Example: build.py -t "Visual Studio"
+
+Game concept added to master/docs/gameconcept.docx
