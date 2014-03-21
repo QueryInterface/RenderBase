@@ -23,7 +23,7 @@ namespace Constructor
         ObjectConstructor() {};
         ~ObjectConstructor() {};
 
-        bool SetPrimitive(PrimitiveType type, const Vector3D& position, const Vector3D& direction = Vector3D());
+        bool SetPrimitive(ElementType type, const Vector3D& position, const Vector3D& direction);
     private:
         std::shared_ptr<IElement> m_constructedObject;
     };

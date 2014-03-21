@@ -9,16 +9,21 @@
 namespace Constructor
 {
 // type of simple primitive 
-    enum PrimitiveType
+    enum ElementType : unsigned int
     {
-    PT_Space   = 0,
-    PT_Cube,
+        ET_Space   = 0,
+        ET_Reference, // reference to an object located in different cell.
 
-    PT_Wedge,
-    PT_Ledder,
+        ET_Cube,
 
-    PT_Cilinder,
-    PT_Sphere,
+        ET_Wedge,
+        ET_Ledder,
+
+        ET_Cilinder,
+        ET_Sphere,
+
+
+        ET_UserCreated = 0x0000ffff, // hope 65536 predefined elements is enougth
     };
 
 // simple 3D types
@@ -30,10 +35,14 @@ namespace Constructor
         Vector3D() : x(1), y(0), z(0) {};
     };
 
-    struct BoundingBox
+    struct ElementDescription
     {
-        Vector3D TLF;
-        Vector3D Dimentions;
+        ElementType primitiveUID;
+        Vector3D    direction; // for reference type it's an object position
+
+        // bounding box
+        Vector3D    TLF;
+        Vector3D    Dimentions;
     };
 
 /////////////////////////////////////////////////////////////////////
@@ -43,9 +52,7 @@ namespace Constructor
 /////////////////////////////////////////////////////////////////////
     struct IElement
     {
-        virtual Vector3D&        GetDirection() const = 0;
-        virtual Vector3D&        GetPosition() const = 0;
-        virtual BoundingBox&     GetBoundingBox() const = 0;
+        virtual ElementDescription* GetObjectDescription() const = 0;
 
         virtual ~IElement();
     };
