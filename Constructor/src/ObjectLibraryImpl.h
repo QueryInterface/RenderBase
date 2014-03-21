@@ -20,7 +20,7 @@ namespace Constructor
     public:
         virtual const ElementDescription& GetElementDescription(ElementType type) const;
 
-        virtual void RegisterElement(IElement& element);
+        virtual void RegisterPrimitive(IElement& element);
 
     private:
         friend struct IObjectLibrary;
@@ -29,7 +29,7 @@ namespace Constructor
         virtual ~ObjectLibrary() {};
 
     private: // arguments
-        std::vector<const IElement*>  m_library;
+        std::vector<const IElement*>  m_primitives;
         ElementDescription      m_dummy;
     };
 

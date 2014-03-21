@@ -19,7 +19,7 @@ namespace Constructor
     {
     public:
         virtual const ElementDescription& GetElementDescription(ElementType type) const = 0;
-        virtual void RegisterElement(IElement& element) = 0;
+        virtual void RegisterPrimitive(IElement& element) = 0;
 
         virtual ~IObjectLibrary() {};
 
