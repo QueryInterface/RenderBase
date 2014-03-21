@@ -13,9 +13,22 @@ IObjectLibrary* IObjectLibrary::instance()
     return library.get();
 }
 
-ElementDescription* ObjectLibrary::GetElementDescription(ElementType type) const
+ObjectLibrary::ObjectLibrary() 
 {
-    return (type >= m_library.size()) ? nullptr : m_library[type]->GetObjectDescription();
+    m_library.resize(ET_SimplePrimitivesCount);
+    m_dummy.primitiveUID = ET_SimplePrimitivesCount;
 }
+
+void ObjectLibrary::RegisterElement(IElement& element)
+{
+    m_library[element.GetObjectDescription().primitiveUID] = &element;
+}
+
+const ElementDescription& ObjectLibrary::GetElementDescription(ElementType type) const
+{
+    return (type >= m_library.size()) ? m_dummy : m_library[type]->GetObjectDescription();
+}
+
+#include "ObjectLibraryPrimitives.cpp"
 
 // eof

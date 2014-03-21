@@ -18,7 +18,8 @@ namespace Constructor
     struct IObjectLibrary
     {
     public:
-        virtual ElementDescription* GetElementDescription(ElementType type) const = 0;
+        virtual const ElementDescription& GetElementDescription(ElementType type) const = 0;
+        virtual void RegisterElement(IElement& element) = 0;
 
         virtual ~IObjectLibrary() {};
 

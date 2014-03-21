@@ -12,8 +12,6 @@ namespace Constructor
     enum ElementType : unsigned int
     {
         ET_Space   = 0,
-        ET_Reference, // reference to an object located in different cell.
-
         ET_Cube,
 
         ET_Wedge,
@@ -22,8 +20,12 @@ namespace Constructor
         ET_Cilinder,
         ET_Sphere,
 
+        ET_SimplePrimitivesCount,
 
-        ET_UserCreated = 0x0000ffff, // hope 65536 predefined elements is enougth
+        ET_UserCreated = 0x0000ffff, // hope 65536 predefined elements will be enougth
+
+
+        ET_Reference   = 0xffffffff, // reference to an object located in different cell.
     };
 
 // simple 3D types
@@ -52,9 +54,9 @@ namespace Constructor
 /////////////////////////////////////////////////////////////////////
     struct IElement
     {
-        virtual ElementDescription* GetObjectDescription() const = 0;
+        virtual const ElementDescription& GetObjectDescription() const = 0;
 
-        virtual ~IElement();
+        virtual ~IElement() {};
     };
 
 }//end  of namespace

@@ -18,16 +18,19 @@ namespace Constructor
     struct ObjectLibrary : public IObjectLibrary
     {
     public:
-        virtual ElementDescription* GetElementDescription(ElementType type) const;
+        virtual const ElementDescription& GetElementDescription(ElementType type) const;
+
+        virtual void RegisterElement(IElement& element);
 
     private:
         friend struct IObjectLibrary;
 
-        ObjectLibrary() {};
+        ObjectLibrary();
         virtual ~ObjectLibrary() {};
 
     private: // arguments
-        std::vector<IElement*> m_library;
+        std::vector<const IElement*>  m_library;
+        ElementDescription      m_dummy;
     };
 
 }//end  of namespace
