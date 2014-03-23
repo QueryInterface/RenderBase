@@ -9,6 +9,7 @@ from subprocess import call
 import ntpath
 import shutil
 
+
 class Builder:
     def __init__(self):
         self.__genTypes = set()
@@ -23,7 +24,6 @@ class Builder:
             # Linux
             self.__genTypes.add('Unix Makefiles')
             self.__genTypes.add('Sublime Text 2 - Unix Makefiles')
-        print 
 
     def ListTypes(self):
         for t in self.__genTypes:
@@ -44,6 +44,7 @@ class Builder:
         os.chdir(oldWorkDir)
         print "Generating project " + self.__curGenType + "...DONE"
         self.__unpack('qt')
+        self.__unpack('WindowsKits')
 
     def Build(self):
         print "INFO: Build is not implemented yet!"
@@ -53,9 +54,9 @@ class Builder:
         shutil.rmtree("./3rdParty/_unpack", ignore_errors=True)
 
     def __unpack(self, module):
-        # Unpack qt
+        # Unpack module
         print "Unpacking " + module + "..."
-        srcPath = "./3rdParty/qt/"
+        srcPath = "./3rdParty/" + module + "/"
         dstPath = "./3rdParty/_unpack/" + module + "/"
         if not os.path.exists(dstPath) or not os.path.isdir(dstPath) or not os.listdir(dstPath):
             # Extract zip files
@@ -83,16 +84,15 @@ class Builder:
     __outPath = ''
 
 
-
 def main():
     try:
         parser = OptionParser()
         parser.add_option("-t", "--type", help="type of output for cmake, for a list use -l or --list_types", metavar="TYPE", dest="GenType")
-        parser.add_option("-l", "--list_types", help="lists generation type", dest="ListTypes", default=False, action="store_true")        
+        parser.add_option("-l", "--list_types", help="lists generation type", dest="ListTypes", default=False, action="store_true")
         parser.add_option("-b", "--build", help="build the prject", dest="Build", default=False, action="store_true")
         parser.add_option("-c", "--clean", help="clean project", dest="Clean", default=False, action="store_true")
         (options, args) = parser.parse_args()
-        
+
         builder = Builder()
         if options.ListTypes:
             builder.ListTypes()
@@ -109,10 +109,10 @@ def main():
         if options.GenType:
             builder.Generate(options.GenType)
         if options.Build:
-            builder.Build();
+            builder.Build()
         if options.Clean:
             builder.Clean()
-    except Exception as ex:
+    except Exception:
         print traceback.format_exc()
 
 main()
