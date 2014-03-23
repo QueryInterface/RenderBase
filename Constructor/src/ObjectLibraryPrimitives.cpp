@@ -1,7 +1,7 @@
 
 //define standard primitive class.
 
-#define DEFINE_PRIMITIVE(PrimitiveType, x, y, z)                                    \
+#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, x, y, z)                          \
 class class_##PrimitiveType : public IElement                                       \
 {                                                                                   \
 public:                                                                             \
@@ -14,7 +14,9 @@ public:                                                                         
         m_desc.TLF = Vector3D(0,0,0);                                               \
         m_desc.Dimentions = Vector3D((x), (y), (z));                                \
         IObjectLibrary::instance()->RegisterPrimitive(*this);                       \
-    }                                                                               \
+    }
+
+#define END_PRIMITIVE_DEFINITION(PrimitiveType)                                     \
                                                                                     \
     virtual ~class_##PrimitiveType() {};                                            \
                                                                                     \
@@ -22,11 +24,24 @@ public:                                                                         
 };                                                                                  \
 std::unique_ptr<IElement> class_##PrimitiveType::self(new class_##PrimitiveType());
 
-DEFINE_PRIMITIVE(Space,     1, 1, 1);
-DEFINE_PRIMITIVE(Cube,      1, 1, 1);
-DEFINE_PRIMITIVE(Wedge,     1, 1, 1);
-DEFINE_PRIMITIVE(Ledder,    1, 1, 1);
-DEFINE_PRIMITIVE(Cilinder,  1, 1, 1);
-DEFINE_PRIMITIVE(Sphere,    1, 1, 1);
+BEGIN_PRIMITIVE_DEFINITION(Space,               1, 1, 1);
+END_PRIMITIVE_DEFINITION(Space);
 
+BEGIN_PRIMITIVE_DEFINITION(Cube,                1, 1, 1);
+END_PRIMITIVE_DEFINITION(Cube);
+
+BEGIN_PRIMITIVE_DEFINITION(Wedge,               1, 1, 1);
+END_PRIMITIVE_DEFINITION(Wedge);
+
+BEGIN_PRIMITIVE_DEFINITION(Ledder,              1, 1, 1);
+END_PRIMITIVE_DEFINITION(Ledder);
+
+BEGIN_PRIMITIVE_DEFINITION(Cilinder,            1, 1, 1);
+END_PRIMITIVE_DEFINITION(Cilinder);
+
+BEGIN_PRIMITIVE_DEFINITION(CilindricPlatform,   3, 3, 1);
+END_PRIMITIVE_DEFINITION(CilindricPlatform);
+
+BEGIN_PRIMITIVE_DEFINITION(Sphere,              1, 1, 1);
+END_PRIMITIVE_DEFINITION(Sphere);
 // eof

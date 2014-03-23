@@ -11,21 +11,21 @@ namespace Constructor
 // type of simple primitive 
     enum ElementType : unsigned int
     {
-        ET_Space   = 0,
-        ET_Cube,
+        ET_Space   = 0,                 // empty space
+        ET_Cube,                        // simple cube
 
-        ET_Wedge,
-        ET_Ledder,
+        ET_Wedge,                       // canted cube
+        ET_Ledder,                      // ledder object
 
-        ET_Cilinder,
-        ET_Sphere,
+        ET_Cilinder,                    // 1 cell cilinder object
+        ET_CilindricPlatform,           // 9 cell cilinder object, 3x3x1. basement for big rotation platform
+        ET_Sphere,                      // 1 cell sphere
 
-        ET_SimplePrimitivesCount,
+        ET_SimplePrimitivesCount,       // all primitives must be placed before this line
 
-        ET_UserCreated = 0x0000ffff, // hope 65536 predefined elements will be enougth
+        ET_UserCreated = 0x0000ffff,    // hope 65536 predefined elements will be enougth
 
-
-        ET_Reference   = 0xffffffff, // reference to an object located in different cell.
+        ET_Reference   = 0xffffffff,    // reference to an object located in different cell.
     };
 
 // simple 3D types
