@@ -39,6 +39,7 @@ set_property(
     TARGET ConstructorTest 
     PROPERTY INCLUDE_DIRECTORIES ${gtest_SOURCE_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
+    APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
 )
 
 # add required definitions (tr1 tuple is not supported under VS11)

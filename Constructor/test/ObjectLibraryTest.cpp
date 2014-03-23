@@ -23,9 +23,7 @@ TEST(ObjectLibraryTest, ObjectLibraryIsASingletone)
     EXPECT_EQ(desc.Dimentions.x, (X));                                                                  \
     EXPECT_EQ(desc.Dimentions.y, (Y));                                                                  \
     EXPECT_EQ(desc.Dimentions.z, (Z));                                                                  \
-    EXPECT_EQ(desc.Direction.x, 1);                                                                     \
-    EXPECT_EQ(desc.Direction.y, 0);                                                                     \
-    EXPECT_EQ(desc.Direction.z, 0);
+    EXPECT_EQ(desc.direction, ED_pY);
 
 #define END_CHECK_PRIMITIVE_TEST() }
 

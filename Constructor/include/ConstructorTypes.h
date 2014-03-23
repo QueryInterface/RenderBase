@@ -28,6 +28,22 @@ namespace Constructor
         ET_Reference   = 0xffffffff,    // reference to an object located in different cell.
     };
 
+// enum represents direction of the element,
+// also the same enum is used for visible faces definitions
+    enum Directions : unsigned char
+    {
+        ED_NO = 0x00,
+
+        ED_pX = 0x01,
+        ED_pY = 0x02,
+        ED_pZ = 0x04,
+
+        ED_nX = 0x10,
+        ED_nY = 0x20,
+        ED_nZ = 0x40,
+
+        ED_All = 0xFF,
+    };
 // simple 3D types
 // TODO: make me a template in common header
     struct Vector3D
@@ -42,11 +58,14 @@ namespace Constructor
     struct ElementDescription
     {
         ElementType primitiveUID;
-        Vector3D    Direction; // for reference type it's an object position
+        Directions  direction; // for reference type it's an object position
 
         // bounding box
         Vector3D    TLF;
         Vector3D    Dimentions;
+
+        // default element direction is UP (for OpenGL coordinate system it is +Y)
+        ElementDescription() : primitiveUID(ET_Space), direction(ED_pY) {};
     };
 
 /////////////////////////////////////////////////////////////////////
