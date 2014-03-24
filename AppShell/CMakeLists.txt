@@ -21,6 +21,7 @@ add_executable(AppShell
 )
 
 target_link_libraries(AppShell RenderBase)
+add_dependencies(AppShell copy_qt_libraries)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

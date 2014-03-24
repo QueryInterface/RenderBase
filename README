@@ -1,11 +1,15 @@
 To generate code run the following command:
-build.py -t <project_type>
+    build.py
+
+Or you may specify project type manually:
+    build.py -t <project_type>
+    Example: build.py -t "Visual Studio 11"
 
 You may list project types by command:
-build.py -l
+    build.py -l
 
-Code will be placed to _build/<project_type> directory
-
-Example: build.py -t "Visual Studio"
+Code will be placed to _build/<project_type> directory.
+Executables and dynamic libraries will be built to _build/<project_type>/bin directory
+Static libraries will be built to _build/<project_type>/lib directory
 
 Game concept added to master/docs/gameconcept.docx

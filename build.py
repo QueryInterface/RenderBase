@@ -16,24 +16,28 @@ class Builder:
         if (sys.platform == 'win32'):
             self.__genTypes.add('Visual Studio 11')
             self.__genTypes.add('Sublime Text 2 - Unix Makefiles')
-        if (sys.platform == 'darwin'):
+            self.__curGenType = 'Visual Studio 11'
+        elif (sys.platform == 'darwin'):
             self.__genTypes.add('Xcode')
             self.__genTypes.add('Unix Makefiles')
             self.__genTypes.add('Sublime Text 2 - Unix Makefiles')
+            self.__curGenType = 'Xcode'
         else:
             # Linux
             self.__genTypes.add('Unix Makefiles')
             self.__genTypes.add('Sublime Text 2 - Unix Makefiles')
+            self.__curGenType = 'Unix Makefiles'
 
     def ListTypes(self):
         for t in self.__genTypes:
             print t
 
-    def Generate(self, genType):
+    def Generate(self, genType=None):
         # Check if generation type is correct
-        if not (genType in self.__genTypes):
+        if genType:
+            self.__curGenType = genType
+        if not (self.__curGenType in self.__genTypes):
             raise Exception('Invalid generation type: ' + genType)
-        self.__curGenType = genType
         print "Generating project " + self.__curGenType + "..."
         self.__outPath = './_build/' + self.__curGenType
         if not os.path.exists(self.__outPath) or not os.path.isdir(self.__outPath):
@@ -98,16 +102,12 @@ def main():
             builder.ListTypes()
             return
 
-        if not options.GenType:
-            parser.print_help()
-
         if options.Build and options.Clean:
             print "ERROR: Can't use --build and --clean options at the same time"
             parser.print_help()
             return
 
-        if options.GenType:
-            builder.Generate(options.GenType)
+        builder.Generate(options.GenType)
         if options.Build:
             builder.Build()
         if options.Clean:
