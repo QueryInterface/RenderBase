@@ -5,6 +5,7 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include "include/MathBasics.h"
 
 namespace Constructor
 {
@@ -44,17 +45,10 @@ namespace Constructor
 
         ED_All = 0xFF,
     };
-// simple 3D types
-// TODO: make me a template in common header
-    struct Vector3D
-    {
-        int x;
-        int y;
-        int z;
-        Vector3D()                      : x(1), y(0), z(0) {};
-        Vector3D(int X, int Y, int Z)   : x(X), y(Y), z(Z) {};
-    };
+    
+    typedef Vector3<int> Vector3D;
 
+// description of element
     struct ElementDescription
     {
         ElementType primitiveUID;

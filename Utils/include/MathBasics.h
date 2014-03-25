@@ -33,6 +33,9 @@ struct Vector3 {
     T x;
     T y;
     T z;
+
+    Vector3 operator+(const Vector3& arg) {return Vector3(x + arg.x, y+arg.y, z+arg.z);}
+    Vector3 operator+=(const Vector3& arg) {x += arg.x; y+= arg.y; z+= arg.z; return *this;}
 };
 
 template <class T>
