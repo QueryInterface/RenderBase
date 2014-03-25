@@ -122,21 +122,26 @@ TEST_F(QuadTreeBenchmark, RemovePerformance)
     }
 }
 
-/*TEST_F(QuadTreeBenchmark, QuadTreeCorrectness)
+TEST_F(QuadTreeBenchmark, QuadTreeCorrectness)
 {
+    size_t targetX = rand() % 512;
+    size_t targetY = rand() % 512;
+    int targetValue = rand() % 512;
+    m_tree->insert(targetX, targetY, targetValue);
+
     for (unsigned int i = 0; i < iterrations; ++i)
     {
         size_t X= rand() % 512;
         size_t Y = rand() % 512;
         int V = rand() % 512;
-        x[i] = X;
-        y[i] = Y;
-        v[X | (Y << 8)] = V;
+        if (X == targetX && Y == targetY)
+        {
+            targetValue = V;
+        }
         m_tree->insert(X, Y, V);
+        ASSERT_EQ(V, *m_tree->item_at(X, Y));
     }
-    for (unsigned int i = 0; i < iterrations; ++i)
-    {
-        ASSERT_EQ(v[x[i] | (y[i] << 8)], *m_tree->item_at(x[i], y[i])) << " broken at " << i;
-    }
-}*/
+
+    ASSERT_EQ(targetValue, *m_tree->item_at(targetX, targetY));
+}
 // eof
