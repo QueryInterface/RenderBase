@@ -78,6 +78,9 @@ else()
     set (WINSDK_DIR ${3RDPARTY_DIR}/_unpack/WindowsKits/8.0/Lib/win8/um/x86)
 endif()
 
+# Set global build variables
+set (ROOT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+
 # Set output folder
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
