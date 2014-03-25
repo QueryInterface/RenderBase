@@ -2,9 +2,14 @@
 #include <stdint.h>
 #include <map>
 
-template <class T>
-class QuadTree
+namespace Utils
 {
 
-};
+    template <class T>
+    class QuadTree
+    {
+
+    };
+
+}
 // eof

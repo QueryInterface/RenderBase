@@ -42,7 +42,7 @@ namespace Constructor
 
     private:
         ElementDescription                  m_desc;
-        QuadTree< Pillar >                  m_pillars;
+//        QuadTree< Pillar >                  m_pillars;
     };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

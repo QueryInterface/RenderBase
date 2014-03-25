@@ -97,10 +97,7 @@ add_subdirectory(Utils)
 # Organize projects in folders
 set_property (TARGET AppShell         PROPERTY FOLDER "Executables")
 set_property (TARGET RenderBase       PROPERTY FOLDER "Libraries")
-set_property (TARGET Utils            PROPERTY FODLER "Libraries")
 set_property (TARGET gtest            PROPERTY FOLDER "3rdParty/gtest")
-set_property (TARGET Constructor      PROPERTY FOLDER "Libraries")
-set_property (TARGET ConstructorTest  PROPERTY FOLDER "UnitTests")
 
 # Set additional targets' flags
 set_target_properties(RenderBase    PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)

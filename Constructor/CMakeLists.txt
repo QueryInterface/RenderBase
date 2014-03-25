@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.11)
-project(Constructor CXX)
+#project(Constructor CXX)
 
 update_compiler_settings()
 
@@ -26,13 +26,16 @@ add_executable(ConstructorTest
     ${TEST_FILES}
 )
 
+set_property (TARGET Constructor      PROPERTY FOLDER "Libraries")
+set_property (TARGET ConstructorTest  PROPERTY FOLDER "UnitTests")
+
 # set include directories
 # set property for library 
 set_property(
     TARGET Constructor 
     PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
-    APPEND PROPERTY INCLUDE_DIRECTORIES ${ROOT_DIRECTORY}/Utils
+    APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
 )
 
 #set property for the test executable
@@ -41,7 +44,7 @@ set_property(
     PROPERTY INCLUDE_DIRECTORIES ${gtest_SOURCE_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
-    APPEND PROPERTY INCLUDE_DIRECTORIES ${ROOT_DIRECTORY}/Utils
+    APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
 )
 
 # add required definitions (tr1 tuple is not supported under VS11)
