@@ -12,6 +12,7 @@
 #pragma once
 
 #include "ConstructorTypes.h"
+#include "include/QuadTree.h"
 #include <vector>
 #include <memory>
 
@@ -41,7 +42,7 @@ namespace Constructor
 
     private:
         ElementDescription                  m_desc;
-        std::vector< std::vector<Pillar> >  m_pillars;
+        QuadTree< Pillar >                  m_pillars;
     };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
