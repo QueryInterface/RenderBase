@@ -91,6 +91,9 @@ namespace Utils
 
         size_t m_squareSide;
         Node   m_root;
+
+        QuadTree(const QuadTree&);
+        const QuadTree& operator=(const QuadTree);
     };
 
 }
