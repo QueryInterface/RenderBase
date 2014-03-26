@@ -23,7 +23,7 @@ protected:
 
 TEST_F(QuadTreeTest, EmptyItem)
 {
-    ASSERT_TRUE( nullptr == m_tree->item_at(254, 400) );
+    ASSERT_TRUE( nullptr == m_tree->get_item_at(254, 400) );
 }
 
 TEST_F(QuadTreeTest, Insert)
@@ -34,25 +34,53 @@ TEST_F(QuadTreeTest, Insert)
 TEST_F(QuadTreeTest, InsertedItem)
 {
     ASSERT_NO_THROW( m_tree->insert(254, 400, 10) );
-    ASSERT_TRUE( nullptr == m_tree->item_at(400, 254) );
-    ASSERT_EQ(10, *m_tree->item_at(254, 400));
+    ASSERT_TRUE( nullptr == m_tree->get_item_at(400, 254) );
+    ASSERT_EQ(10, *m_tree->get_item_at(254, 400));
+}
+
+TEST_F(QuadTreeTest, GetAndCreateItem)
+{
+    ASSERT_NO_THROW( m_tree->item(254, 400) = 10 );
+    ASSERT_TRUE( nullptr == m_tree->get_item_at(400, 254) );
+    ASSERT_EQ(10, *m_tree->get_item_at(254, 400));
+}
+
+TEST_F(QuadTreeTest, GetAndRewriteItem)
+{
+    int i = 0;
+    for (; i < 100000; ++i)
+    {
+        m_tree->item(254, 400) = i;
+    }
+    ASSERT_EQ(i - 1, m_tree->item(254, 400));
 }
 
 TEST_F(QuadTreeTest, RewriteItem)
 {
     m_tree->insert(254, 400, 10);
-    ASSERT_EQ(10, *m_tree->item_at(254, 400));
-    ASSERT_EQ(10, *m_tree->item_at(254, 400));
+    ASSERT_EQ(10, *m_tree->get_item_at(254, 400));
+    ASSERT_EQ(10, *m_tree->get_item_at(254, 400));
     m_tree->insert(254, 400, 50);
-    ASSERT_EQ(50, *m_tree->item_at(254, 400));
+    ASSERT_EQ(50, *m_tree->get_item_at(254, 400));
+}
+
+
+TEST_F(QuadTreeTest, MultipleRewriteItem)
+{
+    int i = 0;
+    for (; i < 100000; ++i)
+    {
+        m_tree->insert(254, 400, i);
+    }
+    ASSERT_EQ(i - 1, *m_tree->get_item_at(254, 400));
 }
 
 TEST_F(QuadTreeTest, RemoveItem)
 {
     m_tree->insert(254, 400, 10);
-    ASSERT_EQ(10, *m_tree->item_at(254, 400));
+    ASSERT_EQ(10, *m_tree->get_item_at(254, 400));
     ASSERT_NO_THROW( m_tree->remove(254, 400) );
-    ASSERT_TRUE( nullptr == m_tree->item_at(254, 400) );
+    ASSERT_TRUE( nullptr == m_tree->get_item_at(254, 400) );
 }
 
 TEST_F(QuadTreeTest, RemoveItems)
@@ -60,16 +88,14 @@ TEST_F(QuadTreeTest, RemoveItems)
     m_tree->insert(254, 400, 10);
     m_tree->insert(254, 401, 15);
     ASSERT_NO_THROW( m_tree->remove(254, 400) );
-    ASSERT_TRUE( nullptr == m_tree->item_at(254, 400) );
-    ASSERT_TRUE( nullptr != m_tree->item_at(254, 401) );
-    ASSERT_EQ( 15, *m_tree->item_at(254, 401) );
+    ASSERT_TRUE( nullptr == m_tree->get_item_at(254, 400) );
+    ASSERT_TRUE( nullptr != m_tree->get_item_at(254, 401) );
+    ASSERT_EQ( 15, *m_tree->get_item_at(254, 401) );
 }
 
 class QuadTreeBenchmark : public ::testing::Test
 {
-     
 public:
-
     static void SetUpTestCase()
     {
         m_tree.reset(new QuadTree<int>(512));
@@ -106,11 +132,11 @@ TEST_F(QuadTreeBenchmark, InsertPerformance)
     }
 }
 
-TEST_F(QuadTreeBenchmark, AccessPerformance)
+TEST_F(QuadTreeBenchmark, GetPerformance)
 {
     for (unsigned int i = 0; i < iterrations; ++i)
     {
-        m_tree->item_at(x[i], y[i]);
+        m_tree->get_item_at(x[i], y[i]);
     }
 }
 
@@ -131,7 +157,7 @@ TEST_F(QuadTreeBenchmark, QuadTreeCorrectness)
 
     for (unsigned int i = 0; i < iterrations; ++i)
     {
-        size_t X= rand() % 512;
+        size_t X = rand() % 512;
         size_t Y = rand() % 512;
         int V = rand() % 512;
         if (X == targetX && Y == targetY)
@@ -139,9 +165,28 @@ TEST_F(QuadTreeBenchmark, QuadTreeCorrectness)
             targetValue = V;
         }
         m_tree->insert(X, Y, V);
-        ASSERT_EQ(V, *m_tree->item_at(X, Y));
+        ASSERT_EQ(V, *m_tree->get_item_at(X, Y));
     }
 
-    ASSERT_EQ(targetValue, *m_tree->item_at(targetX, targetY));
+    ASSERT_EQ(targetValue, *m_tree->get_item_at(targetX, targetY));
+}
+
+TEST_F(QuadTreeBenchmark, AllOperations)
+{
+    for (unsigned int i = 0; i < iterrations; ++i)
+    {
+        size_t X = rand() % 512;
+        size_t Y = rand() % 512;
+        int V = rand() % 512;
+
+        int operation = rand() % 4;
+        switch(operation)
+        {
+            case 0: m_tree->insert(X, Y, V); break;
+            case 1: m_tree->item(X, Y) = V; break;
+            case 2: m_tree->get_item_at(X, Y); break;
+            default: m_tree->remove(X, Y);
+        }
+    }
 }
 // eof

@@ -4,9 +4,28 @@
 
 namespace Utils
 {
+// MACRO!?! ugly, yes, but it help me to save about 5% of performance other than
+// encapsulating the code to the function
+
+#define _item_at(on_not_found, finalize)                            \
+    Node* node      = & m_root;                                     \
+    size_t width    = m_squareSide;                                 \
+    while (width > 1)                                               \
+    {                                                               \
+        width >>= 1;                                                \
+        size_t index = (!!(x & width)) + ((!!(y & width)) << 1);    \
+        x &= ~width;                                                \
+        y &= ~width;                                                \
+        if ( !node->quadNodes[index] )                              \
+        {                                                           \
+            on_not_found;                                           \
+        }                                                           \
+        node = node->quadNodes[index].get();                        \
+    }                                                               \
+    finalize;
+
     // This quad tree is highly limited by it's usage
     // it works with square areas, the side is pow2
-
     template <class T>
     class QuadTree
     {
@@ -15,48 +34,17 @@ namespace Utils
 
         void insert(size_t x, size_t y, T value)
         {
-            Node* node      = & m_root;
-            size_t width    = m_squareSide;
-
-            while (width > 1)
-            {
-                width >>= 1;
-
-                // !!(A) convert any non-null number to 1
-                size_t index = (!!(x & width)) + ((!!(y & width)) << 1);
-                x &= ~width;
-                y &= ~width;
-
-                if ( !node->quadNodes[index] )
-                {
-                    node->quadNodes[index].reset(new Node());
-                }
-                node = node->quadNodes[index].get();
-            }
-            node->value = value;
+            _item_at(node->quadNodes[index].reset(new Node()), node->value = value);
         }
 
-        const T* item_at(size_t x, size_t y)
+        const T* get_item_at(size_t x, size_t y)
         {
-            Node* node      = & m_root;
-            size_t width    = m_squareSide;
+            _item_at(return nullptr, return &node->value);
+        }
 
-            while (width > 1)
-            {
-                width >>= 1;
-
-                // !!(A) convert any non-null number to 1
-                size_t index = (!!(x & width)) + ((!!(y & width)) << 1);
-                x &= ~width;
-                y &= ~width;
-
-                if ( !node->quadNodes[index] )
-                {
-                    return nullptr;
-                }
-                node = node->quadNodes[index].get();
-            }
-            return &node->value;
+        T& item(size_t x, size_t y)
+        {
+            _item_at(node->quadNodes[index].reset(new Node()), return node->value);
         }
 
         void remove(size_t x, size_t y)
@@ -64,7 +52,7 @@ namespace Utils
             Node* node      = & m_root;
             size_t width    = m_squareSide;
             Node* lastFull  = & m_root;
-            size_t targetIndex    = (!!(x & (width >> 1))) + ((!!(y & (width >> 1))) << 1);
+            size_t targetIndex    = (!!(x & (m_squareSide >> 1))) + ((!!(y & (m_squareSide >> 1))) << 1);
 
             while (width > 1)
             {
@@ -88,10 +76,11 @@ namespace Utils
                 node = node->quadNodes[index].get();
                 
             }
-            std::unique_ptr<Node> toRemove(std::move(lastFull->quadNodes[targetIndex]));
-            toRemove.reset();
+            lastFull->quadNodes[targetIndex].reset();
         }
+
     private:
+
         struct Node
         {
             // | 0 | 1 |
