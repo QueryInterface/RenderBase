@@ -34,9 +34,11 @@ struct Vector3 {
     T y;
     T z;
 
-    Vector3 operator+(const Vector3& arg) {return Vector3(x + arg.x, y+arg.y, z+arg.z);}
+    Vector3 operator+ (const Vector3& arg) {return Vector3(x + arg.x, y+arg.y, z+arg.z);}
     Vector3 operator+=(const Vector3& arg) {x += arg.x; y+= arg.y; z+= arg.z; return *this;}
 };
+template <class T>
+bool    operator==(const Vector3<T>& arg1, const Vector3<T>& arg2) {return arg1.x == arg2.x && arg1.y == arg2.y && arg1.z == arg2.z;}
 
 template <class T>
 struct Vector4 {
