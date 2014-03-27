@@ -7,11 +7,22 @@ int main() {
         contextBuilder->SetWidth(640);
         contextBuilder->SetHeight(480);
         contextBuilder->SetTitle("Sample");
-        contextBuilder->SetApiType(RC_API_GLES2);
+        contextBuilder->SetApiType(RC_API_TYPE::GLES2);
         IRenderContext* renderContext = contextBuilder->GetResult();
         IWindow* window = renderContext->GetWindow();
         // Render
-        while(window->ProcessMessage()) {
+        bool b = true;
+        while(b) {
+            WINDOW_MSG msg = window->ProcessMessage();
+            switch (msg) {
+            case WINDOW_MSG::FOREGROUND:
+                {
+                    // Render here
+                }
+                break;
+            case WINDOW_MSG::QUIT:
+                b = false;
+            }
         }
         renderContext->Release();
         contextBuilder->Release();

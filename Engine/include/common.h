@@ -9,3 +9,9 @@
     #endif // DEFINE_EXPORT
     #define CALLING_CONVENTION  __stdcall
 #endif //_WIN32
+
+#define PREVENT_COPY(className) \
+    className(const className&); \
+    className& operator=(const className&);
+
+#define UNUSED(var) var;

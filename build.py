@@ -107,11 +107,14 @@ def main():
             parser.print_help()
             return
 
+        if options.Clean:
+            builder.Clean()
+            return
+
         builder.Generate(options.GenType)
         if options.Build:
             builder.Build()
-        if options.Clean:
-            builder.Clean()
+
     except Exception:
         print traceback.format_exc()
 

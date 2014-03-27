@@ -14,7 +14,7 @@ cmake_minimum_required (VERSION 2.8.11)
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
-include_directories(${QT_INCLUDE_PATH})
+include_directories(${QT_DIR}/include)
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
@@ -30,11 +30,11 @@ add_library(RenderBase SHARED
     ${SOURCE_FILES}
 )
 
+qt5_use_modules(RenderBase Gui OpenGL)
 target_link_libraries(RenderBase Utils)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
-source_group ("Tests"               FILES ${TEST_FILES})
- 
+source_group ("Tests"               FILES ${TEST_FILES}) 

@@ -9,8 +9,14 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 
-enum RC_API_TYPE {
-    RC_API_GLES2   = 0,
+enum class RC_API_TYPE {
+    GLES2 = 0,
+};
+
+enum class WINDOW_MSG {
+    FOREGROUND,
+    BACKGROUND,
+    QUIT
 };
 
 struct IHandle {
@@ -38,7 +44,7 @@ struct IWindow {
     virtual bool        IsFullscreen() const = 0;
 
     virtual IHandle*    RegisterEventCallback(const std::shared_ptr<EventCallback>& callback) = 0;
-    virtual bool        ProcessMessage() = 0;
+    virtual WINDOW_MSG  ProcessMessage() = 0;
 };
 
 struct IRenderContext : public IHandle {

@@ -25,6 +25,14 @@ else()
     set (STATIC_LIB_SUFIX .a)    
 endif()
 
+# Configure WinSDK
+if(${ARCH_64})
+    set (WINSDK_DIR ${3RDPARTY_DIR}/_unpack/WindowsKits/8.0/Lib/win8/um/x64)
+else()
+    set (WINSDK_DIR ${3RDPARTY_DIR}/_unpack/WindowsKits/8.0/Lib/win8/um/x86)
+endif()
+
+# Configure QT
 check_apple_platform()
 if(WIN32)
     if (${ARCH_64})
@@ -57,8 +65,7 @@ else()
         set(QT_DIR ${3RDPARTY_DIR}/_unpack/qt/Qt_linux_x86)
     endif()
 endif()
-
-# Configure QT
+# Set MOC variables
 set(CMAKE_AUTOMOC ON)
 set(AUTOMOC_TARGETS_FOLDER ${PROJECT_BINARY_DIR})
 # Add module search paths
@@ -68,15 +75,10 @@ if (WIN32)
     set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${WINSDK_DIR})
 endif()
 # Define qt suffix
-set(QT_LIB_SUFFIX ${DYNAMIC_LIB_SUFFIX})
-
-
-# Configure WinSDK
-if(${ARCH_64})
-    set (WINSDK_DIR ${3RDPARTY_DIR}/_unpack/WindowsKits/8.0/Lib/win8/um/x64)
-else()
-    set (WINSDK_DIR ${3RDPARTY_DIR}/_unpack/WindowsKits/8.0/Lib/win8/um/x86)
-endif()
+set(QT_LIB_SUFFIX d${DYNAMIC_LIB_SUFFIX})
+# Find QT packages
+find_package(Qt5Gui REQUIRED)
+find_package(OpenGL REQUIRED)
 
 # Set output folder
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

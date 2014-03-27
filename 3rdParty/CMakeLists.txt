@@ -1,2 +1,1 @@
-add_subdirectory(freetype)
 add_subdirectory(gtest-1.6.0)

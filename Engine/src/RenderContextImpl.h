@@ -8,6 +8,11 @@
 #include <set>
 #include <mutex>
 
+#pragma warning(push)
+#pragma warning (disable : 4127)
+#pragma warning (disable : 4512)
+#include "QtGui/QWindow.h"
+#pragma warning(pop)
 
 using std::list;
 using std::set;
@@ -27,6 +32,8 @@ public:
 private:
     WindowBase*                                 _window;
     list< shared_ptr<EventCallback> >::iterator _iter;
+
+    PREVENT_COPY(WindowCallbackHandle);
 };
 
 class RenderContextBuilder : public IRenderContextBuilder {
@@ -59,54 +66,63 @@ private:
 class WindowBase : public IWindow {
     friend class WindowCallbackHandle;
 public:
-    WindowBase(const RenderContextBuilder* builder);
+    WindowBase();
     virtual ~WindowBase() = 0;
     // IWindow
-    virtual void            SetWidth(uint32_t width);
-    virtual void            SetHeight(uint32_t height);
-    virtual void            SetTitle(const std::string& name);
-    virtual void            SetFullscreen(bool fullscreen);
-    virtual uint32_t        GetWidth() const;
-    virtual uint32_t        GetHeight() const;
-    virtual std::string     GetTitle() const;
-    virtual bool            IsFullscreen() const;
     virtual IHandle*        RegisterEventCallback(const std::shared_ptr<EventCallback>& callback);
+    // WindowBase
+    virtual void            Present() = 0;
 private:
-    uint32_t                            _width;
-    uint32_t                            _height;
-    std::string                         _title;
-    bool                                _fullscreen;
     mutex                               _callbackMutex;
     list< shared_ptr<EventCallback> >   _eventCallbacks;
 
     void _eraseCallback(list< shared_ptr<EventCallback> >::iterator& iter);
+
+    PREVENT_COPY(WindowBase);
 };
 
-class WindowQT : public WindowBase {
+class WindowQT final
+    : protected QWindow 
+    , public WindowBase {
+    Q_OBJECT
     friend WindowCallbackHandle;
 public:
     WindowQT(const RenderContextBuilder* builder);
     virtual ~WindowQT();
     // IWindow
-    virtual void            SetWidth(uint32_t width);
-    virtual void            SetHeight(uint32_t height);
-    virtual void            SetTitle(const std::string& name);
-    virtual void            SetFullscreen(bool fullscreen);
-    virtual bool            ProcessMessage();
+    virtual void        SetWidth(uint32_t width) override;
+    virtual void        SetHeight(uint32_t height) override;
+    virtual void        SetTitle(const std::string& name) override;
+    virtual void        SetFullscreen(bool fullscreen) override;
+    virtual uint32_t    GetWidth() const override;
+    virtual uint32_t    GetHeight() const override;
+    virtual std::string GetTitle() const override;
+    virtual bool        IsFullscreen() const override;
+    virtual WINDOW_MSG  ProcessMessage();
+    // WindowQT
+    virtual void        Present() override;
+protected:
+    bool                event(QEvent *event);
+    void                exposeEvent(QExposeEvent *event);
+    void                resizeEvent(QResizeEvent *event);
 private:
+    unique_ptr<QOpenGLContext> _qtGlContext;
+    bool                       _exposed;
+
+    PREVENT_COPY(WindowQT);
 };
 
-class RenderContextGLES2 : public IRenderContext {
+class RenderContextGLES2 final : public IRenderContext {
 public:
-	RenderContextGLES2(const RenderContextBuilder* builder) {builder;}
-	virtual ~RenderContextGLES2() {};
+	RenderContextGLES2(const RenderContextBuilder* builder);
+	virtual ~RenderContextGLES2();
     // IHandle
-	virtual void        Release() {};
+	virtual void        Release();
     // IRenderContext
-	virtual IWindow*    GetWindow() {return nullptr;};
-	virtual void        Clear(uint32_t flags, uint8_t r, uint8_t g, uint8_t b, uint8_t a, float depth, uint8_t stencil) {flags;r;g;b;a;depth;stencil;};
-	virtual void        Present() {};
+	virtual IWindow*    GetWindow();
+	virtual void        Present();
 private:
-    unique_ptr<IWindow> _windowContext;
+    unique_ptr<WindowBase> _window;
 
+    PREVENT_COPY(RenderContextGLES2);
 };
