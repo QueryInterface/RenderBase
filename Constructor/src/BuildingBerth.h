@@ -12,20 +12,31 @@
 #pragma once
 
 #include "ConstructorTypes.h"
+#include "include/QuadTree.h"
 #include <vector>
+#include <list>
 #include <memory>
 
 namespace Constructor
 {
 // a vertical chunk of elements
-    struct Chunk
+    class Pillar
     {
-        unsigned int                        from;
-        unsigned int                        size;
-        std::vector<ElementType>            elements; // if typed is ET_Space, elements are stored in this vector
-    };
+        struct Chunk
+        {
+            unsigned int                        from;
+            unsigned int                        size;
+            std::vector<ElementType>            elements; // if typed is ET_Space, elements are stored in this vector
+        };
+        std::list< Chunk > m_chunks;
 
-    typedef std::vector<Chunk> Pillar;
+    public:
+        Pillar() {};
+        ~Pillar() {};
+
+        ElementType&        item(size_t Z);
+        const ElementType*  get_item_at(size_t Z) const;
+    };
 
 // on a low level object consists from a set of compartments
     class Compartment : public IElement
@@ -40,8 +51,11 @@ namespace Constructor
         void SetElement(ElementType type, const Vector3D& position, Directions direction);
 
     private:
-        ElementDescription                  m_desc;
-        std::vector< std::vector<Pillar> >  m_pillars;
+        ElementDescription                          m_desc;
+        Utils::QuadTree< Pillar >  m_pillars;
+
+        Compartment(const Compartment& arg);
+        const Compartment& operator=(const Compartment& arg);
     };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,10 +72,10 @@ namespace Constructor
         // Attaches element to Complartment. if new compartment was created function returns true;
         bool SetElement(ElementType type, const Vector3D& position, Directions direction);
 
-        size_t GetCompartmentsCount() const {return m_compartments.size();}
-        const Compartment& GetCompartment(size_t index) const;
+//        size_t GetCompartmentsCount() const {return m_compartments.size();}
+        const Compartment& GetCompartment() const;
     private:
-        std::vector<Compartment> m_compartments;
+        Compartment m_compartment;
     };
 
 }//end  of namespace constructor

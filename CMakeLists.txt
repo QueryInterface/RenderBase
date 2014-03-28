@@ -80,6 +80,9 @@ set(QT_LIB_SUFFIX d${DYNAMIC_LIB_SUFFIX})
 find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
 
+# Set global build variables
+set (ROOT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+
 # Set output folder
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -96,10 +99,7 @@ add_subdirectory(Utils)
 # Organize projects in folders
 set_property (TARGET AppShell         PROPERTY FOLDER "Executables")
 set_property (TARGET RenderBase       PROPERTY FOLDER "Libraries")
-set_property (TARGET Utils            PROPERTY FODLER "Libraries")
 set_property (TARGET gtest            PROPERTY FOLDER "3rdParty/gtest")
-set_property (TARGET Constructor      PROPERTY FOLDER "Libraries")
-set_property (TARGET ConstructorTest  PROPERTY FOLDER "UnitTests")
 
 # Set additional targets' flags
 set_target_properties(RenderBase    PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)
