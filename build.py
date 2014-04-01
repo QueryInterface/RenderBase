@@ -38,6 +38,10 @@ class Builder:
             self.__curGenType = genType
         if not (self.__curGenType in self.__genTypes):
             raise Exception('Invalid generation type: ' + genType)
+        # Unpack of 3rdParty
+        self.__unpack('qt')
+        self.__unpack('WindowsKits')
+        # CMake generation
         print "Generating project " + self.__curGenType + "..."
         self.__outPath = './_build/' + self.__curGenType
         if not os.path.exists(self.__outPath) or not os.path.isdir(self.__outPath):
@@ -47,8 +51,6 @@ class Builder:
         call(['cmake', '-G', self.__curGenType, '../../'])
         os.chdir(oldWorkDir)
         print "Generating project " + self.__curGenType + "...DONE"
-        self.__unpack('qt')
-        self.__unpack('WindowsKits')
 
     def Build(self):
         print "INFO: Build is not implemented yet!"

@@ -15,7 +15,7 @@ else()
 endif()
 
 if (WIN32)
-    set (DYNAMIC_LIB_SUFFIX .dll)
+    set (DYNAMIC_LIB_SUFIX .dll)
     set (STATIC_LIB_SUFIX .lib)
 elseif(APPLE)
     set (DYNAMIC_LIB_SUFIX .dylib)
@@ -65,17 +65,12 @@ else()
         set(QT_DIR ${3RDPARTY_DIR}/_unpack/qt/Qt_linux_x86)
     endif()
 endif()
-# Set MOC variables
-set(CMAKE_AUTOMOC ON)
-set(AUTOMOC_TARGETS_FOLDER ${PROJECT_BINARY_DIR})
 # Add module search paths
 set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT_DIR}/lib/cmake)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${QT_DIR}/lib/cmake)
 if (WIN32)
     set (CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${WINSDK_DIR})
 endif()
-# Define qt suffix
-set(QT_LIB_SUFFIX d${DYNAMIC_LIB_SUFFIX})
 # Find QT packages
 find_package(Qt5Gui REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -115,14 +110,16 @@ set_target_properties(gtest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUP
 if (WIN32)
     add_custom_target(copy_qt_libraries
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Core${QT_LIB_SUFFIX}         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Gui${QT_LIB_SUFFIX}          ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Cored${DYNAMIC_LIB_SUFIX}    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Guid${DYNAMIC_LIB_SUFIX}     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Core${DYNAMIC_LIB_SUFIX}    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/Qt5Gui${DYNAMIC_LIB_SUFIX}     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icuin51${DYNAMIC_LIB_SUFFIX}    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icuuc51${DYNAMIC_LIB_SUFFIX}    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icudt51${DYNAMIC_LIB_SUFFIX}    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icuin51${DYNAMIC_LIB_SUFIX}    	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icuuc51${DYNAMIC_LIB_SUFIX}    	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DIR}/bin/icudt51${DYNAMIC_LIB_SUFIX}    	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
         
-        COMMAND ${CMAKE_COMMAND} -E copy_directory    ${QT_DIR}/plugins/platforms                   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/platforms
+        COMMAND ${CMAKE_COMMAND} -E copy_directory    ${QT_DIR}/plugins/platforms                  	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/platforms
 
         COMMENT "Copying QT binaries to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>" VERBATIM
     )

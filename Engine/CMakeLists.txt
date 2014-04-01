@@ -11,6 +11,10 @@ cmake_minimum_required (VERSION 2.8.11)
 #  set_target_properties(d3dx9 PROPERTIES IMPORTED_LOCATION ${DX_DIR}Lib\\x86\\d3dx9.lib)
 #endif()
 
+# Set MOC variables
+set(CMAKE_AUTOMOC ON)
+set_property (GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER automoc)
+
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
@@ -19,6 +23,7 @@ include_directories(${QT_DIR}/include)
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
 file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
+file(GLOB AUTOMOC_FILES        ${CMAKE_CURRENT_BINARY_DIR}/*_automoc.cpp)
 
 # list all source files from src and test folders automatically 
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
@@ -36,5 +41,6 @@ target_link_libraries(RenderBase Utils)
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})
+source_group ("automoc"             FILES ${AUTOMOC_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
 source_group ("Tests"               FILES ${TEST_FILES}) 

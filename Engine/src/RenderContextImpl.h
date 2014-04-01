@@ -12,6 +12,7 @@
 #pragma warning (disable : 4127)
 #pragma warning (disable : 4512)
 #include "QtGui/QWindow.h"
+#include <QGuiApplication>
 #pragma warning(pop)
 
 using std::list;
@@ -106,6 +107,8 @@ protected:
     void                exposeEvent(QExposeEvent *event);
     void                resizeEvent(QResizeEvent *event);
 private:
+    int32_t                    _appParam;
+    QGuiApplication            _app; 
     unique_ptr<QOpenGLContext> _qtGlContext;
     bool                       _exposed;
 
