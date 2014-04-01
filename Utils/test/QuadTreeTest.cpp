@@ -8,10 +8,10 @@ using namespace Utils;
 class QuadTreeTest : public ::testing::Test
 {
 public:
-
+    static const size_t c_size = 512;
     void SetUp()
     {
-        m_tree.reset(new QuadTree<int>(512));
+        m_tree.reset(new QuadTree<int>(c_size));
     }
     void TearDown()
     {
@@ -91,6 +91,48 @@ TEST_F(QuadTreeTest, RemoveItems)
     ASSERT_TRUE( nullptr == m_tree->get_item_at(254, 400) );
     ASSERT_TRUE( nullptr != m_tree->get_item_at(254, 401) );
     ASSERT_EQ( 15, *m_tree->get_item_at(254, 401) );
+}
+
+// bounding rect
+TEST_F(QuadTreeTest, BoundingRectSingleItem)
+{
+    for (size_t i = 0; i < 100; ++i)
+    {
+        size_t X = rand() % c_size;
+        size_t Y = rand() % c_size;
+        m_tree->item(X, Y) = 10;
+        EXPECT_EQ(X, m_tree->left()) << "failed for X = " << X;
+        EXPECT_EQ(Y, m_tree->top()) << "failed for Y = " << Y;
+        EXPECT_EQ(X+1, m_tree->right()) << "failed for X = " << X;
+        EXPECT_EQ(Y+1, m_tree->bottom()) << "failed for Y = " << Y;
+        m_tree->remove(X, Y);
+    }
+}
+
+// bounding rect
+TEST_F(QuadTreeTest, BoundingRectDiagonale)
+{
+
+    m_tree->item(0, 0) = 10;
+    m_tree->item(1, 1) = 10;
+    EXPECT_EQ(0, m_tree->left());
+    EXPECT_EQ(0, m_tree->top());
+    EXPECT_EQ(2, m_tree->right());
+    EXPECT_EQ(2, m_tree->bottom());
+
+}
+
+TEST_F(QuadTreeTest, BoundingRectSameVerticalSlice)
+{
+    for (size_t i = 2; i < c_size; ++i)
+        m_tree->item(2, i) = 10;
+    for (size_t i = 2; i < c_size; ++i)
+        m_tree->item(i, 2) = 10;
+    m_tree->item(c_size - 1, 1) = 10;
+    m_tree->item(1, c_size - 1) = 10;
+
+    EXPECT_EQ(1, m_tree->left()) << "the worst case: left is on the bottom";
+    EXPECT_EQ(1, m_tree->top()) << "the worst case: top is on the right";
 }
 
 class QuadTreeBenchmark : public ::testing::Test

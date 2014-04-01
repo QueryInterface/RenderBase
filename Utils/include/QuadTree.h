@@ -30,7 +30,11 @@ namespace Utils
     class QuadTree
     {
     public:
-        QuadTree(size_t squareSide) : m_squareSide(squareSide) {}
+        QuadTree(size_t squareSide) : m_squareSide(squareSide) , m_treeDepth(1)
+        {
+            size_t depth = squareSide;
+            while (depth>>= 1) ++m_treeDepth;
+        }
 
         void insert(size_t x, size_t y, T value)
         {
@@ -79,6 +83,37 @@ namespace Utils
             lastFull->quadNodes[targetIndex].reset();
         }
 
+        size_t left()
+        {
+            const size_t primaryCheck[]   = {0, 2};
+            const size_t secondaryCheck[] = {1, 3};
+            size_t current = m_squareSide;
+            return scan_nodes_lt(primaryCheck, secondaryCheck, &m_root, 0, m_squareSide, &current);
+        }
+
+        size_t top()
+        {
+            const size_t primaryCheck[]   = {0, 1};
+            const size_t secondaryCheck[] = {2, 3};
+            size_t current = m_squareSide;
+            return scan_nodes_lt(primaryCheck, secondaryCheck, &m_root, 0, m_squareSide, &current);
+        }
+
+        size_t right()
+        {
+            const size_t primaryCheck[]   = {1, 3};
+            const size_t secondaryCheck[] = {0, 2};
+            size_t current = m_squareSide;
+            return scan_nodes_rb(primaryCheck, secondaryCheck, &m_root, m_squareSide, m_squareSide, &current);
+        }
+
+        size_t bottom()
+        {
+            const size_t primaryCheck[]   = {2, 3};
+            const size_t secondaryCheck[] = {0, 1};
+            size_t current = m_squareSide;
+            return scan_nodes_rb(primaryCheck, secondaryCheck, &m_root, m_squareSide, m_squareSide, &current);
+        }
     private:
 
         struct Node
@@ -89,11 +124,54 @@ namespace Utils
             T value;
         };
 
+        size_t m_treeDepth;
         size_t m_squareSide;
         Node   m_root;
 
         QuadTree(const QuadTree&);
         const QuadTree& operator=(const QuadTree);
+
+        size_t scan_nodes_lt(const size_t* pi, const size_t* si, const Node* n, size_t lt, size_t w, size_t *current)
+        {
+            w >>= 1;
+            size_t retval = lt;
+            if (w)
+            {
+                if ((n->quadNodes[ pi[0] ] || n->quadNodes[ pi[1] ]) && lt < *current)
+                {
+                    if (n->quadNodes[ pi[0] ]) retval = scan_nodes_lt(pi, si, n->quadNodes[ pi[0] ].get(), lt, w, current);
+                    if (n->quadNodes[ pi[1] ]) retval = scan_nodes_lt(pi, si, n->quadNodes[ pi[1] ].get(), lt, w, current);
+                }
+                else if ((n->quadNodes[ si[0] ] || n->quadNodes[ si[1] ]) && (lt + w) < *current)
+                {
+                    lt += w;
+                    if (n->quadNodes[ si[0] ]) retval = scan_nodes_lt(pi, si, n->quadNodes[ si[0] ].get(), lt, w, current);
+                    if (n->quadNodes[ si[1] ]) retval = scan_nodes_lt(pi, si, n->quadNodes[ si[1] ].get(), lt, w, current);
+                }
+            }
+            return retval;
+        }
+
+        size_t scan_nodes_rb(const size_t* pi, const size_t* si, const Node* n, size_t rb, size_t w, size_t *current)
+        {
+            w >>= 1;
+            size_t retval = rb;
+            if (w)
+            {
+                if ((n->quadNodes[ pi[0] ] || n->quadNodes[ pi[1] ])/*&& (rb + 1) > *current*/)
+                {
+                    if (n->quadNodes[ pi[0] ]) retval = scan_nodes_rb(pi, si, n->quadNodes[ pi[0] ].get(), rb, w, current);
+                    if (n->quadNodes[ pi[1] ]) retval = scan_nodes_rb(pi, si, n->quadNodes[ pi[1] ].get(), rb, w, current);
+                }
+                else if ((n->quadNodes[ si[0] ] || n->quadNodes[ si[1] ])/* && (rb + w + 1) > *current*/)
+                {
+                    rb -= w;
+                    if (n->quadNodes[ si[0] ]) retval = scan_nodes_rb(pi, si, n->quadNodes[ si[0] ].get(), rb, w, current);
+                    if (n->quadNodes[ si[1] ]) retval = scan_nodes_rb(pi, si, n->quadNodes[ si[1] ].get(), rb, w, current);
+                }
+            }
+            return retval;
+        }
     };
 
 }
