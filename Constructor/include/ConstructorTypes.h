@@ -55,8 +55,8 @@ namespace Constructor
         Directions  direction; // for reference type it's an object position
 
         // bounding box
-        Vector3D    TLF;
-        Vector3D    Dimentions;
+        Vector3D    TLF; // top,left,front
+        Vector3D    BRB; // bottom,right,back
 
         // default element direction is UP (for OpenGL coordinate system it is +Y)
         ElementDescription() : primitiveUID(ET_Space), direction(ED_pY) {};

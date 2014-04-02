@@ -1,7 +1,7 @@
 
 //define standard primitive class.
 
-#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX_TLF, BBOX_DIMENSIONS)        \
+#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX_TLF, BBOX_BRB)               \
 class class_##PrimitiveType : public IElement                                       \
 {                                                                                   \
 public:                                                                             \
@@ -12,14 +12,13 @@ public:                                                                         
     {                                                                               \
         m_desc.primitiveUID = ET_##PrimitiveType;                                   \
         m_desc.TLF = (BBOX_TLF);                                                    \
-        m_desc.Dimentions = (BBOX_DIMENSIONS);                                      \
+        m_desc.BRB = (BBOX_BRB);                                                    \
         IObjectLibrary::instance()->RegisterPrimitive(*this);                       \
     }
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                     \
                                                                                     \
     virtual ~class_##PrimitiveType() {};                                            \
-                                                                                    \
     static std::unique_ptr<IElement> self;                                          \
 };                                                                                  \
 std::unique_ptr<IElement> class_##PrimitiveType::self(new class_##PrimitiveType());
@@ -39,7 +38,7 @@ END_PRIMITIVE_DEFINITION(Ledder);
 BEGIN_PRIMITIVE_DEFINITION(Cilinder,            Vector3D(0, 0, 0),      Vector3D(1, 1, 1));
 END_PRIMITIVE_DEFINITION(Cilinder);
 
-BEGIN_PRIMITIVE_DEFINITION(CilindricPlatform,   Vector3D(-1, 0, -1),    Vector3D(3, 1, 3));
+BEGIN_PRIMITIVE_DEFINITION(CilindricPlatform,   Vector3D(-1, 0, -1),    Vector3D(2, 1, 2));
 END_PRIMITIVE_DEFINITION(CilindricPlatform);
 
 BEGIN_PRIMITIVE_DEFINITION(Sphere,              Vector3D(0, 0, 0),      Vector3D(1, 1, 1));

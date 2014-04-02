@@ -12,41 +12,37 @@ TEST(ObjectLibraryTest, ObjectLibraryIsASingletone)
     ASSERT_EQ(lib1, lib2) << "Library must be a singletone";
 }
 
-#define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, X, Y, Z, DX, DY, DZ)                                  \
+#define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                             \
     TEST(Fixture, DescriptionOf_##Type##_Element)                                                       \
 {                                                                                                       \
     const ElementDescription& desc = IObjectLibrary::instance()->GetElementDescription(ET_##Type);      \
     ASSERT_EQ(ET_##Type, desc.primitiveUID) << "incorrect primitive type expected: ET_" << #Type;       \
-    EXPECT_EQ(desc.TLF.x, (X));                                                                         \
-    EXPECT_EQ(desc.TLF.y, (Y));                                                                         \
-    EXPECT_EQ(desc.TLF.z, (Z));                                                                         \
-    EXPECT_EQ(desc.Dimentions.x, (DX));                                                                 \
-    EXPECT_EQ(desc.Dimentions.y, (DY));                                                                 \
-    EXPECT_EQ(desc.Dimentions.z, (DZ));                                                                 \
+    EXPECT_EQ(desc.TLF, tlf);                                                                           \
+    EXPECT_EQ(desc.BRB, (brb));                                                                         \
     EXPECT_EQ(desc.direction, ED_pY);
 
 #define END_CHECK_PRIMITIVE_TEST() }
 
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Space, 0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Space, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Cube,  0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Cube,  Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Wedge, 0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Wedge, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Ledder, 0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Ledder, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Cilinder, 0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Cilinder, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, CilindricPlatform, -1, 0, -1, 3, 1, 3)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, CilindricPlatform, Vector3D(-1, 0, -1), Vector3D(2, 1, 2))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Sphere, 0, 0, 0, 1, 1, 1)
+BEGIN_CHECK_PRIMITIVE_TEST(ObjectLibraryTest, Sphere, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
 // eof
