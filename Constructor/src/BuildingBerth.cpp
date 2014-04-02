@@ -14,8 +14,8 @@ using namespace Constructor;
 
 ElementType&        Pillar::item(size_t z)
 {
-    for (auto chunk = m_chunks.begin(); chunk != m_chunks.end(); ++chunk )
-    {
+    //for (auto chunk = m_chunks.begin(); chunk != m_chunks.end(); ++chunk )
+    //{
         /*if ( chunk->from - z == 1)
         {
             chunk->elements.push_front(ET_Space);
@@ -34,8 +34,8 @@ ElementType&        Pillar::item(size_t z)
                 m_chunks.erase(chunk + 1);
             }
             return chunk->elements.back();
-        }*/
-    }
+        }
+    }/**/
     Chunk chunk;
     chunk.from = z;
     chunk.elements.push_back(ET_Space);
@@ -61,17 +61,24 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
     m_desc.primitiveUID = type;
 
     const ElementDescription &desc = IObjectLibrary::instance()->GetElementDescription(type);
-    Vector3D elementPosition = Vector3D(position.x + desc.TLF.x, position.y + desc.TLF.y, position.z + desc.TLF.z);
+    m_pillars.item(position.x, position.y).item(position.z) = type;
+    if (Vector3D(1,1,1) != desc.Dimentions)
+    {
+        for (int x = 0; x < desc.Dimentions.x; ++x)
+        {
+            int X = x + desc.TLF.x;
+            for (int y = 0; y < desc.Dimentions.y; ++y)
+            {
+                int Y = y + desc.TLF.y;
+                if (X || Y)
+                    m_pillars.item(position.x + X, position.y + Y).item(position.z) = ET_Reference;
+            }
+        }
+    }
 
-    m_desc.TLF = Vector3D(
-        min(m_desc.TLF.x, elementPosition.x),
-        min(m_desc.TLF.y, elementPosition.y),
-        min(m_desc.TLF.z, elementPosition.z));
-
-    m_desc.Dimentions = Vector3D(
-        max(m_desc.Dimentions.x, elementPosition.x + desc.Dimentions.x - m_desc.TLF.x),
-        max(m_desc.Dimentions.y, elementPosition.y + desc.Dimentions.y - m_desc.TLF.y),
-        max(m_desc.Dimentions.z, elementPosition.z + desc.Dimentions.z - m_desc.TLF.z));
+    m_desc.TLF = Vector3D(m_pillars.left(), m_pillars.top(), min(m_desc.TLF.z, position.z));
+    m_desc.Dimentions = Vector3D(m_pillars.right() - m_desc.TLF.x, m_pillars.bottom() - m_desc.TLF.y,
+        max(m_desc.Dimentions.z, position.z + desc.Dimentions.z - m_desc.TLF.z));
 }
 
 const Compartment& BuildingBerth::GetCompartment() const
@@ -86,13 +93,6 @@ bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Direc
     {
         return false;
     }
-
-/*    bool created = false;
-    if (m_compartments.empty())
-    {
-        m_compartments.push_back(Compartment());
-        created = true;
-    }*/
 
     m_compartment.SetElement(type, position, direction);
     return true;
