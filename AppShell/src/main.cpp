@@ -11,18 +11,12 @@ int main() {
         IRenderContext* renderContext = contextBuilder->GetResult();
         IWindow* window = renderContext->GetWindow();
         // Render
-        bool b = true;
-        while(b) {
-            WINDOW_MSG msg = window->ProcessMessage();
-            switch (msg) {
-            case WINDOW_MSG::FOREGROUND:
-                {
-                    // Render here
-                }
-                break;
-            case WINDOW_MSG::QUIT:
-                b = false;
+        WINDOW_MSG msg = WINDOW_MSG::FOREGROUND;
+        while((msg = window->ProcessMessage()) != WINDOW_MSG::QUIT) {
+            if (msg == WINDOW_MSG::FOREGROUND)
+            {
             }
+            renderContext->Present();
         }
         renderContext->Release();
         contextBuilder->Release();

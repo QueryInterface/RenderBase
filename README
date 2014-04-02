@@ -13,3 +13,7 @@ Executables and dynamic libraries will be built to _build/<project_type>/bin dir
 Static libraries will be built to _build/<project_type>/lib directory
 
 Game concept added to master/docs/gameconcept.docx
+
+OpenGL rendering on Windows can be performed through Desktop OpenGL or ANGLE.
+By default it's using Desktop OpenGL.
+To enable angle uncomment USE_ANGLE flag in root CMakeLists.txt

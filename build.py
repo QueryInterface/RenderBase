@@ -39,7 +39,8 @@ class Builder:
         if not (self.__curGenType in self.__genTypes):
             raise Exception('Invalid generation type: ' + genType)
         # Unpack of 3rdParty
-        self.__unpack('qt')
+        #self.__unpack('qt')
+        self.__unpack('SDL')
         self.__unpack('WindowsKits')
         # CMake generation
         print "Generating project " + self.__curGenType + "..."
