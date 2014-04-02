@@ -101,10 +101,10 @@ TEST_F(QuadTreeTest, BoundingRectSingleItem)
         size_t X = rand() % c_size;
         size_t Y = rand() % c_size;
         m_tree->item(X, Y) = 10;
-        EXPECT_EQ(X, m_tree->left()) << "failed for X = " << X;
-        EXPECT_EQ(Y, m_tree->top()) << "failed for Y = " << Y;
-        EXPECT_EQ(X+1, m_tree->right()) << "failed for X = " << X;
-        EXPECT_EQ(Y+1, m_tree->bottom()) << "failed for Y = " << Y;
+        ASSERT_EQ(X, m_tree->left()) << "failed for X = " << X;
+        ASSERT_EQ(Y, m_tree->top()) << "failed for Y = " << Y;
+        ASSERT_EQ(X+1, m_tree->right()) << "failed for X = " << X;
+        ASSERT_EQ(Y+1, m_tree->bottom()) << "failed for Y = " << Y;
         m_tree->remove(X, Y);
     }
 }
@@ -112,13 +112,13 @@ TEST_F(QuadTreeTest, BoundingRectSingleItem)
 // bounding rect
 TEST_F(QuadTreeTest, BoundingRectDiagonale)
 {
-
     m_tree->item(0, 0) = 10;
-    m_tree->item(1, 1) = 10;
+    m_tree->item(1, 2) = 10;
+    m_tree->item(2, 0) = 10;
     EXPECT_EQ(0, m_tree->left());
     EXPECT_EQ(0, m_tree->top());
-    EXPECT_EQ(2, m_tree->right());
-    EXPECT_EQ(2, m_tree->bottom());
+    EXPECT_EQ(3, m_tree->right());
+    EXPECT_EQ(3, m_tree->bottom());
 
 }
 
