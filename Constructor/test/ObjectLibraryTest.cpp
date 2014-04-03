@@ -17,8 +17,8 @@ TEST(ObjectLibraryTest, ObjectLibraryIsASingletone)
 {                                                                                                       \
     const ElementDescription& desc = IObjectLibrary::instance()->GetElementDescription(ET_##Type);      \
     ASSERT_EQ(ET_##Type, desc.primitiveUID) << "incorrect primitive type expected: ET_" << #Type;       \
-    EXPECT_EQ(desc.TLF, tlf);                                                                           \
-    EXPECT_EQ(desc.BRB, (brb));                                                                         \
+    EXPECT_EQ(desc.LFT, tlf);                                                                           \
+    EXPECT_EQ(desc.RBB, (brb));                                                                         \
     EXPECT_EQ(desc.direction, ED_pY);
 
 #define END_CHECK_PRIMITIVE_TEST() }

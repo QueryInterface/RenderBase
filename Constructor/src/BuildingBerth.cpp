@@ -51,8 +51,8 @@ const ElementType*  Pillar::get_item_at(size_t z) const
 Compartment::Compartment() 
     : m_pillars(256)
 {
-    m_desc.TLF = Vector3D(INT32_MAX, INT32_MAX, INT32_MAX);
-    m_desc.BRB = Vector3D(0,0,0);
+    m_desc.LFT = Vector3D(INT32_MAX, INT32_MAX, INT32_MAX);
+    m_desc.RBB = Vector3D(0,0,0);
 }
 
 void Compartment::SetElement(ElementType type, const Vector3D& position, Directions direction)
@@ -62,11 +62,11 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
 
     const ElementDescription &desc = IObjectLibrary::instance()->GetElementDescription(type);
     m_pillars.item(position.x, position.y).item(position.z) = type;
-    if (Vector3D(1,1,1) != (desc.BRB - desc.TLF))
+    if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
-        for (int x = desc.TLF.x; x < desc.BRB.x; ++x)
+        for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
         {
-            for (int y = desc.TLF.y; y < desc.BRB.y; ++y)
+            for (int y = desc.LFT.y; y < desc.RBB.y; ++y)
             {
                 if (x || y)
                     m_pillars.item(position.x + x, position.y + y).item(position.z) = ET_Reference;
@@ -74,9 +74,9 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
         }
     }
 
-    m_desc.TLF = Vector3D(m_pillars.left(), m_pillars.top(), min(m_desc.TLF.z, position.z));
-    m_desc.BRB = Vector3D(m_pillars.right(), m_pillars.bottom(),
-        max(m_desc.BRB.z, position.z + desc.BRB.z));
+    m_desc.LFT = Vector3D(m_pillars.left(), m_pillars.top(), min(m_desc.LFT.z, position.z));
+    m_desc.RBB = Vector3D(m_pillars.right(), m_pillars.bottom(),
+        max(m_desc.RBB.z, position.z + desc.RBB.z));
 }
 
 const Compartment& BuildingBerth::GetCompartment() const

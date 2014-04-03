@@ -1,7 +1,7 @@
 
 //define standard primitive class.
 
-#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX_TLF, BBOX_BRB)               \
+#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX_LFT, BBOX_RBB)               \
 class class_##PrimitiveType : public IElement                                       \
 {                                                                                   \
 public:                                                                             \
@@ -11,13 +11,12 @@ public:                                                                         
     class_##PrimitiveType()                                                         \
     {                                                                               \
         m_desc.primitiveUID = ET_##PrimitiveType;                                   \
-        m_desc.TLF = (BBOX_TLF);                                                    \
-        m_desc.BRB = (BBOX_BRB);                                                    \
+        m_desc.LFT = (BBOX_LFT);                                                    \
+        m_desc.RBB = (BBOX_RBB);                                                    \
         IObjectLibrary::instance()->RegisterPrimitive(*this);                       \
     }
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                     \
-                                                                                    \
     virtual ~class_##PrimitiveType() {};                                            \
     static std::unique_ptr<IElement> self;                                          \
 };                                                                                  \
