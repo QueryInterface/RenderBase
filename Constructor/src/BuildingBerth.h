@@ -25,7 +25,6 @@ namespace Constructor
         struct Chunk
         {
             unsigned int                        from;
-            unsigned int                        size;
             std::vector<ElementType>            elements; // if typed is ET_Space, elements are stored in this vector
         };
         std::list< Chunk > m_chunks;

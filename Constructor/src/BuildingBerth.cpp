@@ -59,8 +59,17 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
 {
     m_desc.direction = direction;
     m_desc.primitiveUID = type;
-
     const ElementDescription &desc = IObjectLibrary::instance()->GetElementDescription(type);
+
+    m_desc.LFT = Vector3D(
+        min(position.x + desc.LFT.x, m_desc.LFT.x),
+        min(position.y + desc.LFT.y, m_desc.LFT.y),
+        min(position.z + desc.LFT.z, m_desc.LFT.z));
+    m_desc.RBB = Vector3D(
+        max(position.x + desc.RBB.x, m_desc.RBB.x),
+        max(position.y + desc.RBB.y, m_desc.RBB.y),
+        max(position.z + desc.RBB.z, m_desc.RBB.z));
+
     m_pillars.item(position.x, position.y).item(position.z) = type;
     if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
@@ -73,10 +82,6 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
             }
         }
     }
-
-    m_desc.LFT = Vector3D(m_pillars.left(), m_pillars.top(), min(m_desc.LFT.z, position.z));
-    m_desc.RBB = Vector3D(m_pillars.right(), m_pillars.bottom(),
-        max(m_desc.RBB.z, position.z + desc.RBB.z));
 }
 
 const Compartment& BuildingBerth::GetCompartment() const
