@@ -1,9 +1,9 @@
 #pragma once
+#include "common.h"
 #include <stdint.h>
 #include <string>
 #include <memory>
 #include <vector>
-#include "common.h"
 
 using std::shared_ptr;
 using std::string;
