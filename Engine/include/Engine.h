@@ -6,13 +6,14 @@ using std::shared_ptr;
 using std::string;
 using std::wstring;
 
+struct IClonable;
 struct IResource;
 struct IMesh;
 struct ITexture;
 struct IProgram;
 struct IScript;
+struct IObjectPart;
 struct IObject;
-struct ICompositeObject;
 struct ILight;
 struct IScene;
 struct IResourceOverseer;
@@ -22,21 +23,33 @@ typedef shared_ptr<IMesh>               IMeshPtr;
 typedef shared_ptr<ITexture>            ITexturePtr;
 typedef shared_ptr<IProgram>            IProgramPtr;
 typedef shared_ptr<IScript>             IScriptPtr;
+typedef shared_ptr<IObjectPart>         IObjectPartPtr;
 typedef shared_ptr<IObject>             IObjectPtr;
-typedef shared_ptr<ICompositeObject>    ICompositeObjectPtr;
 typedef shared_ptr<IScene>              IScenePtr;
 typedef shared_ptr<ILight>              ILightPtr;
 typedef shared_ptr<IResourceOverseer>   IResourceOverseerPtr;
 typedef shared_ptr<IEngine>             IEnginePtr;
 
-struct IResource : public IHandle {
+struct IClonable 
+{
+    virtual IClonable* clone() = 0;
+}
+
+// resource interfaces
+struct IResource : public IClonable {
 };
 
 struct IMesh : public IResource {
+    // tbd
 };
 
 struct ITexture : public IResource {
+    // tbd
 };
+
+struct ISceleton : public IResource {
+    // tbd
+}
 
 struct IProgram : public IResource {
     virtual string  GetVertexShader() const             = 0;
@@ -48,18 +61,27 @@ struct IProgram : public IResource {
 struct IScript : public IResource {
 };
 
-struct IObject : public IHandle {
+// object interfaces
+
+struct IObjectPart : public IClonable
+{
+    virtual IProgramPtr     GetProgram()                    = 0;
+    virtual IMeshPtr        GetMesh() = 0;
+};
+
+struct IObject : public IClonable
+{
     // Sets
     virtual void            SetPosition(Vector3<float> pos) = 0;
     // Gets
     virtual Vector3<float>  GetPosition() const             = 0;
-    virtual IProgramPtr     GetProgram()                    = 0;
+    
+    virtual void            AddObjectPart(IObjectPartPtr obj) = 0;
+    virtual size_t          GetObjectPartsCount() const = 0;
+    virtual IObjectPartPtr  GetObjectParts(size_t index) const = 0;
 };
 
-struct ICompositeObject : IObject {
-    virtual void AddObject(IObjectPtr obj) = 0;
-};
-
+// scene interfaces
 struct ILight : public IHandle {
     // Sets
     virtual void            SetPosition(Vector3<float> pos) = 0;
