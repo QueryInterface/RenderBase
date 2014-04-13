@@ -26,6 +26,26 @@ macro(force_warning_level)
   endif()
 endmacro()
 
+# increase warning level to W4
+macro(disable_warning_level)
+  if(MSVC)
+    # Force to always compile with W4
+    foreach (flag_var
+             CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+             CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO 
+             CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+             CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+      if(${flag_var} MATCHES "/W[0-4]")
+        string(REGEX REPLACE "/W[0-4]" "/W0" ${flag_var} "${${flag_var}}")
+      endif()
+      if(${flag_var} MATCHES "-W[0-4]")
+        string(REGEX REPLACE "-W[0-4]" "-W0" ${flag_var} "${${flag_var}}")
+      endif()
+    endforeach()
+  endif()
+endmacro()
+
+
 # set all compiler properties (W4 and MT)
 macro(update_compiler_settings)
   if (MSVC)

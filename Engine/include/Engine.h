@@ -33,7 +33,7 @@ typedef shared_ptr<IEngine>             IEnginePtr;
 struct IClonable 
 {
     virtual IClonable* clone() = 0;
-}
+};
 
 // resource interfaces
 struct IResource : public IClonable {
@@ -49,7 +49,7 @@ struct ITexture : public IResource {
 
 struct ISceleton : public IResource {
     // tbd
-}
+};
 
 struct IProgram : public IResource {
     virtual string  GetVertexShader() const             = 0;
