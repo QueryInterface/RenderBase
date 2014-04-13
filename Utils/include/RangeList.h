@@ -6,24 +6,29 @@
 namespace Utils
 {
     template <class T>
-    class range_list
+    class RangeList
     {
     public:
-        range_list(size_t size) : m_size(size) 
+        struct range_desc
         {
-        }
-        ~range_list() {}
+            size_t start;
+            std::vector<T> items;
+        };
 
-        size_t segments_count() {return m_segments.size();}
+    public:
+        RangeList() {}
+        ~RangeList() {}
+
+        size_t ranges_count() {return m_rs.size();}
 
         T* get_item_at(size_t index) 
         {
-            auto segment = m_segments.begin();
-            for (; segment != m_segments.end(); ++segment)
+            auto range = m_rs.begin();
+            for (; range != m_rs.end(); ++range)
             {
-                if (segment->start <= index && (index - segment->start) < segment->items.size())
+                if (range->start <= index && (index - range->start) < range->items.size())
                 {
-                    return &segment->items[index - segment->start];
+                    return &range->items[index - range->start];
                 }
             }
             return nullptr; 
@@ -31,36 +36,89 @@ namespace Utils
 
         void insert(size_t index, T value) 
         {
-            auto segment = m_segments.begin();
-            for (; segment != m_segments.end(); ++segment)
+            auto range = m_rs.begin();
+
+            for (; range != m_rs.end(); ++range)
             {
-                size_t local_index = index - segment->start;
-                if (segment->start <= index && local_index <= segment->items.size())
+                range_desc &desc = *range;
+                size_t local_index = index - desc.start;
+                if (range->start > index)
+                    break;
+
+                if (desc.start <= index && local_index <= desc.items.size())
                 {
-                    if (local_index == segment->items.size())
+                    if (local_index == desc.items.size())
                     {
-                        segment->items.push_back(value);
+                        desc.items.push_back(value);
+                        if (range != m_rs.end())
+                        {
+                            auto next = range;
+                            if (++next != m_rs.end() && desc.start + desc.items.size() == next->start)
+                            {
+                                desc.items.insert(desc.items.end(), next->items.begin(), next->items.end());
+                                m_rs.erase(next);
+                            }
+                        }
                     }
-                    else 
-                        segment->items[local_index] = value;
+                    else
+                        desc.items[local_index] = value;
                     return;
                 }
             }
-            segment_desc desc;
-            desc.start = index;
-            desc.items.push_back(value);
-            m_segments.push_back(desc);
+
+            if (m_rs.end() != range && index + 1 == range->start)
+            {
+                range->items.insert(range->items.begin(), value);
+                --range->start;
+            }
+            else
+            {
+                range_desc desc;
+                desc.start = index;
+                desc.items.push_back(value);
+
+                m_rs.insert(range, desc);
+            }
+        }
+
+        void remove(size_t index)
+        {
+            auto range = m_rs.begin();
+
+            for (; range != m_rs.end(); ++range)
+            {
+                range_desc &desc = *range;
+                size_t local_index = index - desc.start;
+                if (range->start > index)
+                    break;
+
+                if (desc.start <= index && local_index <= desc.items.size())
+                {
+                    range_desc splitted;
+                    splitted.start = index + 1;
+                    T* start = &desc.items[local_index + 1];
+                    splitted.items.assign(start, start + desc.items.size() - local_index - 1);
+
+                    m_rs.insert(++range, splitted);
+                    desc.items.resize(local_index);
+
+                    return;
+                }
+            }
+        }
+
+        size_t start() 
+        {
+            return m_rs.size() ? m_rs.front().start : 0;
+        }
+
+        size_t size() 
+        {
+            return m_rs.size() ? m_rs.back().start + m_rs.back().items.size() : 0;
         }
 
     private:
-        size_t m_size;
-        struct segment_desc
-        {
-            size_t start;
-            std::vector<T> items;
-        };
-
-        std::list<segment_desc> m_segments;
+        std::list<range_desc> m_rs; //list of ranges
     };
 }
 // eof

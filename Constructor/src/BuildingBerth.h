@@ -13,29 +13,13 @@
 
 #include "ConstructorTypes.h"
 #include "include/QuadTree.h"
+#include "include/RangeList.h"
 #include <vector>
 #include <list>
 #include <memory>
 
 namespace Constructor
 {
-// a vertical chunk of elements
-    class Pillar
-    {
-        struct Chunk
-        {
-            unsigned int                        from;
-            std::vector<ElementType>            elements; // if typed is ET_Space, elements are stored in this vector
-        };
-        std::list< Chunk > m_chunks;
-
-    public:
-        Pillar() {};
-        ~Pillar() {};
-
-        ElementType&        item(size_t Z);
-        const ElementType*  get_item_at(size_t Z) const;
-    };
 
 // on a low level object consists from a set of compartments
     class Compartment : public IConstructable
@@ -50,8 +34,8 @@ namespace Constructor
         void SetElement(ElementType type, const Vector3D& position, Directions direction);
 
     private:
-        ConstructionDescription                          m_desc;
-        Utils::QuadTree< Pillar >  m_pillars;
+        ConstructionDescription                             m_desc;
+        Utils::QuadTree< Utils::RangeList<ElementType> >    m_pillars;
 
         Compartment(const Compartment& arg);
         const Compartment& operator=(const Compartment& arg);

@@ -65,4 +65,52 @@ TEST_F(BuildingBerthTest, AddBigPrimitive3X3X1)
     EXPECT_EQ(Vector3D(3,1,3), (desc.RBB));
 }
 
+TEST_F(BuildingBerthTest, ConstructPillar)
+{
+    for (size_t i = 0; i < 100; ++i)
+    {
+        m_builder->SetElement(ET_Cube, Vector3D(0,0,i), ED_pY);
+    }
+
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    EXPECT_EQ(Vector3D(1,1,100), (desc.RBB));
+}
+
+TEST_F(BuildingBerthTest, ConstructSolidQube)
+{
+    const size_t cubeScales = 64;
+    for (size_t x = 0; x < cubeScales; ++x)
+    {
+        for (size_t y = 0; y < cubeScales; ++y)
+        {
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                m_builder->SetElement(ET_Cube, Vector3D(x,y,z), ED_pY);
+            }
+        }
+    }
+
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
+}
+
+TEST_F(BuildingBerthTest, ConstructSpongeSystem)
+{
+    const size_t cubeScales = 64;
+    for (size_t x = 0; x < cubeScales; ++x)
+    {
+        for (size_t y = 0; y < cubeScales; ++y)
+        {
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                if (x+y+z % 2)
+                    m_builder->SetElement(ET_Cube, Vector3D(x,y,z), ED_pY);
+            }
+        }
+    }
+
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
+}
+
 // eof

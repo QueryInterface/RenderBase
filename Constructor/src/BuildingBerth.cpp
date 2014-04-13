@@ -12,42 +12,6 @@ using namespace Constructor;
 #define max(a, b) (a)>(b) ? (a) : (b)
 #endif
 
-ElementType&        Pillar::item(size_t z)
-{
-    //for (auto chunk = m_chunks.begin(); chunk != m_chunks.end(); ++chunk )
-    //{
-        /*if ( chunk->from - z == 1)
-        {
-            chunk->elements.push_front(ET_Space);
-            return chunk->elements.front();
-        }
-        else if (chunk->from < z && chunk->elements.size() + chunk->from > z)
-        {
-            return chunk->elements[z - chunk->from];
-        }
-        else if (z - chunk->from == chunk->elements.size())
-        {
-            chunk->elements.push_back(ET_Space);
-            if ((chunk + 1) != m_chunks.end() && (chunk+1)->from == chunk->from + chunk->elements.size())
-            {
-                chunk->elements.insert(chunk->elements.end(), (chunk+1)->elements.begin(), (chunk+1)->elements.end());
-                m_chunks.erase(chunk + 1);
-            }
-            return chunk->elements.back();
-        }
-    }/**/
-    Chunk chunk;
-    chunk.from = z;
-    chunk.elements.push_back(ET_Space);
-    return chunk.elements.back();
-}
-
-const ElementType*  Pillar::get_item_at(size_t z) const
-{
-    z;
-    return nullptr;
-}
-
 Compartment::Compartment() 
     : m_pillars(256)
 {
@@ -70,7 +34,7 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
         max(position.y + desc.RBB.y, m_desc.RBB.y),
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
-    m_pillars.item(position.x, position.y).item(position.z) = type;
+    m_pillars.item(position.x, position.y).insert(position.z, type);
     if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
         for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
@@ -78,7 +42,7 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
             for (int y = desc.LFT.y; y < desc.RBB.y; ++y)
             {
                 if (x || y)
-                    m_pillars.item(position.x + x, position.y + y).item(position.z) = ET_Reference;
+                    m_pillars.item(position.x + x, position.y + y).insert(position.z, ET_Reference);
             }
         }
     }
