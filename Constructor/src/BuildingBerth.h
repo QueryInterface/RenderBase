@@ -38,7 +38,7 @@ namespace Constructor
     };
 
 // on a low level object consists from a set of compartments
-    class Compartment : public IElement
+    class Compartment : public IConstructable
     {
     public:
         // IElement interface

@@ -25,7 +25,7 @@ namespace Constructor
 
         bool SetPrimitive(ElementType type, const Vector3D& position, const Vector3D& direction);
     private:
-        std::shared_ptr<IElement> m_constructedObject;
+        std::shared_ptr<IConstructable> m_constructedObject;
     };
 
 }//end  of namespace constructor

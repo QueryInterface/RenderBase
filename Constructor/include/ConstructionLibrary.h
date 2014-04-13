@@ -15,16 +15,16 @@ namespace Constructor
 /// object library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-    struct IObjectLibrary
+    struct IConstructionLibrary
     {
     public:
         virtual const ElementDescription& GetElementDescription(ElementType type) const = 0;
-        virtual void RegisterPrimitive(IElement& element) = 0;
+        virtual void RegisterPrimitive(IConstructable& element) = 0;
 
-        virtual ~IObjectLibrary() {};
+        virtual ~IConstructionLibrary() {};
 
     public:
-        static IObjectLibrary* instance();
+        static IConstructionLibrary* instance();
     };
 
 }//end  of namespace

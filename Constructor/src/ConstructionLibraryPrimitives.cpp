@@ -2,7 +2,7 @@
 //define standard primitive class.
 
 #define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX_LFT, BBOX_RBB)               \
-class class_##PrimitiveType : public IElement                                       \
+class class_##PrimitiveType : public IConstructable                                 \
 {                                                                                   \
 public:                                                                             \
     ElementDescription m_desc;                                                      \
@@ -13,14 +13,14 @@ public:                                                                         
         m_desc.primitiveUID = ET_##PrimitiveType;                                   \
         m_desc.LFT = (BBOX_LFT);                                                    \
         m_desc.RBB = (BBOX_RBB);                                                    \
-        IObjectLibrary::instance()->RegisterPrimitive(*this);                       \
+        IConstructionLibrary::instance()->RegisterPrimitive(*this);                   \
     }
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                     \
     virtual ~class_##PrimitiveType() {};                                            \
-    static std::unique_ptr<IElement> self;                                          \
+    static std::unique_ptr<IConstructable> self;                                    \
 };                                                                                  \
-std::unique_ptr<IElement> class_##PrimitiveType::self(new class_##PrimitiveType());
+std::unique_ptr<IConstructable> class_##PrimitiveType::self(new class_##PrimitiveType());
 
 BEGIN_PRIMITIVE_DEFINITION(Space,               Vector3D(0, 0, 0),      Vector3D(1, 1, 1));
 END_PRIMITIVE_DEFINITION(Space);

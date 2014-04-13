@@ -67,11 +67,11 @@ namespace Constructor
 /// Simple construction element interface
 ///
 /////////////////////////////////////////////////////////////////////
-    struct IElement
+    struct IConstructable
     {
         virtual const ElementDescription& GetObjectDescription() const = 0;
 
-        virtual ~IElement() {};
+        virtual ~IConstructable() {};
     };
 
 }//end  of namespace

@@ -5,7 +5,7 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "ObjectLibrary.h"
+#include "ConstructionLibrary.h"
 #include <vector>
 
 namespace Constructor
@@ -15,21 +15,21 @@ namespace Constructor
 /// object library public interface. Library is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-    struct ObjectLibrary : public IObjectLibrary
+    struct ConstructionLibrary : public IConstructionLibrary
     {
     public:
         virtual const ElementDescription& GetElementDescription(ElementType type) const;
 
-        virtual void RegisterPrimitive(IElement& element);
+        virtual void RegisterPrimitive(IConstructable& element);
 
     private:
-        friend struct IObjectLibrary;
+        friend struct IConstructionLibrary;
 
-        ObjectLibrary();
-        virtual ~ObjectLibrary() {};
+        ConstructionLibrary();
+        virtual ~ConstructionLibrary() {};
 
     private: // arguments
-        std::vector<const IElement*>  m_primitives;
+        std::vector<const IConstructable*>  m_primitives;
         ElementDescription      m_dummy;
     };
 
