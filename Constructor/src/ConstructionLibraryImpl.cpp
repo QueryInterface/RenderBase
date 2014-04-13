@@ -21,12 +21,12 @@ ConstructionLibrary::ConstructionLibrary()
 
 void ConstructionLibrary::RegisterPrimitive(IConstructable& element)
 {
-    m_primitives[element.GetObjectDescription().primitiveUID] = &element;
+    m_primitives[element.ConstructionDesc().primitiveUID] = &element;
 }
 
-const ElementDescription& ConstructionLibrary::GetElementDescription(ElementType type) const
+const ConstructionDescription& ConstructionLibrary::GetConstructionDescription(ElementType type) const
 {
-    return (type >= m_primitives.size()) ? m_dummy : m_primitives[type]->GetObjectDescription();
+    return (type >= m_primitives.size()) ? m_dummy : m_primitives[type]->ConstructionDesc();
 }
 
 #include "ConstructionLibraryPrimitives.cpp"

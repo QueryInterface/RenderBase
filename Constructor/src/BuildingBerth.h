@@ -42,7 +42,7 @@ namespace Constructor
     {
     public:
         // IElement interface
-        const ElementDescription& GetObjectDescription() const {return m_desc;};
+        const ConstructionDescription& ConstructionDesc() const {return m_desc;};
         Compartment();
         virtual ~Compartment() {};
 
@@ -50,7 +50,7 @@ namespace Constructor
         void SetElement(ElementType type, const Vector3D& position, Directions direction);
 
     private:
-        ElementDescription                          m_desc;
+        ConstructionDescription                          m_desc;
         Utils::QuadTree< Pillar >  m_pillars;
 
         Compartment(const Compartment& arg);

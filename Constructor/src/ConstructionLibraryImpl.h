@@ -18,7 +18,7 @@ namespace Constructor
     struct ConstructionLibrary : public IConstructionLibrary
     {
     public:
-        virtual const ElementDescription& GetElementDescription(ElementType type) const;
+        virtual const ConstructionDescription& GetConstructionDescription(ElementType type) const;
 
         virtual void RegisterPrimitive(IConstructable& element);
 
@@ -30,7 +30,7 @@ namespace Constructor
 
     private: // arguments
         std::vector<const IConstructable*>  m_primitives;
-        ElementDescription      m_dummy;
+        ConstructionDescription      m_dummy;
     };
 
 }//end  of namespace

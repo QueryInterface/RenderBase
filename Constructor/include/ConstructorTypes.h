@@ -49,7 +49,7 @@ namespace Constructor
     typedef Vector3<int> Vector3D;
 
 // description of element
-    struct ElementDescription
+    struct ConstructionDescription
     {
         ElementType primitiveUID;
         Directions  direction; // for reference type it's an object position
@@ -59,7 +59,7 @@ namespace Constructor
         Vector3D    RBB; // right, bottom, back
 
         // default element direction is UP (for OpenGL coordinate system it is +Y)
-        ElementDescription() : primitiveUID(ET_Space), direction(ED_pY) {};
+        ConstructionDescription() : primitiveUID(ET_Space), direction(ED_pY) {};
     };
 
 /////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace Constructor
 /////////////////////////////////////////////////////////////////////
     struct IConstructable
     {
-        virtual const ElementDescription& GetObjectDescription() const = 0;
+        virtual const ConstructionDescription& ConstructionDesc() const = 0;
 
         virtual ~IConstructable() {};
     };

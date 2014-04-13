@@ -15,7 +15,7 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 #define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                             \
     TEST(Fixture, DescriptionOf_##Type##_Element)                                                       \
 {                                                                                                       \
-    const ElementDescription& desc = IConstructionLibrary::instance()->GetElementDescription(ET_##Type);  \
+    const ConstructionDescription& desc = IConstructionLibrary::instance()->GetConstructionDescription(ET_##Type);  \
     ASSERT_EQ(ET_##Type, desc.primitiveUID) << "incorrect primitive type expected: ET_" << #Type;       \
     EXPECT_EQ(desc.LFT, tlf);                                                                           \
     EXPECT_EQ(desc.RBB, (brb));                                                                         \

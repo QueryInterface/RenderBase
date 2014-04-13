@@ -18,7 +18,7 @@ namespace Constructor
     struct IConstructionLibrary
     {
     public:
-        virtual const ElementDescription& GetElementDescription(ElementType type) const = 0;
+        virtual const ConstructionDescription& GetConstructionDescription(ElementType type) const = 0;
         virtual void RegisterPrimitive(IConstructable& element) = 0;
 
         virtual ~IConstructionLibrary() {};

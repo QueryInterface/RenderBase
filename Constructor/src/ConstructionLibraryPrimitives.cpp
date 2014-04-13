@@ -5,8 +5,8 @@
 class class_##PrimitiveType : public IConstructable                                 \
 {                                                                                   \
 public:                                                                             \
-    ElementDescription m_desc;                                                      \
-    const ElementDescription& GetObjectDescription() const {return m_desc;}         \
+    ConstructionDescription m_desc;                                                      \
+    const ConstructionDescription& ConstructionDesc() const {return m_desc;}         \
                                                                                     \
     class_##PrimitiveType()                                                         \
     {                                                                               \

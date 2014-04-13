@@ -29,7 +29,7 @@ TEST_F(BuildingBerthTest, AddPrimitive)
 {
     ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(0,0,0), ED_pY));
 
-    const ElementDescription desc = m_builder->GetCompartment().GetObjectDescription();
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), desc.RBB);
 }
 
@@ -37,7 +37,7 @@ TEST_F(BuildingBerthTest, AddPrimitiveInNonZeroPosition)
 {
     ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(2,5,3), ED_pY));
 
-    const ElementDescription desc = m_builder->GetCompartment().GetObjectDescription();
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), (desc.RBB - desc.LFT));
 }
 
@@ -53,7 +53,7 @@ TEST_F(BuildingBerthTest, AddSetOfPrimitives3X3X3)
     ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(1,2,1), ED_pY));
     ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(2,0,2), ED_pY));
 
-    const ElementDescription desc = m_builder->GetCompartment().GetObjectDescription();
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,3,3), desc.RBB);
 }
 
@@ -61,7 +61,7 @@ TEST_F(BuildingBerthTest, AddBigPrimitive3X3X1)
 {
     m_builder->SetElement(ET_CilindricPlatform, Vector3D(1,0,1), ED_pY);
 
-    const ElementDescription desc = m_builder->GetCompartment().GetObjectDescription();
+    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,1,3), (desc.RBB));
 }
 
