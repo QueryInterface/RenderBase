@@ -99,13 +99,6 @@ struct IScript : public IResource
 };
 
 // object interfaces
-struct IObjectPart 
-    : public IClonable
-    , public ISceneElement
-{
-    virtual IProgramPtr     GetProgram()                    = 0;
-    virtual IMeshPtr        GetMesh() = 0;
-};
 
 struct IObject
     : public IClonable
@@ -115,6 +108,12 @@ struct IObject
     virtual void            SetPosition(Vector3<float> pos)     = 0;
     // Gets
     virtual Vector3<float>  GetPosition() const                 = 0;
+    virtual IProgramPtr     GetProgram()    = 0;
+    virtual IMeshPtr        GetMesh()       = 0;
+};
+
+struct IObjectPart : public IObject
+{
 };
 
 struct ISimpleObject : public IObject
@@ -128,7 +127,10 @@ struct IComplexObject : public IObject
     virtual IObjectPartPtr  GetObjectParts(size_t index) const  = 0;
 };
 
-struct ILight : public IObject
+// scene interfaces
+struct ILight
+    : public IClonable
+    , public ISceneElement 
 {
     // Sets
     virtual void            SetPosition(Vector3<float> pos) = 0;
@@ -136,8 +138,11 @@ struct ILight : public IObject
     virtual Vector3<float>  GetPosition() const             = 0;    
 };
 
-struct ICamera : public IObject 
+struct ICamera
+    : public IClonable
+    , public ISceneElement 
 {
+
 };
 
 // Base level of all objects
