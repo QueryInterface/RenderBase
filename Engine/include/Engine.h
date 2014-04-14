@@ -2,33 +2,43 @@
 
 #include "common.h"
 #include "RenderContext.h"
+#include "MathBasics.h"
+
 using std::shared_ptr;
 using std::string;
 using std::wstring;
 
-struct IClonable;
 struct ISceneElement;
-struct IResource;
+struct ISceneElementHandle;
+struct IScene;
+
 struct IMesh;
 struct ITexture;
 struct IProgram;
 struct IScript;
 struct IObjectPart;
-struct IObject;
+struct ISimpleObject;
+struct IComplexObject;
 struct ILight;
-struct IScene;
+struct ICamera;
+
 struct IResourceOverseer;
 struct IEngine;
 
 typedef shared_ptr<ISceneElement>       ISceneElementPtr;
+typedef shared_ptr<ISceneElementHandle> ISceneElementHandlePtr;
+typedef shared_ptr<IScene>              IScenePtr;
+
 typedef shared_ptr<IMesh>               IMeshPtr;
 typedef shared_ptr<ITexture>            ITexturePtr;
 typedef shared_ptr<IProgram>            IProgramPtr;
 typedef shared_ptr<IScript>             IScriptPtr;
 typedef shared_ptr<IObjectPart>         IObjectPartPtr;
-typedef shared_ptr<IObject>             IObjectPtr;
-typedef shared_ptr<IScene>              IScenePtr;
+typedef shared_ptr<ISimpleObject>       ISimpleObjectPtr;
+typedef shared_ptr<IComplexObject>      IComplexObjectPtr;
 typedef shared_ptr<ILight>              ILightPtr;
+typedef shared_ptr<ICamera>             ICameraPtr;
+
 typedef shared_ptr<IResourceOverseer>   IResourceOverseerPtr;
 typedef shared_ptr<IEngine>             IEnginePtr;
 
@@ -37,21 +47,31 @@ struct IClonable
     virtual IClonable* Clone() = 0;
 };
 
-// Specifies elements that could be added to scene graph
-// There are a few ways to attach object:
-// 1. Bidirectional attachment (rigid connection) - move of one object causes move of another one
-// 2. Directiona attachmant - A->B move of object A causes move of object B, move of object B doesn't cause move of object A 
-struct ISceneElement 
-{
-    virtual void AttachBidirectional(ISceneElementPtr sceneElement) = 0;
-    virtual void AttachDirectional(ISceneElementPtr sceneElement)   = 0;
-};
-
-// resource interfaces
 struct IResource : public IClonable 
 {
 };
 
+// Specifies elements that could be added to scene graph
+// There are a few ways to attach object:
+// 1. Bidirectional attachment (rigid connection) - move of one object causes move of another one
+// 2. Directiona attachmant - A->B move of object A causes move of object B, move of object B doesn't cause move of object A 
+struct ISceneElementHandle
+{
+    virtual void                AttachBidirectional(ISceneElementHandlePtr sceneElement) = 0;
+    virtual void                AttachDirectional(ISceneElementHandlePtr sceneElement)   = 0;
+    virtual uint32_t            GetNumAttached() const;
+    virtual uint32_t            GetAttached(uint32_t index) const;
+    virtual void                Detach();
+    virtual void                Detach(ISceneElementHandlePtr sceneElement);
+    virtual ISceneElementPtr    GetSceneElement() const;
+};
+
+struct ISceneElement 
+{
+    ISceneElementHandlePtr GetSceneElementHandle();
+};
+
+// resource interfaces
 struct IMesh : public IResource 
 {
     // tbd
@@ -92,7 +112,7 @@ struct IObjectPart
     virtual IMeshPtr        GetMesh() = 0;
 };
 
-struct IObject 
+struct IObject
     : public IClonable
     , public ISceneElement
 {
@@ -100,7 +120,16 @@ struct IObject
     virtual void            SetPosition(Vector3<float> pos)     = 0;
     // Gets
     virtual Vector3<float>  GetPosition() const                 = 0;
-    
+};
+
+struct ISimpleObject : public IObject
+    : public IClonable
+    , public ISceneElement
+{
+};
+
+struct IComplexObject : public IObject
+{
     virtual void            AddObjectPart(IObjectPartPtr obj)   = 0;
     virtual size_t          GetObjectPartsCount() const         = 0;
     virtual IObjectPartPtr  GetObjectParts(size_t index) const  = 0;
@@ -120,16 +149,18 @@ struct ILight
 // Base level of all objects
 struct IScene
 {
-    virtual void AddSceneElement(ISceneElementPtr obj) = 0;
+    virtual ISceneElementHandlePtr AddSceneElement(ISceneElementPtr obj) = 0;
 };
 
 struct IResourceOverseer 
 {
-    virtual IMeshPtr        CreateMesh(const wstring& path)                 = 0;
-    virtual ITexturePtr     CreateTexture(const wstring& path)              = 0;
-    virtual IScriptPtr      CreateScript(const wstring& path)               = 0;
+    virtual IMeshPtr            CreateMesh(const wstring& path)                 = 0;
+    virtual ITexturePtr         CreateTexture(const wstring& path)              = 0;
+    virtual IScriptPtr          CreateScript(const wstring& path)               = 0;
+    virtual IObjectPartPtr      CreateObjectPart(/*type*/)                      = 0;
 
-    virtual IObjectPtr      CreateObject(IMeshPtr mesh, ITexturePtr texture)= 0;
+    virtual IComplexObject      CreateComplexObject()                           = 0;
+    virtual ISimpleObjectPtr    CreateSimpleObject(IMeshPtr mesh, ITexturePtr texture)= 0;
 };
 
 struct IEngine : public IHandle 

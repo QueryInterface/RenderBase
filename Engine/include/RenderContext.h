@@ -23,10 +23,6 @@ struct IHandle {
     virtual void Release() = 0;
 };
 
-struct IRenderable {
-    virtual void Render() = 0;
-};
-
 struct EventCallback {
     virtual void OnKeyPress(uint32_t keyCode, bool isPress) {keyCode; isPress;}
 };

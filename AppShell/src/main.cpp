@@ -1,7 +1,47 @@
+#if 0
+#include "Engine.h"
+#else
 #include "RenderContext.h"
+#endif
 #include "Utils.h"
 
 int main() {
+#if 0
+    try 
+    {
+        IEnginePtr engine = Engine::Create();
+        IWindowPtr window = engine->GetWindow();
+        IResourceOverseerPtr resourceMgr = engine->GetResourceOverseer();
+
+        window->SetWidth(640);
+        window->SetHeight(480);
+        window->SetFullscreen(false);
+
+        IScenePtr scene = IScene::Create();
+        // Create simple object
+        IMeshPtr mesh = resourceMgr->CreateMesh("path");
+        ITexturePtr texture = resourceMgr->CreateTexture("path");
+        ISimpleObjectPtr simpleObject = resourceMgr->CreateSimpleObject(mesh, texture);
+        // Create complex object
+        IObjectPartPtr objectPart0 = resourceMgr->CreateObjectPart(/*type*/);
+        IObjectPartPtr onjectPart1 = resourceMgr->CreateObjectPart(/*type*/);
+        IComplexObjectPtr complexObject = resourceMgr->CreateComplexObject();
+        complexObject->AddObjectPart(objectPart0);
+        complexObject->AddObjectPart(onjectPart1);
+        // Add objects to scene
+        ISceneElementHandlePtr simpleObjectHandle = scene->AddSceneElement(simpleObject);
+        ISceneElementHandlePtr complexObjectHandle = scene->AddSceneElement(complexObject);
+        // Bind objects
+        simpleObjectHandle->AttachBidirectional(complexObjectHandle);
+
+        engine->Run();
+    }
+    catch(std::exception& ex)
+    {
+        ex;
+        return -1;
+    }
+#else
     try {
         IRenderContextBuilder* contextBuilder = IRenderContextBuilder::Create();
         contextBuilder->SetWidth(640);
@@ -25,5 +65,6 @@ int main() {
         ex;
         return -1;
     }
+#endif
     return 0;
 }
