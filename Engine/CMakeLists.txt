@@ -3,7 +3,6 @@ cmake_minimum_required (VERSION 2.8.11)
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
-
 include_directories(${SDL_DIR}/include)
 
 # list all header files from src and include folders automatically 
