@@ -1,12 +1,8 @@
 #include "RenderContextImpl.h"
 #include "ErrorHandler.h"
 #include <vector>
-#ifdef USE_QT_LIBS
-#include <QtGui/QOpenGLContext>
-#else
 #include "SDL_opengles2.h"
 #include "SDL_egl.h"
-#endif //USE_QT_LIBS
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// EventCallbackHandle ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,99 +121,13 @@ inline void WindowBase::_eraseCallback(list< shared_ptr<EventCallback> >::iterat
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// WindowtQT //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef USE_QT_LIBS
-WindowQT::WindowQT(const RenderContextBuilder* builder) 
-    : _appParam(0)
-    , _app(_appParam, 0)
-    , QWindow((QWindow*)nullptr)
-    , _exposed(QWindow::isExposed())
-    , _qtGlContext(new QOpenGLContext(this)) {
-
-    SetWidth(builder->GetWidth());
-    SetHeight(builder->GetHeight());
-    SetTitle(builder->GetTitle());
-    SetFullscreen(builder->IsFullscreen());
-    setSurfaceType(QWindow::OpenGLSurface);
-}
-
-WindowQT::~WindowQT() {
-}
-
-void WindowQT::SetWidth(uint32_t width) {
-    QWindow::setWidth(width);
-}    
-     
-void WindowQT::SetHeight(uint32_t height) {
-    QWindow::setHeight(height);
-}
-
-void WindowQT::SetTitle(const std::string& name) {
-    QWindow::setTitle(name.c_str());
-}
-
-void WindowQT::SetFullscreen(bool fullscreen) {
-    if (fullscreen)
-        QWindow::showFullScreen();
-    else
-        QWindow::showNormal();
-}
-
-uint32_t WindowQT::GetWidth() const {
-    return QWindow::width();
-}
-
-uint32_t WindowQT::GetHeight() const {
-    return QWindow::height();
-}
-
-std::string WindowQT::GetTitle() const {
-    return QWindow::title().toUtf8().constData();
-}
-
-bool WindowQT::IsFullscreen() const {
-    return QWindow::visibility() == FullScreen;
-}
-
-WINDOW_MSG WindowQT::ProcessMessage() {
-    if (_exposed)
-        return WINDOW_MSG::FOREGROUND;
-    return WINDOW_MSG::BACKGROUND;
-}
-
-void WindowQT::Present() {
-    _qtGlContext->swapBuffers(this);
-}
-
-bool WindowQT::event(QEvent* event) {
-    UNUSED(event);
-    switch (event->type()) {
-    case QEvent::Quit:
-        return QWindow::event(event);
-    default:
-        return QWindow::event(event);
-    }
-}
-
-void WindowQT::exposeEvent(QExposeEvent* event) {
-    UNUSED(event);
-    _exposed = QWindow::isExposed();
-}
-
-void WindowQT::resizeEvent(QResizeEvent* event) {
-    UNUSED(event);
-}
-#endif //USE_QT_LIBS
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// WindowSDL //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 WindowSDL::WindowSDL(const RenderContextBuilder* builder) {
     SDL_Init(SDL_INIT_VIDEO);
-#ifdef USE_ANGLE
+#ifdef WIN32
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#endif //USE_ANGLE
+#endif //WIN32
     _window = SDL_CreateWindow(builder->GetTitle().c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
                                builder->GetWidth(), builder->GetHeight(), SDL_WINDOW_OPENGL);
     VE_ERROR_IF(!_window, L"Window creation failed: %S", SDL_GetError());
@@ -293,11 +203,7 @@ void WindowSDL::Present() {
 /// RenderContextGLES2 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RenderContextGLES2::RenderContextGLES2(const RenderContextBuilder* builder)
-#ifdef USE_QT_LIBS
-    : _window(new WindowQT(builder)) {
-#else
     : _window(new WindowSDL(builder)) {
-#endif //USE_QT_LIBS
 }
 
 RenderContextGLES2::~RenderContextGLES2() {

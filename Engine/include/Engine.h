@@ -123,8 +123,6 @@ struct IObject
 };
 
 struct ISimpleObject : public IObject
-    : public IClonable
-    , public ISceneElement
 {
 };
 

@@ -12,7 +12,6 @@ file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
 # list all source files from src and test folders automatically 
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 
-
 # Form binaries
 add_executable(AppShell
     ${HEADER_FILES}
@@ -21,11 +20,7 @@ add_executable(AppShell
 )
 
 target_link_libraries(AppShell RenderBase)
-if (USE_QT_LIBS)
-    list(APPEND DEPENDS copy_qt_libraries)
-elseif(USE_ANGLE)
-    list(APPEND DEPENDS copy_angle_libraries)
-endif()
+list(APPEND DEPENDS copy_angle_libraries)
 if (${DEPENDS})
     add_dependencies(AppShell ${DEPENDS})
 endif()

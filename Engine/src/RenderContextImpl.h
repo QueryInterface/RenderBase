@@ -8,16 +8,7 @@
 #include <set>
 #include <mutex>
 
-#ifdef USE_QT_LIBS
-#pragma warning(push)
-#pragma warning (disable : 4127)
-#pragma warning (disable : 4512)
-#include "QtGui/QWindow.h"
-#include <QGuiApplication>
-#pragma warning(pop)
-#else
 #include "SDL.h"
-#endif //USE_QT_LIBS
 
 using std::list;
 using std::set;
@@ -27,6 +18,31 @@ using std::mutex;
 class RenderContextGLES2;
 class WindowBase;
 class WindowQT;
+
+enum class RC_API_TYPE {
+    GLES2 = 0,
+};
+
+enum class WINDOW_MSG {
+    FOREGROUND,
+    BACKGROUND,
+    QUIT
+};
+
+struct IRenderContextBuilder 
+    : public IHandle {
+
+    virtual void            SetWidth(uint32_t width) = 0;
+    virtual void            SetHeight(uint32_t height) = 0;
+    virtual void            SetTitle(const std::string& title) = 0;
+    virtual void            SetFullscreen(bool fullscreen) = 0;
+    virtual void            SetApiType(RC_API_TYPE apiType) = 0;
+
+    virtual IRenderContext* GetResult() = 0;
+
+    static LIB_EXPORT IRenderContextBuilder* CALLING_CONVENTION Create();
+};
+
 
 class WindowCallbackHandle : public IHandle {
 public:
@@ -86,41 +102,6 @@ private:
     PREVENT_COPY(WindowBase);
 };
 
-#ifdef USE_QT_LIBS
-class WindowQT final
-    : protected QWindow 
-    , public WindowBase {
-    Q_OBJECT
-    friend WindowCallbackHandle;
-public:
-    WindowQT(const RenderContextBuilder* builder);
-    virtual ~WindowQT();
-    // IWindow
-    virtual void        SetWidth(uint32_t width) override;
-    virtual void        SetHeight(uint32_t height) override;
-    virtual void        SetTitle(const std::string& name) override;
-    virtual void        SetFullscreen(bool fullscreen) override;
-    virtual uint32_t    GetWidth() const override;
-    virtual uint32_t    GetHeight() const override;
-    virtual std::string GetTitle() const override;
-    virtual bool        IsFullscreen() const override;
-    virtual WINDOW_MSG  ProcessMessage();
-    // WindowQT
-    virtual void        Present() override;
-protected:
-    bool                event(QEvent *event);
-    void                exposeEvent(QExposeEvent *event);
-    void                resizeEvent(QResizeEvent *event);
-private:
-    int32_t                    _appParam;
-    QGuiApplication            _app; 
-    unique_ptr<QOpenGLContext> _qtGlContext;
-    bool                       _exposed;
-
-    PREVENT_COPY(WindowQT);
-};
-#endif //USE_QT_LIBS
-
 class WindowSDL final : public WindowBase {
 public:
     WindowSDL(const RenderContextBuilder* builder);
@@ -134,9 +115,9 @@ public:
     virtual uint32_t    GetHeight() const override;
     virtual std::string GetTitle() const override;
     virtual bool        IsFullscreen() const override;
+    // WindowSDL
     virtual WINDOW_MSG  ProcessMessage();
-    // WindowQT
-    virtual void        Present() override;
+    virtual void        Present();
 private:
     SDL_Window*    _window;
     SDL_GLContext  _glcontext;
@@ -148,7 +129,6 @@ public:
 	virtual ~RenderContextGLES2();
     // IHandle
 	virtual void        Release();
-    // IRenderContext
 	virtual IWindow*    GetWindow();
 	virtual void        Present();
 private:
