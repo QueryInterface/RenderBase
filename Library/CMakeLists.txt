@@ -16,23 +16,23 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/ConstructionLibraryPri
     HEADER_FILE_ONLY true
 )
 # Form binaries
-add_library(Constructor STATIC
+add_library(Library STATIC
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
     ${SOURCE_FILES}
 )
 
-add_executable(ConstructorTest
+add_executable(LibraryTest
     ${TEST_FILES}
 )
 
-set_property (TARGET Constructor      PROPERTY FOLDER "Libraries")
-set_property (TARGET ConstructorTest  PROPERTY FOLDER "UnitTests")
+set_property (TARGET Library PROPERTY FOLDER "Libraries")
+set_property (TARGET LibraryTest  PROPERTY FOLDER "UnitTests")
 
 # set include directories
 # set property for library 
 set_property(
-    TARGET Constructor 
+    TARGET Library 
     PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
@@ -41,7 +41,7 @@ set_property(
 
 #set property for the test executable
 set_property(
-    TARGET ConstructorTest 
+    TARGET LibraryTest 
     PROPERTY INCLUDE_DIRECTORIES ${gtest_SOURCE_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
@@ -50,10 +50,10 @@ set_property(
 )
 
 # add required definitions (tr1 tuple is not supported under VS11)
-set_target_properties(ConstructorTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
+set_target_properties(LibraryTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
 
-add_dependencies(ConstructorTest Constructor Library gtest)
-target_link_libraries(ConstructorTest Constructor Library gtest)
+add_dependencies(LibraryTest Library gtest)
+target_link_libraries(LibraryTest Library gtest)
 
 
 # files layout for all targets
@@ -64,8 +64,8 @@ source_group ("Tests"               FILES ${TEST_FILES})
 
 # add tests
 add_test(
-    NAME    ConstructorUnitTest
-    WORKING_DIRECTORY ConstructorTest_BINARY_DIR
-    COMMAND ConstructorTest
+    NAME    LibraryUnitTest
+    WORKING_DIRECTORY LibraryTest_BINARY_DIR
+    COMMAND LibraryTest
 )
 

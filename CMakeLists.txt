@@ -58,6 +58,7 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_subdirectory(3rdParty)
 add_subdirectory(Engine)
 add_subdirectory(AppShell)
+add_subdirectory(Library)
 add_subdirectory(Constructor)
 add_subdirectory(Utils)
 

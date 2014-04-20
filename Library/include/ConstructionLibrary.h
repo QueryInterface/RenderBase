@@ -5,28 +5,23 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "ConstructorTypes.h"
-
-namespace Constructor
-{
+#include "Constructor.h"
 
 /////////////////////////////////////////////////////////////////////
 ///
 /// object library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-    struct IConstructionLibrary
-    {
-    public:
-        virtual const ConstructionDescription& GetConstructionDescription(ElementType type) const = 0;
-        virtual void RegisterPrimitive(IConstructable& element) = 0;
+struct IConstructionLibrary
+{
+public:
+    virtual const Constructor::ConstructionDescription& GetConstructionDescription(Constructor::ElementType type) const = 0;
+    virtual void RegisterPrimitive(Constructor::IConstructable& element) = 0;
 
-        virtual ~IConstructionLibrary() {};
+    virtual ~IConstructionLibrary() {};
 
-    public:
-        static IConstructionLibrary* instance();
-    };
-
-}//end  of namespace
+public:
+    static IConstructionLibrary* instance();
+};
 
 // eof
