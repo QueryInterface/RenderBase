@@ -135,6 +135,38 @@ TEST_F(QuadTreeTest, BoundingRectSameVerticalSlice)
     EXPECT_EQ(1, m_tree->top()) << "the worst case: top is on the right";
 }
 
+TEST_F(QuadTreeTest, ForEachCoordinates)
+{
+    for (size_t i = 0; i < 100; ++i)
+    {
+        size_t X, Y;
+        size_t x = rand()%c_size, y = rand()%c_size;
+        m_tree->item(x, y) = i;
+        int V;
+        m_tree->for_each
+        (
+            [&](size_t x, size_t y, int& v)
+            { X = x; Y = y, V = v; }
+        );
+        m_tree->remove(x, y);
+
+        ASSERT_EQ(x, X);
+        ASSERT_EQ(y, Y);
+        ASSERT_EQ(i, V);
+    }
+}
+
+TEST_F(QuadTreeTest, ForEachItems)
+{
+    for (size_t i = 0; i < c_size; ++i)
+        m_tree->item(i, i) = 10;
+
+    int count = 0;
+    m_tree->for_each([&](size_t, size_t, int&){++count;});
+
+    EXPECT_EQ(c_size, count) << "for each should be called for all non-null items";
+}
+
 class QuadTreeBenchmark : public ::testing::Test
 {
 public:

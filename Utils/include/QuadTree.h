@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <memory>
+#include <functional>
 
 namespace Utils
 {
@@ -113,6 +114,11 @@ namespace Utils
             size_t current = 0;
             return scan_nodes_rb(primaryCheck, secondaryCheck, &m_root, m_squareSide, m_squareSide, current);
         }
+
+        void for_each(std::function<void(size_t, size_t, T&)> visitor)
+        {
+            _foreach(&m_root, 0, 0, m_squareSide, visitor);
+        }
     private:
 
         struct Node
@@ -171,6 +177,24 @@ namespace Utils
             }
             current = (retval > current) ? retval : current;
             return current;
+        }
+
+        void _foreach(Node* n, size_t x, size_t y, size_t w, std::function<void(size_t, size_t, T&)> v)
+        {
+            w >>= 1;
+            if (w)
+            {
+                if (n->quadNodes[0]) 
+                    _foreach(n->quadNodes[0].get(), x, y, w, v);
+                if (n->quadNodes[1]) 
+                    _foreach(n->quadNodes[1].get(), x + w, y, w, v);
+                if (n->quadNodes[2]) 
+                    _foreach(n->quadNodes[2].get(), x, y + w, w, v);
+                if (n->quadNodes[3]) 
+                    _foreach(n->quadNodes[3].get(), x + w, y + w, w, v);
+            }
+            else
+                v(x, y, n->value);
         }
     };
 
