@@ -5,17 +5,23 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "../Library/include/ConstructionLibrary.h"
-
-namespace Library
-{
-
+#include "Constructor.h"
 /////////////////////////////////////////////////////////////////////
 ///
 /// object library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-//    IConstructionLibrary* ConstructionLibraryInstance() {return IConstructionLibrary::instance();};
-}//end  of namespace
+struct IObjectLibrary;
+struct ILibrary
+{
+    static ILibrary* library();
+
+// access to constructions
+    virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
+    virtual void RegisterConstruction(IConstructable& element) = 0;
+
+// access to meshes
+//  virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
+};
 
 // eof

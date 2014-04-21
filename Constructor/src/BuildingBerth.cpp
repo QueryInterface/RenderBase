@@ -23,7 +23,7 @@ void Compartment::SetElement(ElementType type, const Vector3D& position, Directi
 {
     m_desc.direction = direction;
     m_desc.primitiveUID = type;
-    const ConstructionDescription &desc = IConstructionLibrary::instance()->GetConstructionDescription(type);
+    const ConstructionDescription &desc = ILibrary::library()->GetConstruction(type);
 
     m_desc.LFT = Vector3D(
         min(position.x + desc.LFT.x, m_desc.LFT.x),

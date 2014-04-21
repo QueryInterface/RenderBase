@@ -1,13 +1,11 @@
-#include "ConstructionLibrary.h"
+#include "Library.h"
 #include <gtest/gtest.h>
 #include <memory>
 
-using namespace Constructor;
-
 TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 {
-    IConstructionLibrary* lib1 = IConstructionLibrary::instance();
-    IConstructionLibrary* lib2 = IConstructionLibrary::instance();
+    ILibrary* lib1 = ILibrary::library();
+    ILibrary* lib2 = ILibrary::library();
 
     ASSERT_EQ(lib1, lib2) << "Library must be a singletone";
 }
@@ -15,7 +13,7 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 #define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                             \
     TEST(Fixture, DescriptionOf_##Type##_Element)                                                       \
 {                                                                                                       \
-    const ConstructionDescription& desc = IConstructionLibrary::instance()->GetConstructionDescription(ET_##Type);  \
+    const ConstructionDescription& desc = ILibrary::library()->GetConstruction(ET_##Type);              \
     ASSERT_EQ(ET_##Type, desc.primitiveUID) << "incorrect primitive type expected: ET_" << #Type;       \
     EXPECT_EQ(desc.LFT, tlf);                                                                           \
     EXPECT_EQ(desc.RBB, (brb));                                                                         \

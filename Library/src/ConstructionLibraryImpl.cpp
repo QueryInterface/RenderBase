@@ -1,17 +1,7 @@
 #include "ConstructionLibraryImpl.h"
 #include <memory>
 
-using namespace Constructor;
-
-IConstructionLibrary* IConstructionLibrary::instance()
-{
-    static std::unique_ptr<IConstructionLibrary> library;
-    if (nullptr == library)
-    {
-        library.reset(new ConstructionLibrary());
-    }
-    return library.get();
-}
+using namespace LibraryImpl;
 
 ConstructionLibrary::ConstructionLibrary() 
 {
