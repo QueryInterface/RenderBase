@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.8.11)
 
 # Include directories
 include_directories(include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
 include_directories(${SDL_DIR}/include)
 
@@ -13,7 +14,7 @@ file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 
 # Form binaries
-add_library(RenderBase SHARED
+add_library(Engine SHARED
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
     ${SOURCE_FILES}
@@ -47,7 +48,7 @@ else()
 endif()
 list(APPEND EXTRA_LIBS SDL2)
 list(APPEND EXTRA_LIBS Utils)
-target_link_libraries(RenderBase ${EXTRA_LIBS})
+target_link_libraries(Engine ${EXTRA_LIBS})
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

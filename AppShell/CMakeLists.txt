@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.11)
 
 # Include directories
 include_directories(include)
-include_directories(${PROJECT_SOURCE_DIR}/Engine/include)
-include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+#include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
@@ -19,7 +19,7 @@ add_executable(AppShell
     ${SOURCE_FILES}
 )
 
-target_link_libraries(AppShell RenderBase)
+target_link_libraries(AppShell Engine)
 list(APPEND DEPENDS copy_angle_libraries)
 if (${DEPENDS})
     add_dependencies(AppShell ${DEPENDS})

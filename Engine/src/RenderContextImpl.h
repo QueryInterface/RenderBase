@@ -3,7 +3,7 @@
 #define D3D_DEBUG_INFO
 #endif // _DEBUG
 
-#include "RenderContext.h"
+#include "Engine.h"
 #include <list>
 #include <set>
 #include <mutex>
@@ -27,6 +27,10 @@ enum class WINDOW_MSG {
     FOREGROUND,
     BACKGROUND,
     QUIT
+};
+
+struct IRenderContext
+{
 };
 
 struct IRenderContextBuilder 

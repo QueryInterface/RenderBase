@@ -64,10 +64,10 @@ add_subdirectory(Utils)
 
 # Organize projects in folders
 set_property (TARGET AppShell         PROPERTY FOLDER "Executables")
-set_property (TARGET RenderBase       PROPERTY FOLDER "Libraries")
+set_property (TARGET Engine           PROPERTY FOLDER "Libraries")
 
 # Set additional targets' flags
-set_target_properties(RenderBase    PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)
+set_target_properties(Engine        PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)
 set_target_properties(gtest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
 
 # set_target_properties(RenderBase    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)

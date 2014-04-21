@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/Engine/include)
 
 # list all header files from src and include folders automatically 
