@@ -5,17 +5,12 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "include/MathBasics.h"
+#include "MathBasics.h"
 
-<<<<<<< HEAD
-#include "../Constructor/include/ConstructorTypes.h"
-#include "../Constructor/include/Object.h"
-=======
 enum ElementType : unsigned int
 {
     ET_Space   = 0,                 // empty space
     ET_Cube,                        // simple cube
->>>>>>> 2f270d27849e9e9346af41f0ed11ec02368c8ef3
 
     ET_Wedge,                       // canted cube
     ET_Ledder,                      // ledder object
