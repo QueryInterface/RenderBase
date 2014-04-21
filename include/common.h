@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 #ifdef _WIN32
 	#include "Windows.h"
@@ -15,3 +16,17 @@
     className& operator=(const className&);
 
 #define UNUSED(var) var;
+
+struct IClonable  
+{
+    virtual IClonable* Clone() = 0;
+};
+
+struct ISceneElement 
+{
+};
+
+struct IHandle
+{
+    virtual void Release() = 0;
+};

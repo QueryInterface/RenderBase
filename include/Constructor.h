@@ -6,7 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "..\Constructor\include\ConstructorTypes.h"
+#include "../Constructor/include/ConstructorTypes.h"
+#include "../Constructor/include/Object.h"
 
 
 // eof
