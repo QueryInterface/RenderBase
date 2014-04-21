@@ -13,7 +13,7 @@ public:                                                                         
         m_desc.primitiveUID = ET_##PrimitiveType;                                   \
         m_desc.LFT = (BBOX_LFT);                                                    \
         m_desc.RBB = (BBOX_RBB);                                                    \
-        IConstructionLibrary::instance()->RegisterPrimitive(*this);                   \
+        ILibrary::library()->RegisterConstruction(*this);                           \
     }
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                     \

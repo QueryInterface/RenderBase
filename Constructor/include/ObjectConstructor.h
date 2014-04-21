@@ -11,14 +11,14 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "ConstructorTypes.h"
+#include "Constructor.h"
 #include "include/QuadTree.h"
 #include "include/RangeList.h"
 #include <vector>
 #include <list>
 #include <memory>
 
-namespace Constructor
+namespace ConstructorImpl
 {
 
 // on a low level object consists from a set of compartments
@@ -31,7 +31,7 @@ namespace Constructor
         virtual ~Compartment() {};
 
     public:
-        void SetElement(ElementType type, const Vector3D& position, Directions direction);
+        void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction);
 
     private:
         ConstructionDescription                             m_desc;
@@ -39,26 +39,6 @@ namespace Constructor
 
         Compartment(const Compartment& arg);
         const Compartment& operator=(const Compartment& arg);
-    };
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-//
-// primary building berth.
-//
-///////////////////////////////////////////////////////////////////////////////////////////////
-    class BuildingBerth
-    {
-    public:
-        BuildingBerth() {};
-        ~BuildingBerth() {};
-
-        // Attaches element to Complartment. if new compartment was created function returns true;
-        bool SetElement(ElementType type, const Vector3D& position, Directions direction);
-
-//        size_t GetCompartmentsCount() const {return m_compartments.size();}
-        const Compartment& GetCompartment() const;
-    private:
-        Compartment m_compartment;
     };
 
 }//end  of namespace constructor

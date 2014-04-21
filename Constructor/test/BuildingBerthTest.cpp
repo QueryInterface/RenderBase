@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-using namespace Constructor;
+using namespace ConstructorImpl;
 
 class BuildingBerthTest : public ::testing::Test
 {

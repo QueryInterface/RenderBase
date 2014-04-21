@@ -11,10 +11,6 @@ file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/test/ TEST_FILES)
 
-# exclude file from build. this cpp files are included to another cpp
-set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/ConstructionLibraryPrimitives.cpp     PROPERTIES
-    HEADER_FILE_ONLY true
-)
 # Form binaries
 add_library(Constructor STATIC
     ${HEADER_FILES}

@@ -5,25 +5,23 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "ConstructionLibrary.h"
+#include "Library.h"
+#include "Constructor.h"
 #include <vector>
 
-namespace Constructor
-{
 /////////////////////////////////////////////////////////////////////
 ///
 /// object library public interface. Library is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-    struct ConstructionLibrary : public IConstructionLibrary
+namespace LibraryImpl
+{
+    class ConstructionLibrary
     {
     public:
-        virtual const ConstructionDescription& GetConstructionDescription(ElementType type) const;
+        const ConstructionDescription& GetConstructionDescription(ElementType type) const;
 
-        virtual void RegisterPrimitive(IConstructable& element);
-
-    private:
-        friend struct IConstructionLibrary;
+        void RegisterPrimitive(IConstructable& element);
 
         ConstructionLibrary();
         virtual ~ConstructionLibrary() {};
@@ -32,7 +30,7 @@ namespace Constructor
         std::vector<const IConstructable*>  m_primitives;
         ConstructionDescription      m_dummy;
     };
-
-}//end  of namespace
+}
+//end  of namespace
 
 // eof

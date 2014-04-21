@@ -5,23 +5,32 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "Constructor.h"
+#include "Library.h"
+#include "ConstructionLibraryImpl.h"
 
+namespace LibraryImpl
+{
 /////////////////////////////////////////////////////////////////////
 ///
 /// object library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-struct IConstructionLibrary
+class Library : public ILibrary
 {
 public:
-    virtual const Constructor::ConstructionDescription& GetConstructionDescription(Constructor::ElementType type) const = 0;
-    virtual void RegisterPrimitive(Constructor::IConstructable& element) = 0;
+    // construction library object
+    virtual const ConstructionDescription& GetConstruction(ElementType et);
+    virtual void RegisterConstruction(IConstructable& element);
 
-    virtual ~IConstructionLibrary() {};
+    virtual ~Library() {};
 
-public:
-    static IConstructionLibrary* instance();
+private:
+    friend struct ILibrary;
+
+    Library();
+
+    ConstructionLibrary m_constructionLibrary;
 };
 
+};
 // eof
