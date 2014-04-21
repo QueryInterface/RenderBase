@@ -12,35 +12,10 @@
 #pragma once
 
 #include "Constructor.h"
-#include "include/QuadTree.h"
-#include "include/RangeList.h"
-#include <vector>
-#include <list>
-#include <memory>
+#include "ObjectConstructor.h"
 
-namespace Constructor
+namespace ConstructorImpl
 {
-
-// on a low level object consists from a set of compartments
-    class Compartment : public IConstructable
-    {
-    public:
-        // IElement interface
-        const ConstructionDescription& ConstructionDesc() const {return m_desc;};
-        Compartment();
-        virtual ~Compartment() {};
-
-    public:
-        void SetElement(ElementType type, const Vector3D& position, Directions direction);
-
-    private:
-        ConstructionDescription                             m_desc;
-        Utils::QuadTree< Utils::RangeList<ElementType> >    m_pillars;
-
-        Compartment(const Compartment& arg);
-        const Compartment& operator=(const Compartment& arg);
-    };
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //
 // primary building berth.

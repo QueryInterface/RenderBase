@@ -11,7 +11,6 @@
 /// object library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-struct IObjectLibrary;
 struct ILibrary
 {
     static ILibrary* library();

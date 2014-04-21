@@ -71,4 +71,17 @@ struct IConstructable
     virtual ~IConstructable() {};
 };
 
+/////////////////////////////////////////////////////////////////////
+///
+/// Constructor public interface
+///
+/////////////////////////////////////////////////////////////////////
+struct Constructor //: public ISceneObject
+{
+    virtual void                    NewConstruction() = 0;
+    virtual bool                    AddElement(ElementType type, const Vector3D& position, Directions direction) = 0;
+    virtual const IConstructable&   GetBoundConstruction() = 0;
+    
+};
+
 // eof
