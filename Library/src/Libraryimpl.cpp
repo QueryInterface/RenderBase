@@ -27,4 +27,9 @@ const ConstructionDescription& Library::GetConstruction(ElementType type)
     return m_constructionLibrary.GetConstructionDescription(type);
 }
 
+const Mesh& Library::GetMesh(unsigned int id, unsigned int flags)
+{
+    return m_meshLibrary.GetMeshObject(id, flags);
+}
+
 // eof

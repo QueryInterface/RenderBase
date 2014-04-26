@@ -7,6 +7,7 @@
 #pragma once
 #include "Library.h"
 #include "ConstructionLibraryImpl.h"
+#include "MeshLibraryImpl.h"
 
 namespace LibraryImpl
 {
@@ -22,6 +23,9 @@ public:
     virtual const ConstructionDescription& GetConstruction(ElementType et);
     virtual void RegisterConstruction(IConstructable& element);
 
+    // mesh library object
+    virtual const Mesh& GetMesh(unsigned int id, unsigned int flags);
+
     virtual ~Library() {};
 
 private:
@@ -30,6 +34,7 @@ private:
     Library();
 
     ConstructionLibrary m_constructionLibrary;
+    MeshLibrary         m_meshLibrary;
 };
 
 };

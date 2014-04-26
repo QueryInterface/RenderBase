@@ -6,9 +6,27 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "Constructor.h"
+#include <vector>
+
+//TODO: draft structures. to be movedto appropriate place
+
+struct LayoutItem
+{
+    unsigned int    size;
+    unsigned int    stride;
+    unsigned int    offset;
+};
+
+struct Mesh
+{
+    std::vector<LayoutItem> layout;
+    std::vector<float>      interleavedBuffer;
+    std::vector<short>      indices;
+};
+
 /////////////////////////////////////////////////////////////////////
 ///
-/// object library public interface. object is a singletone
+/// Resource library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
 struct ILibrary
@@ -19,8 +37,7 @@ struct ILibrary
     virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
     virtual void RegisterConstruction(IConstructable& element) = 0;
 
-// access to meshes
-//  virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
+    virtual const Mesh& GetMesh(unsigned int id, unsigned int flags) = 0;
 };
 
 // eof
