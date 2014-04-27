@@ -19,6 +19,7 @@ namespace LibraryImpl
     {
     public:
         const Mesh& GetMeshObject(unsigned int id, unsigned int flags);
+        void RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh);
 
         MeshLibrary();
         virtual ~MeshLibrary() {};

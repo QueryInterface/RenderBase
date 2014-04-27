@@ -5,12 +5,12 @@
 class class_##PrimitiveType : public IConstructable                                 \
 {                                                                                   \
 public:                                                                             \
-    ConstructionDescription m_desc;                                                      \
-    const ConstructionDescription& ConstructionDesc() const {return m_desc;}         \
+    ConstructionDescription m_desc;                                                 \
+    const ConstructionDescription& ConstructionDesc() const {return m_desc;}        \
                                                                                     \
     class_##PrimitiveType()                                                         \
     {                                                                               \
-        m_desc.primitiveUID = ET_##PrimitiveType;                                   \
+        m_desc.primitiveUID = ElementType::##PrimitiveType;                         \
         m_desc.LFT = (BBOX_LFT);                                                    \
         m_desc.RBB = (BBOX_RBB);                                                    \
         ILibrary::library()->RegisterConstruction(*this);                           \

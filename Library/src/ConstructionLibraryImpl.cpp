@@ -5,8 +5,8 @@ using namespace LibraryImpl;
 
 ConstructionLibrary::ConstructionLibrary() 
 {
-    m_primitives.resize(ET_SimplePrimitivesCount);
-    m_dummy.primitiveUID = ET_SimplePrimitivesCount;
+    m_primitives.resize(ElementType::SimplePrimitivesCount);
+    m_dummy.primitiveUID = ElementType::SimplePrimitivesCount;
 }
 
 void ConstructionLibrary::RegisterPrimitive(IConstructable& element)

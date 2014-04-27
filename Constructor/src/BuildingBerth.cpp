@@ -11,7 +11,7 @@ const Compartment& BuildingBerth::GetCompartment() const
 
 bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Directions direction)
 {
-    if (type == ET_Space) 
+    if (type == ElementType::Space) 
     {
         return false;
     }

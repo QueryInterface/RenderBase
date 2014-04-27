@@ -38,6 +38,7 @@ struct ILibrary
     virtual void RegisterConstruction(IConstructable& element) = 0;
 
     virtual const Mesh& GetMesh(unsigned int id, unsigned int flags) = 0;
+    virtual void RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh) = 0;
 };
 
 // eof

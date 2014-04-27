@@ -10,14 +10,14 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
     ASSERT_EQ(lib1, lib2) << "Library must be a singletone";
 }
 
-#define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                             \
-    TEST(Fixture, DescriptionOf_##Type##_Element)                                                       \
-{                                                                                                       \
-    const ConstructionDescription& desc = ILibrary::library()->GetConstruction(ET_##Type);              \
-    ASSERT_EQ(ET_##Type, desc.primitiveUID) << "incorrect primitive type expected: ET_" << #Type;       \
-    EXPECT_EQ(desc.LFT, tlf);                                                                           \
-    EXPECT_EQ(desc.RBB, (brb));                                                                         \
-    EXPECT_EQ(desc.direction, ED_pY);
+#define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                                             \
+    TEST(Fixture, DescriptionOf_##Type##_Element)                                                                       \
+{                                                                                                                       \
+    const ConstructionDescription& desc = ILibrary::library()->GetConstruction(ElementType::##Type);                    \
+    ASSERT_EQ(ElementType::##Type, desc.primitiveUID) << "incorrect primitive type expected: ElementType::" << #Type;   \
+    EXPECT_EQ(desc.LFT, tlf);                                                                                           \
+    EXPECT_EQ(desc.RBB, (brb));                                                                                         \
+    EXPECT_EQ(desc.direction, Directions::pY);
 
 #define END_CHECK_PRIMITIVE_TEST() }
 

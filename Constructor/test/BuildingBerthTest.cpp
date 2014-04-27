@@ -22,12 +22,12 @@ protected:
 
 TEST_F(BuildingBerthTest, AddSpace)
 {
-    ASSERT_FALSE(m_builder->SetElement(ET_Space, Vector3D(0,0,0), ED_pY));
+    ASSERT_FALSE(m_builder->SetElement(ElementType::Space, Vector3D(0,0,0), Directions::pY));
 }
 
 TEST_F(BuildingBerthTest, AddPrimitive)
 {
-    ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(0,0,0), ED_pY));
+    ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY));
 
     const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), desc.RBB);
@@ -35,7 +35,7 @@ TEST_F(BuildingBerthTest, AddPrimitive)
 
 TEST_F(BuildingBerthTest, AddPrimitiveInNonZeroPosition)
 {
-    ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(2,5,3), ED_pY));
+    ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(2,5,3), Directions::pY));
 
     const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), (desc.RBB - desc.LFT));
@@ -49,9 +49,9 @@ TEST_F(BuildingBerthTest, AddSetOfPrimitives3X3X3)
 //      --- --- [0]
 // keep in mind Up is on Y axis
 
-    ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(0,0,0), ED_pY));
-    ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(1,2,1), ED_pY));
-    ASSERT_TRUE(m_builder->SetElement(ET_Cube, Vector3D(2,0,2), ED_pY));
+    ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY));
+    ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(1,2,1), Directions::pY));
+    ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(2,0,2), Directions::pY));
 
     const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,3,3), desc.RBB);
@@ -59,7 +59,7 @@ TEST_F(BuildingBerthTest, AddSetOfPrimitives3X3X3)
 
 TEST_F(BuildingBerthTest, AddBigPrimitive3X3X1)
 {
-    m_builder->SetElement(ET_CilindricPlatform, Vector3D(1,0,1), ED_pY);
+    m_builder->SetElement(ElementType::CilindricPlatform, Vector3D(1,0,1), Directions::pY);
 
     const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,1,3), (desc.RBB));
@@ -69,7 +69,7 @@ TEST_F(BuildingBerthTest, ConstructPillar)
 {
     for (size_t i = 0; i < 100; ++i)
     {
-        m_builder->SetElement(ET_Cube, Vector3D(0,0,i), ED_pY);
+        m_builder->SetElement(ElementType::Cube, Vector3D(0,0,i), Directions::pY);
     }
 
     const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
@@ -85,7 +85,7 @@ TEST_F(BuildingBerthTest, ConstructSolidQube)
         {
             for (size_t z = 0; z < cubeScales; ++z)
             {
-                m_builder->SetElement(ET_Cube, Vector3D(x,y,z), ED_pY);
+                m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY);
             }
         }
     }
@@ -104,7 +104,7 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
             for (size_t z = 0; z < cubeScales; ++z)
             {
                 if (x+y+z % 2)
-                    m_builder->SetElement(ET_Cube, Vector3D(x,y,z), ED_pY);
+                    m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY);
             }
         }
     }

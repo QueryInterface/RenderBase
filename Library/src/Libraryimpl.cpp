@@ -32,4 +32,8 @@ const Mesh& Library::GetMesh(unsigned int id, unsigned int flags)
     return m_meshLibrary.GetMeshObject(id, flags);
 }
 
+void Library::RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh)
+{
+    m_meshLibrary.RegisterMesh(id, flags,mesh);
+}
 // eof

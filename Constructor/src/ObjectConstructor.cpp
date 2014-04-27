@@ -32,15 +32,16 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
         max(position.y + desc.RBB.y, m_desc.RBB.y),
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
-    m_pillars.item(position.x, position.y).insert(position.z, desc.primitiveUID);
+    // Y is UP direction
+    m_pillars.item(position.x, position.z).insert(position.y, desc.primitiveUID);
     if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
         for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
         {
-            for (int y = desc.LFT.y; y < desc.RBB.y; ++y)
+            for (int z = desc.LFT.z; z < desc.RBB.z; ++z)
             {
-                if (x || y)
-                    m_pillars.item(position.x + x, position.y + y).insert(position.z, ET_Reference);
+                if (x || z)
+                    m_pillars.item(position.x + x, position.z + z).insert(position.y, ElementType::Reference);
             }
         }
     }

@@ -24,7 +24,9 @@ public:
     virtual void RegisterConstruction(IConstructable& element);
 
     // mesh library object
+    // according to flags, mesh may contain different geometry
     virtual const Mesh& GetMesh(unsigned int id, unsigned int flags);
+    virtual void RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh);
 
     virtual ~Library() {};
 
