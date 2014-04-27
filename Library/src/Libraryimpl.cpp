@@ -27,13 +27,13 @@ const ConstructionDescription& Library::GetConstruction(ElementType type)
     return m_constructionLibrary.GetConstructionDescription(type);
 }
 
-const Mesh& Library::GetMesh(unsigned int id, unsigned int flags)
+const IMesh& Library::GetMesh(unsigned int id)
 {
-    return m_meshLibrary.GetMeshObject(id, flags);
+    return m_meshLibrary.GetMeshObject(id);
 }
 
-void Library::RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh)
+void Library::RegisterMesh(unsigned int id, const IMesh& mesh)
 {
-    m_meshLibrary.RegisterMesh(id, flags,mesh);
+    m_meshLibrary.RegisterMesh(id, mesh);
 }
 // eof

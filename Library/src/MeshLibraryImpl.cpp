@@ -6,24 +6,16 @@ using namespace LibraryImpl;
 MeshLibrary::MeshLibrary() 
 {
     m_primitives.resize(ElementType::SimplePrimitivesCount);
-//    m_dummy.primitiveUID = ElementType::SimplePrimitivesCount;
-}
-/*
-void MeshLibrary::RegisterPrimitiveMesh(unsigned int id, const Mesh& prototype)
-{
-    m_primitives[id] = prototype;
-}
-*/
-const Mesh& MeshLibrary::GetMeshObject(unsigned int id, unsigned int flags)
-{
-    flags;
-    return m_primitives[id];
-    //return (type >= m_primitives.size()) ? m_dummy : m_primitives[type]->ConstructionDesc();
 }
 
-void MeshLibrary::RegisterMesh(unsigned int id, unsigned int flags, const Mesh& mesh)
+const IMesh& MeshLibrary::GetMeshObject(unsigned int id)
 {
-    id; flags; mesh;
+    return *m_primitives[id];
+}
+
+void MeshLibrary::RegisterMesh(unsigned int id, const IMesh& mesh)
+{
+    m_primitives[id] = &mesh;
 }
 
 #include "MeshLibraryPrimitives.cpp"
