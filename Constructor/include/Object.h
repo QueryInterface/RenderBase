@@ -14,8 +14,8 @@ struct IObject;
 typedef shared_ptr<IObject> IObjectPtr;
 
 struct IObject
-    : public IClonable
-    , public ISceneElement
+    : public ISceneElement
+    , public IClonable<IObject>
 {
     virtual void            SetPosition(Vector3<float> pos)                         = 0;
     virtual Vector3<float>  GetPosition() const                                     = 0;

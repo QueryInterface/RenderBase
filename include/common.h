@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <memory>
 
 #ifdef _WIN32
 	#include "Windows.h"
@@ -17,9 +18,10 @@
 
 #define UNUSED(var) var;
 
+template<typename ClonableType>
 struct IClonable  
 {
-    virtual IClonable* Clone() = 0;
+    virtual ClonableType Clone() const = 0;
 };
 
 struct ISceneElement 
@@ -28,5 +30,5 @@ struct ISceneElement
 
 struct IHandle
 {
-    virtual void Release() = 0;
+    virtual void Release() = 0; 
 };

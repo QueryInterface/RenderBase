@@ -22,6 +22,8 @@ class SpaceMesh : public BaseMesh
 {
 public:
     SpaceMesh() { ILibrary::library()->RegisterMesh(ElementType::Space, *this); };
+    virtual void Release() override {delete this;}
+    virtual IMeshPtr Clone() const {return std::make_shared<SpaceMesh>(*this);};
 private:
     static std::unique_ptr<IMesh> self;
 };
@@ -45,6 +47,16 @@ public:
         m_indices.assign(indices, indices + sizeof(indices)/sizeof(short));
         ILibrary::library()->RegisterMesh(ElementType::Cube, *this);
     }
+
+    virtual void Release() override 
+    {
+        delete this;
+    }
+
+    virtual IMeshPtr Clone() const 
+    {
+        return std::make_shared<CubeMesh>(*this);
+    };
 
     virtual const IndexData_t&  GetIndexData(unsigned int flags) const
     {
