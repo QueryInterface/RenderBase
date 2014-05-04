@@ -14,10 +14,12 @@ public:
     ComplexObject();
     virtual ~ComplexObject();
 
-    IObjectPtr              Clone() const;
+    IObjectPtr              Clone() const override;
 
-    virtual void            SetPosition(Vector3<float> pos) override;
+    virtual void            SetPosition(const Vector3<float>& pos) override;
     virtual Vector3<float>  GetPosition() const override;
+
+    virtual void            Shift(const Vector3<float>& shift) override;
 
     virtual void            AttachBidirectional(IObjectPtr object) override;
     virtual void            AttachDirectional(IObjectPtr object) override;
@@ -29,4 +31,5 @@ private:
     Vector3<float>              m_position;
     vector<IObjectPtr>          m_connections;
     vector< weak_ptr<IObject> > m_connectionsWeak;
+    uint32_t                    m_nestedCall;
 };

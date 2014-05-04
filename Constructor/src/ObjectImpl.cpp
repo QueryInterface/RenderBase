@@ -3,8 +3,12 @@
 
 using std::static_pointer_cast;
 
+#define NESTED_LOCK() if (m_nestedCall) return; ++m_nestedCall;
+#define NESTED_UNLOCK() --m_nestedCall;
+
 ComplexObject::ComplexObject()
     : m_position(0., 0., 0.)
+    , m_nestedCall(0)
 {
 
 }
@@ -21,9 +25,41 @@ IObjectPtr ComplexObject::Clone() const
     return std::static_pointer_cast<IObject>(obj);
 }
 
-void ComplexObject::SetPosition(Vector3<float> pos) 
+void ComplexObject::SetPosition(const Vector3<float>& pos) 
 {
+    NESTED_LOCK();
     m_position = pos;
+    for (auto c : m_connections)
+    {
+        c->SetPosition(pos);
+    }
+    for (auto c : m_connectionsWeak)
+    {
+        IObjectPtr weakObject = c.lock();
+        if (weakObject)
+            weakObject->SetPosition(pos);
+    }
+    NESTED_UNLOCK();
+}
+
+void ComplexObject::Shift(const Vector3<float>& pos)
+{
+    NESTED_LOCK();
+    if (m_nestedCall) return;
+    ++m_nestedCall;
+
+    m_position += pos;
+    for (auto c : m_connections)
+    {
+        c->Shift(pos);
+    }
+    for (auto c : m_connectionsWeak)
+    {
+        IObjectPtr weakObject = c.lock();
+        if (weakObject)
+            weakObject->Shift(pos);
+    }
+    NESTED_UNLOCK();
 }
 
 Vector3<float> ComplexObject::GetPosition() const 
