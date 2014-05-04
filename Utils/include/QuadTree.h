@@ -42,7 +42,7 @@ namespace Utils
             _item_at(node->quadNodes[index].reset(new Node()), node->value = value);
         }
 
-        const T* get_item_at(size_t x, size_t y)
+        T* get_item_at(size_t x, size_t y)
         {
             _item_at(return nullptr, return &node->value);
         }
