@@ -113,4 +113,19 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
     EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
 }
 
+TEST_F(BuildingBerthTest, ElementNeighbourhood)
+{
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY);
+    Element element;
+    int i = 0;
+    m_builder->GetCompartment().IterrateObject(
+        [&](size_t, size_t, Utils::RangeList<Element>& item){
+            ++i;
+            element = *item.get_item_at(1);
+    });
+    ASSERT_EQ(1, i);
+    ASSERT_EQ(Directions::pY | Directions::nY, element.neighbourhood);
+}
 // eof

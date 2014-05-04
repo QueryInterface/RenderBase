@@ -31,7 +31,7 @@ namespace ConstructorImpl
         bool SetElement(ElementType type, const Vector3D& position, Directions direction);
 
 //        size_t GetCompartmentsCount() const {return m_compartments.size();}
-        const Compartment& GetCompartment() const;
+        Compartment& GetCompartment();
     private:
         Compartment m_compartment;
     };

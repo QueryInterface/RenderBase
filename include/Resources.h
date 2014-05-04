@@ -32,7 +32,7 @@ struct IMesh
 
     virtual const LayoutData_t& GetLayout()     const = 0;
     virtual const VertexData_t& GetMeshBuffer() const = 0;
-    virtual const IndexData_t&  GetIndexData(unsigned int flags) const = 0; 
+    virtual void GetIndexData(unsigned int, IndexData_t&) const = 0; 
 
 };
 

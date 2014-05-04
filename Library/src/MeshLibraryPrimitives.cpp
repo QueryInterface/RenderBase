@@ -7,13 +7,12 @@ class BaseMesh : public IMesh
 public:
     BaseMesh() { }
 
-    virtual const LayoutData_t& GetLayout() const                   { return m_layout;   }
-    virtual const VertexData_t& GetMeshBuffer() const               { return m_vertices; }
-    virtual const IndexData_t&  GetIndexData(unsigned int) const    { return m_indices;  }
+    virtual const LayoutData_t& GetLayout() const                                 { return m_layout;   }
+    virtual const VertexData_t& GetMeshBuffer() const                             { return m_vertices; }
+    virtual void                GetIndexData(unsigned int, IndexData_t& ind) const    { ind.clear(); }
 
 protected:
     VertexData_t    m_vertices;
-    IndexData_t     m_indices;
     LayoutData_t    m_layout;
 };
 
@@ -35,16 +34,17 @@ class CubeMesh : public BaseMesh
 public:
     CubeMesh()
     {
-        short indices[] = {
-            0, 1, 2, 1, 2, 3, // front
-            2, 3, 4, 2, 4, 5, // right
-            1, 6, 4, 1, 4, 3, // top
-            7, 5, 4, 7, 4, 6, // back
-            1, 0, 7, 1, 7, 6, // left
-            0, 2, 7, 2, 5, 7, // bottom
-        };
+#include "../models/Cube.mdl"
 
-        m_indices.assign(indices, indices + sizeof(indices)/sizeof(short));
+        m_layout.assign(layout, layout + sizeof(layout)/sizeof(LayoutData_t));
+
+        for (size_t i = 0; i < groupsCount; ++i)
+        {
+            m_indices[i].assign(indexGroups[i], indexGroups[i] + sizeof(indexGroups[i])/sizeof(short));
+        }
+
+        m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
+
         ILibrary::library()->RegisterMesh(ElementType::Cube, *this);
     }
 
@@ -58,13 +58,20 @@ public:
         return std::make_shared<CubeMesh>(*this);
     };
 
-    virtual const IndexData_t&  GetIndexData(unsigned int flags) const
+    virtual void GetIndexData(unsigned int flags, IndexData_t& indices) const
     {
-        flags;
-        return m_indices;
+        indices.clear();
+        for (size_t i = 0; i < 6; ++i )
+        {
+            if (flags & 1 << i)
+            {
+                indices.insert(indices.end(), m_indices[i].begin(), m_indices[i].end());
+            }
+        }
     }
 
 private:
+    IndexData_t     m_indices[6];
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());

@@ -33,7 +33,8 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
     // Y is UP direction
-    m_pillars.item(position.x, position.z).insert(position.y, desc.primitiveUID);
+    Element element = {desc.primitiveUID, direction, 0};
+    m_pillars.item(position.x, position.z).insert(position.y, element);
     if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
         for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
@@ -41,10 +42,22 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
             for (int z = desc.LFT.z; z < desc.RBB.z; ++z)
             {
                 if (x || z)
-                    m_pillars.item(position.x + x, position.z + z).insert(position.y, ElementType::Reference);
+                {
+                    Element ref = {ElementType::Reference, direction, 0};
+                    m_pillars.item(position.x + x, position.z + z).insert(position.y, ref);
+                }
             }
         }
     }
 }
 
+void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
+{
+    x; y; z;
+/*    if(m_pillars.get_item_at(x-1, z)->get_item_at(y))
+            m_pillars.get_item_at(x-1, z)->get_item_at(y)->neighbourhood |= Directions::nX;
+
+    if (m_pillars.get_item_at(x+1, z) && m_pillars.get_item_at(x+1, z)->get_item_at(y))
+        m_pillars.get_item_at(x+1, z)->get_item_at(y)->neighbourhood |= Directions::pX;*/
+}
 // eof

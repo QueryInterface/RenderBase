@@ -3,7 +3,7 @@
 
 using namespace ConstructorImpl;
 
-const Compartment& BuildingBerth::GetCompartment() const
+Compartment& BuildingBerth::GetCompartment()
 {
     //assert(index < m_compartments.size());
     return m_compartment;

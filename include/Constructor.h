@@ -32,13 +32,13 @@ enum Directions : unsigned char
 {
     NO = 0x00,
 
-    pX = 0x01,
-    pY = 0x02,
-    pZ = 0x04,
+    pX = (1 << 0),
+    pY = (1 << 1),
+    pZ = (1 << 2),
 
-    nX = 0x10,
-    nY = 0x20,
-    nZ = 0x40,
+    nX = (1 << 3),
+    nY = (1 << 4),
+    nZ = (1 << 5),
 
     All = 0xFF,
 };
