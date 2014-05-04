@@ -14,6 +14,13 @@ ComplexObject::~ComplexObject()
 
 }
 
+IObjectPtr ComplexObject::Clone() const
+{
+    std::shared_ptr<ComplexObject> obj = std::make_shared<ComplexObject>();
+    *obj = *this;
+    return std::static_pointer_cast<IObject>(obj);
+}
+
 void ComplexObject::SetPosition(Vector3<float> pos) 
 {
     m_position = pos;

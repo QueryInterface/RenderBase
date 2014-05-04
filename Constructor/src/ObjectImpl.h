@@ -8,11 +8,14 @@ using std::vector;
 
 class ComplexObject 
     : public IObject
-    , private enable_shared_from_this<ComplexObject> 
+    , public enable_shared_from_this<ComplexObject> 
 {
 public:
     ComplexObject();
     virtual ~ComplexObject();
+
+    IObjectPtr              Clone() const;
+
     virtual void            SetPosition(Vector3<float> pos) override;
     virtual Vector3<float>  GetPosition() const override;
 
