@@ -39,11 +39,10 @@ namespace ConstructorImpl
         void IterrateObject(std::function<void(size_t, size_t, Utils::RangeList<Element>&)> visitor) { m_pillars.for_each(visitor); };
 
     public:
-        void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction);
-
-    private:
+        void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction, bool updateNeighbours);
         void UpdateNeighbourhood(size_t x, size_t y, size_t z);
 
+    private:
         ConstructionDescription                         m_desc;
         Utils::QuadTree< Utils::RangeList<Element> >    m_pillars;
 

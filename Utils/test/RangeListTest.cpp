@@ -158,4 +158,15 @@ TEST_F(RangeVectorTest, Sizes)
     ASSERT_EQ( 151, m_ranges->size() );
     ASSERT_EQ( 100, m_ranges->start() );
 }
+/*
+TEST_F(RangeVectorTest, BeginIterator)
+{
+    m_ranges->insert(100, 10);
+    m_ranges->insert(150, 12);
+
+    auto iterator = m_ranges->begin();
+
+    ASSERT_EQ( 10, iterator.value() );
+}
+*/
 // eof

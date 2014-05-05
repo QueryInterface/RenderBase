@@ -14,13 +14,43 @@ namespace Utils
             size_t start;
             std::vector<T> items;
         };
+        /*
+        class iterator
+        {
+            friend class RangeList<T>;
 
+            std::list<range_desc>& m_ranges;
+            std::list<range_desc>::iterator m_range;
+
+            iterator(std::list<range_desc>& rs) : m_ranges(rs) 
+            {
+                m_range = m_ranges.begin();
+            }
+        public:
+            iterator& operator ++() 
+            {
+                ++m_range;
+                return *this;
+            }
+
+            iterator& operator --() 
+            {
+                return *this;
+            }
+
+            T& value()
+            {
+                return *items;
+            }
+        };
+        */
     public:
-        RangeList() {}
+        RangeList() /*: m_iterator(m_rs)*/ {}
         ~RangeList() {}
 
         size_t ranges_count() {return m_rs.size();}
 
+        // get item by index
         T* get_item_at(size_t index) 
         {
             auto range = m_rs.begin();
@@ -34,6 +64,7 @@ namespace Utils
             return nullptr; 
         }
 
+        // insert item to the range list
         void insert(size_t index, T value) 
         {
             auto range = m_rs.begin();
@@ -52,6 +83,7 @@ namespace Utils
                         desc.items.push_back(value);
                         if (range != m_rs.end())
                         {
+                            // mergetwo items if item is inserted between 2 neighbour ranges
                             auto next = range;
                             if (++next != m_rs.end() && desc.start + desc.items.size() == next->start)
                             {
@@ -60,18 +92,18 @@ namespace Utils
                             }
                         }
                     }
-                    else
+                    else // replacevalueif we are in range
                         desc.items[local_index] = value;
                     return;
                 }
             }
-
+            // insert item to the beginning of the range
             if (m_rs.end() != range && index + 1 == range->start)
             {
                 range->items.insert(range->items.begin(), value);
                 --range->start;
             }
-            else
+            else // add new range
             {
                 range_desc desc;
                 desc.start = index;
@@ -116,8 +148,14 @@ namespace Utils
         {
             return m_rs.size() ? m_rs.back().start + m_rs.back().items.size() : 0;
         }
-
+        /*
+        iterator& begin()
+        {
+            return m_iterator;
+        }
+        */
     private:
+        //iterator m_iterator;
         std::list<range_desc> m_rs; //list of ranges
     };
 }

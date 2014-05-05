@@ -28,7 +28,7 @@ namespace ConstructorImpl
         ~BuildingBerth() {};
 
         // Attaches element to Complartment. if new compartment was created function returns true;
-        bool SetElement(ElementType type, const Vector3D& position, Directions direction);
+        bool SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours = false);
 
 //        size_t GetCompartmentsCount() const {return m_compartments.size();}
         Compartment& GetCompartment();

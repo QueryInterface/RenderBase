@@ -115,9 +115,9 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
 
 TEST_F(BuildingBerthTest, ElementNeighbourhood)
 {
-    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY);
-    m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY);
-    m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
     Element element;
     int i = 0;
     m_builder->GetCompartment().IterrateObject(

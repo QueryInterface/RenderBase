@@ -18,7 +18,7 @@ Compartment::Compartment()
     m_desc.RBB = Vector3D(0,0,0);
 }
 
-void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction)
+void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction, bool updateNeighbours)
 {
     m_desc.direction = direction;
     m_desc.primitiveUID = desc.primitiveUID;
@@ -35,7 +35,12 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
     // Y is UP direction
     Element element = {desc.primitiveUID, direction, 0};
     m_pillars.item(position.x, position.z).insert(position.y, element);
-    UpdateNeighbourhood(position.x, position.y, position.z);
+
+    // notify neighbours aboutnew element
+    if (updateNeighbours)
+    {
+        UpdateNeighbourhood(position.x, position.y, position.z);
+    }
 
     if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
     {
@@ -55,43 +60,69 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
 
 void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 {
-    Element* self = m_pillars.get_item_at(x,z)->get_item_at(y);
-    Element* item = m_pillars.get_item_at(x,z)->get_item_at(y - 1);
+    auto pillar = m_pillars.get_item_at(x,z);
+    assert(nullptr != pillar);
+
+    Element* self = pillar->get_item_at(y);
+    Element* item = nullptr;
+
+    assert(self);
+
+    item = pillar->get_item_at(y - 1);
     if (item)
     {
         item->neighbourhood |= Directions::nY;
         self->neighbourhood |= Directions::pY;
     }
-    item = m_pillars.get_item_at(x,z)->get_item_at(y + 1);
+    item = pillar->get_item_at(y + 1);
     if (item)
     {
         item->neighbourhood |= Directions::pY;
         self->neighbourhood |= Directions::nY;
     }
 
-
-    if (m_pillars.get_item_at(x-1, z) && m_pillars.get_item_at(x-1, z)->get_item_at(y))
+    pillar = m_pillars.get_item_at(x - 1, z);
+    if (pillar)
     {
-        m_pillars.get_item_at(x-1, z)->get_item_at(y)->neighbourhood |= Directions::nX;
-        self->neighbourhood |= Directions::pX;
+        item = pillar->get_item_at(y);
+        if (item)
+        {
+            item->neighbourhood |= Directions::nX;
+            self->neighbourhood |= Directions::pX;
+        }
     }
 
-    if (m_pillars.get_item_at(x+1, z) && m_pillars.get_item_at(x+1, z)->get_item_at(y))
+    pillar = m_pillars.get_item_at(x + 1, z);
+    if (pillar)
     {
-        m_pillars.get_item_at(x+1, z)->get_item_at(y)->neighbourhood |= Directions::pX;
-        self->neighbourhood |= Directions::nX;
+        item = pillar->get_item_at(y);
+        if (item)
+        {
+            item->neighbourhood |= Directions::pX;
+            self->neighbourhood |= Directions::nX;
+        }
     }
 
-    if (m_pillars.get_item_at(x, z-1) && m_pillars.get_item_at(x, z-1)->get_item_at(y))
+    pillar = m_pillars.get_item_at(x, z - 1);
+    if (pillar)
     {
-        m_pillars.get_item_at(x, z-1)->get_item_at(y)->neighbourhood |= Directions::nZ;
-        self->neighbourhood |= Directions::pZ;
+        item = pillar->get_item_at(y);
+        if (item)
+        {
+            item->neighbourhood |= Directions::nZ;
+            self->neighbourhood |= Directions::pZ;
+        }
     }
 
-    if (m_pillars.get_item_at(x, z+1) && m_pillars.get_item_at(x, z+1)->get_item_at(y))
+    pillar = m_pillars.get_item_at(x, z + 1);
+    if (pillar)
     {
-        m_pillars.get_item_at(x, z+1)->get_item_at(y)->neighbourhood |= Directions::pZ;
-        self->neighbourhood |= Directions::nZ;
+        item = pillar->get_item_at(y);
+        if (item)
+        {
+            item->neighbourhood |= Directions::pZ;
+            self->neighbourhood |= Directions::nZ;
+        }
     }
 }
 // eof

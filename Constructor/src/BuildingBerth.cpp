@@ -9,14 +9,14 @@ Compartment& BuildingBerth::GetCompartment()
     return m_compartment;
 }
 
-bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Directions direction)
+bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours)
 {
     if (type == ElementType::Space) 
     {
         return false;
     }
 
-    m_compartment.SetElement(ILibrary::library()->GetConstruction(type), position, direction);
+    m_compartment.SetElement(ILibrary::library()->GetConstruction(type), position, direction, updateNeighbours);
     return true;
 }
 // eof
