@@ -97,8 +97,8 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::nX;
-            self->neighbourhood |= Directions::pX;
+            item->neighbourhood |= Directions::pX;
+            self->neighbourhood |= Directions::nX;
         }
     }
 
@@ -108,8 +108,8 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::pX;
-            self->neighbourhood |= Directions::nX;
+            item->neighbourhood |= Directions::nX;
+            self->neighbourhood |= Directions::pX;
         }
     }
 
@@ -119,8 +119,8 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::nZ;
-            self->neighbourhood |= Directions::pZ;
+            item->neighbourhood |= Directions::pZ;
+            self->neighbourhood |= Directions::nZ;
         }
     }
 
@@ -130,8 +130,8 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::pZ;
-            self->neighbourhood |= Directions::nZ;
+            item->neighbourhood |= Directions::nZ;
+            self->neighbourhood |= Directions::pZ;
         }
     }
 }

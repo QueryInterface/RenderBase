@@ -94,6 +94,22 @@ TEST_F(BuildingBerthTest, ConstructSolidQube)
     EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
 }
 
+TEST_F(BuildingBerthTest, IterateThroughSolidCube)
+{
+    const size_t cubeScales = 64;
+    for (size_t x = 0; x < cubeScales; ++x)
+    {
+        for (size_t y = 0; y < cubeScales; ++y)
+        {
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                 m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY);
+            }
+        }
+    }
+    ASSERT_NO_THROW ( m_builder->GetCompartment().IterrateObject([&](size_t, size_t, size_t, Element&){}));
+}
+
 TEST_F(BuildingBerthTest, ConstructSpongeSystem)
 {
     const size_t cubeScales = 64;
