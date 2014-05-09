@@ -2,6 +2,7 @@
 #include <list>
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace Utils
 {
@@ -14,38 +15,9 @@ namespace Utils
             size_t start;
             std::vector<T> items;
         };
-        /*
-        class iterator
-        {
-            friend class RangeList<T>;
 
-            std::list<range_desc>& m_ranges;
-            std::list<range_desc>::iterator m_range;
-
-            iterator(std::list<range_desc>& rs) : m_ranges(rs) 
-            {
-                m_range = m_ranges.begin();
-            }
-        public:
-            iterator& operator ++() 
-            {
-                ++m_range;
-                return *this;
-            }
-
-            iterator& operator --() 
-            {
-                return *this;
-            }
-
-            T& value()
-            {
-                return *items;
-            }
-        };
-        */
     public:
-        RangeList() /*: m_iterator(m_rs)*/ {}
+        RangeList() {}
         ~RangeList() {}
 
         size_t ranges_count() {return m_rs.size();}
@@ -148,15 +120,22 @@ namespace Utils
         {
             return m_rs.size() ? m_rs.back().start + m_rs.back().items.size() : 0;
         }
-        /*
-        iterator& begin()
+
+        void for_each(std::function<void(size_t, T&)> visitor)
         {
-            return m_iterator;
+            for (auto range : m_rs)
+            {
+                for (size_t index = 0; index != range.items.size(); ++index)
+                {
+                    visitor(range.start + index, range.items[index]);
+                }
+            }
         }
-        */
     private:
         //iterator m_iterator;
         std::list<range_desc> m_rs; //list of ranges
+        //duh! this is the way to forcecompiler to check type of iterator
+        //typename std::list<range_desc>::iterator m_it;
     };
 }
 // eof

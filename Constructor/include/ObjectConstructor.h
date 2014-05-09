@@ -29,6 +29,7 @@ namespace ConstructorImpl
 // on a low level object consists from a set of compartments
     class Compartment : public IConstructable
     {
+        typedef Utils::RangeList<Element> Pillar_t;
     public:
         // IElement interface
         const ConstructionDescription& ConstructionDesc() const {return m_desc;};
@@ -36,7 +37,7 @@ namespace ConstructorImpl
         Compartment();
         virtual ~Compartment() {};
 
-        void IterrateObject(std::function<void(size_t, size_t, Utils::RangeList<Element>&)> visitor) { m_pillars.for_each(visitor); };
+        void IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor);
 
     public:
         void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction, bool updateNeighbours);
@@ -44,7 +45,7 @@ namespace ConstructorImpl
 
     private:
         ConstructionDescription                         m_desc;
-        Utils::QuadTree< Utils::RangeList<Element> >    m_pillars;
+        Utils::QuadTree< Pillar_t >    m_pillars;
 
         Compartment(const Compartment& arg);
         const Compartment& operator=(const Compartment& arg);

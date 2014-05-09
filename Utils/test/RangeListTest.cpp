@@ -158,6 +158,38 @@ TEST_F(RangeVectorTest, Sizes)
     ASSERT_EQ( 151, m_ranges->size() );
     ASSERT_EQ( 100, m_ranges->start() );
 }
+
+TEST_F(RangeVectorTest, ForEachValue)
+{
+    m_ranges->insert(100, 10);
+    int value = 0;
+    m_ranges->for_each([&](size_t x, int v) {
+        x; v;
+        value = v;
+    });
+    ASSERT_EQ(10, value);
+}
+
+TEST_F(RangeVectorTest, ForEachItems)
+{
+    size_t reference = 0;
+    for (int i = 9; i >= 0; --i)
+    {
+        for (size_t j = 1; j < 10; ++j)
+        {
+            m_ranges->insert(i*10 + j, i*10 + j);
+            ++reference;
+        }
+    }
+    ASSERT_EQ(10, m_ranges->ranges_count());
+
+    size_t count = 0;
+    m_ranges->for_each([&](size_t x, int v) {
+        x; v;
+        ++count;
+    });
+    ASSERT_EQ(reference, count);
+}
 /*
 TEST_F(RangeVectorTest, BeginIterator)
 {

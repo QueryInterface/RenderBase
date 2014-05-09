@@ -58,6 +58,16 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
     }
 }
 
+void Compartment::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
+{
+    //ACHTUNG: double lambda!!!!
+    m_pillars.for_each([&](size_t x, size_t z, Pillar_t& pillar){
+        pillar.for_each([&](size_t y, Element& e){
+            visitor(x,y,z,e);
+        });
+    });
+}
+
 void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 {
     auto pillar = m_pillars.get_item_at(x,z);
@@ -71,14 +81,14 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     item = pillar->get_item_at(y - 1);
     if (item)
     {
-        item->neighbourhood |= Directions::nY;
-        self->neighbourhood |= Directions::pY;
+        item->neighbourhood |= Directions::pY;
+        self->neighbourhood |= Directions::nY;
     }
     item = pillar->get_item_at(y + 1);
     if (item)
     {
-        item->neighbourhood |= Directions::pY;
-        self->neighbourhood |= Directions::nY;
+        item->neighbourhood |= Directions::nY;
+        self->neighbourhood |= Directions::pY;
     }
 
     pillar = m_pillars.get_item_at(x - 1, z);
