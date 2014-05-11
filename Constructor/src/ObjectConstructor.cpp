@@ -1,4 +1,5 @@
 #include "ObjectConstructor.h"
+#include "Library.h"
 #include <assert.h>
 
 using namespace ConstructorImpl;
@@ -134,5 +135,24 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
             self->neighbourhood |= Directions::pZ;
         }
     }
+}
+
+void Compartment::ConstructMesh()
+{
+    IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
+    {
+        x;y;z;
+        const IMesh& mesh = ILibrary::library()->GetMesh(e.type);
+        m_vertices.insert(m_vertices.end(), mesh.GetMeshBuffer().begin(), mesh.GetMeshBuffer().end());
+        IMesh::IndexData_t indices;
+        // TODO: I don't like the interface
+        mesh.GetIndexData(~e.neighbourhood, indices);
+        m_indices.insert(m_indices.end(), indices.begin(), indices.end());
+    });
+}
+
+void Compartment::GetIndexData(unsigned int, IndexData_t& indices) const
+{
+    indices.assign(m_indices.begin(), m_indices.end());
 }
 // eof

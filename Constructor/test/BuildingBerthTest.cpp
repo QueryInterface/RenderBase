@@ -119,7 +119,7 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
         {
             for (size_t z = 0; z < cubeScales; ++z)
             {
-                if (x+y+z % 2)
+                if ((x+y+z) % 2)
                     m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY);
             }
         }
@@ -167,5 +167,37 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
                 FAIL();
             }
     }));
+}
+
+TEST_F(BuildingBerthTest, ElementsMesh)
+{
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,4,0), Directions::pY, true);
+
+    ASSERT_NO_THROW(m_builder->GetCompartment().ConstructMesh());
+
+    const IMesh::VertexData_t& vertices = m_builder->GetCompartment().GetMeshBuffer();
+    IMesh::IndexData_t indices;
+    m_builder->GetCompartment().GetIndexData(0, indices);
+
+    ASSERT_EQ(8 * 3 * 3, vertices.size());
+    ASSERT_EQ(36 * 3, indices.size());
+}
+
+TEST_F(BuildingBerthTest, SinglePillarMesh)
+{
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
+
+    ASSERT_NO_THROW(m_builder->GetCompartment().ConstructMesh());
+
+    const IMesh::VertexData_t& vertices = m_builder->GetCompartment().GetMeshBuffer();
+    IMesh::IndexData_t indices;
+    m_builder->GetCompartment().GetIndexData(0, indices);
+
+    ASSERT_EQ(8 * 3 * 3, vertices.size());
+    ASSERT_EQ(84, indices.size());
 }
 // eof
