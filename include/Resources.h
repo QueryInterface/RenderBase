@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <vector>
 
 struct IMesh;
 struct ITexture;

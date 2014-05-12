@@ -13,6 +13,9 @@
 
 #include "Constructor.h"
 #include "ObjectConstructor.h"
+#include "HullConstructor.h"
+
+struct IMesh;
 
 namespace ConstructorImpl
 {
@@ -32,8 +35,11 @@ namespace ConstructorImpl
 
 //        size_t GetCompartmentsCount() const {return m_compartments.size();}
         Compartment& GetCompartment();
+        IMesh& GetHull();
+
     private:
         Compartment m_compartment;
+        Hull        m_hull;
     };
 
 }//end  of namespace constructor

@@ -14,6 +14,7 @@ using namespace ConstructorImpl;
 
 Compartment::Compartment() 
     : m_pillars(256)
+    , m_isDirty(false)
 {
     m_desc.LFT = Vector3D(INT32_MAX, INT32_MAX, INT32_MAX);
     m_desc.RBB = Vector3D(0,0,0);
@@ -21,6 +22,8 @@ Compartment::Compartment()
 
 void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction, bool updateNeighbours)
 {
+    m_isDirty = true;
+
     m_desc.direction = direction;
     m_desc.primitiveUID = desc.primitiveUID;
 
@@ -137,22 +140,4 @@ void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
-void Compartment::ConstructMesh()
-{
-    IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
-    {
-        x;y;z;
-        const IMesh& mesh = ILibrary::library()->GetMesh(e.type);
-        m_vertices.insert(m_vertices.end(), mesh.GetMeshBuffer().begin(), mesh.GetMeshBuffer().end());
-        IMesh::IndexData_t indices;
-        // TODO: I don't like the interface
-        mesh.GetIndexData(~e.neighbourhood, indices);
-        m_indices.insert(m_indices.end(), indices.begin(), indices.end());
-    });
-}
-
-void Compartment::GetIndexData(unsigned int, IndexData_t& indices) const
-{
-    indices.assign(m_indices.begin(), m_indices.end());
-}
 // eof

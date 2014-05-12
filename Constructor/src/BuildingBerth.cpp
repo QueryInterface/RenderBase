@@ -1,5 +1,6 @@
 #include "BuildingBerth.h"
 #include "Library.h"
+#include "Resources.h"
 
 using namespace ConstructorImpl;
 
@@ -18,5 +19,15 @@ bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Direc
 
     m_compartment.SetElement(ILibrary::library()->GetConstruction(type), position, direction, updateNeighbours);
     return true;
+}
+
+IMesh& BuildingBerth::GetHull()
+{
+    if (m_compartment.IsOutdated())
+    {
+        m_compartment.ResetCore();
+        m_hull.ConstructMesh(m_compartment);
+    }
+    return m_hull;
 }
 // eof

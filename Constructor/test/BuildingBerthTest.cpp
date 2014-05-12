@@ -175,11 +175,11 @@ TEST_F(BuildingBerthTest, ElementsMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,4,0), Directions::pY, true);
 
-    ASSERT_NO_THROW(m_builder->GetCompartment().ConstructMesh());
+    const IMesh& mesh = m_builder->GetHull();
 
-    const IMesh::VertexData_t& vertices = m_builder->GetCompartment().GetMeshBuffer();
+    const IMesh::VertexData_t& vertices = mesh.GetMeshBuffer();
     IMesh::IndexData_t indices;
-    m_builder->GetCompartment().GetIndexData(0, indices);
+    mesh.GetIndexData(0, indices);
 
     ASSERT_EQ(8 * 3 * 3, vertices.size());
     ASSERT_EQ(36 * 3, indices.size());
@@ -191,11 +191,11 @@ TEST_F(BuildingBerthTest, SinglePillarMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
 
-    ASSERT_NO_THROW(m_builder->GetCompartment().ConstructMesh());
+    const IMesh& mesh = m_builder->GetHull();
 
-    const IMesh::VertexData_t& vertices = m_builder->GetCompartment().GetMeshBuffer();
+    const IMesh::VertexData_t& vertices = mesh.GetMeshBuffer();
     IMesh::IndexData_t indices;
-    m_builder->GetCompartment().GetIndexData(0, indices);
+    mesh.GetIndexData(0, indices);
 
     ASSERT_EQ(8 * 3 * 3, vertices.size());
     ASSERT_EQ(84, indices.size());
