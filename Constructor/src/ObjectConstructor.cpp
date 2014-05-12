@@ -12,7 +12,7 @@ using namespace ConstructorImpl;
 #define max(a, b) (a)>(b) ? (a) : (b)
 #endif
 
-Compartment::Compartment() 
+Core::Core() 
     : m_pillars(256)
     , m_isDirty(false)
 {
@@ -20,7 +20,7 @@ Compartment::Compartment()
     m_desc.RBB = Vector3D(0,0,0);
 }
 
-void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction, bool updateNeighbours)
+void Core::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction, bool updateNeighbours)
 {
     m_isDirty = true;
 
@@ -62,7 +62,7 @@ void Compartment::SetElement(const ConstructionDescription& desc, const Vector3D
     }
 }
 
-void Compartment::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
+void Core::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
 {
     //ACHTUNG: double lambda!!!!
     m_pillars.for_each([&](size_t x, size_t z, Pillar_t& pillar){
@@ -72,7 +72,7 @@ void Compartment::IterrateObject(std::function<void(size_t, size_t, size_t, Elem
     });
 }
 
-void Compartment::UpdateNeighbourhood(size_t x, size_t y, size_t z)
+void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 {
     auto pillar = m_pillars.get_item_at(x,z);
     assert(nullptr != pillar);

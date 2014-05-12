@@ -29,16 +29,16 @@ namespace ConstructorImpl
         Directions      direction;
         unsigned int    neighbourhood;
     };
-// on a low level object consists from a set of compartments
-    class Compartment : public IConstructable
+// on a low level object consists from a set of Cores
+    class Core : public IConstructable
     {
         typedef Utils::RangeList<Element> Pillar_t;
     public:
         // IConstructable interface
         const ConstructionDescription& ConstructionDesc() const {return m_desc;};
     public:
-        Compartment();
-        virtual ~Compartment() {};
+        Core();
+        virtual ~Core() {};
 
         // Adds element to specified position
         void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction, bool updateNeighbours);
@@ -46,7 +46,7 @@ namespace ConstructorImpl
         // Updates neighborhoodof component in position x, y, z
         void UpdateNeighbourhood(size_t x, size_t y, size_t z);
 
-        // Allows to iterrate through compartment components
+        // Allows to iterrate through Core components
         void IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor);
 
         // is Outdated
@@ -59,8 +59,8 @@ namespace ConstructorImpl
 
         bool                            m_isDirty;
     private:
-        Compartment(const Compartment& arg);
-        const Compartment& operator=(const Compartment& arg);
+        Core(const Core& arg);
+        const Core& operator=(const Core& arg);
     };
 
 }//end  of namespace constructor

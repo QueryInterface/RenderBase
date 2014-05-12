@@ -29,7 +29,7 @@ TEST_F(BuildingBerthTest, AddPrimitive)
 {
     ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY));
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), desc.RBB);
 }
 
@@ -37,7 +37,7 @@ TEST_F(BuildingBerthTest, AddPrimitiveInNonZeroPosition)
 {
     ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(2,5,3), Directions::pY));
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,1), (desc.RBB - desc.LFT));
 }
 
@@ -53,7 +53,7 @@ TEST_F(BuildingBerthTest, AddSetOfPrimitives3X3X3)
     ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(1,2,1), Directions::pY));
     ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, Vector3D(2,0,2), Directions::pY));
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,3,3), desc.RBB);
 }
 
@@ -61,7 +61,7 @@ TEST_F(BuildingBerthTest, AddBigPrimitive3X3X1)
 {
     m_builder->SetElement(ElementType::CilindricPlatform, Vector3D(1,0,1), Directions::pY);
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(3,1,3), (desc.RBB));
 }
 
@@ -72,7 +72,7 @@ TEST_F(BuildingBerthTest, ConstructPillar)
         m_builder->SetElement(ElementType::Cube, Vector3D(0,0,i), Directions::pY);
     }
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(1,1,100), (desc.RBB));
 }
 
@@ -90,7 +90,7 @@ TEST_F(BuildingBerthTest, ConstructSolidQube)
         }
     }
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
 }
 
@@ -107,7 +107,7 @@ TEST_F(BuildingBerthTest, IterateThroughSolidCube)
             }
         }
     }
-    ASSERT_NO_THROW ( m_builder->GetCompartment().IterrateObject([&](size_t, size_t, size_t, Element&){}));
+    ASSERT_NO_THROW ( m_builder->GetCore().IterrateObject([&](size_t, size_t, size_t, Element&){}));
 }
 
 TEST_F(BuildingBerthTest, ConstructSpongeSystem)
@@ -125,7 +125,7 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
         }
     }
 
-    const ConstructionDescription desc = m_builder->GetCompartment().ConstructionDesc();
+    const ConstructionDescription desc = m_builder->GetCore().ConstructionDesc();
     EXPECT_EQ(Vector3D(cubeScales, cubeScales, cubeScales), (desc.RBB));
 }
 
@@ -143,7 +143,7 @@ TEST_F(BuildingBerthTest, IterateThroughSpongeSystem)
             }
         }
     }
-    ASSERT_NO_FATAL_FAILURE ( m_builder->GetCompartment().IterrateObject([&](size_t x, size_t y, size_t z, Element&){
+    ASSERT_NO_FATAL_FAILURE ( m_builder->GetCore().IterrateObject([&](size_t x, size_t y, size_t z, Element&){
         ASSERT_EQ(1, ((x+y+z) % 2));
     }));
 }
@@ -153,7 +153,7 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
-    ASSERT_NO_FATAL_FAILURE (m_builder->GetCompartment().IterrateObject(
+    ASSERT_NO_FATAL_FAILURE (m_builder->GetCore().IterrateObject(
         [&](size_t, size_t y, size_t, Element& item){
             switch(y)
             {

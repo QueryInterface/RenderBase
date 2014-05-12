@@ -18,8 +18,8 @@
 
 namespace ConstructorImpl
 {
-    class Compartment;
-// on a low level object consists from a set of compartments
+    class Core;
+// on a low level object consists from a set of Cores
     class Hull : public IMesh
     {
     public:
@@ -38,7 +38,7 @@ namespace ConstructorImpl
         virtual ~Hull() {};
 
         // Construct mesh for object
-        void ConstructMesh(Compartment& objectCore);
+        void ConstructMesh(Core& objectCore);
 
     private:
         LayoutData_t                    m_layout;

@@ -30,15 +30,15 @@ namespace ConstructorImpl
         BuildingBerth() {};
         ~BuildingBerth() {};
 
-        // Attaches element to Complartment. if new compartment was created function returns true;
+        // Attaches element to Complartment. if new Core was created function returns true;
         bool SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours = false);
 
-//        size_t GetCompartmentsCount() const {return m_compartments.size();}
-        Compartment& GetCompartment();
+//        size_t GetCoresCount() const {return m_Cores.size();}
+        Core&  GetCore();
         IMesh& GetHull();
 
     private:
-        Compartment m_compartment;
+        Core        m_core;
         Hull        m_hull;
     };
 

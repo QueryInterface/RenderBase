@@ -17,7 +17,7 @@ Hull::Hull()
 {
 }
 
-void Hull::ConstructMesh(Compartment& objectCore)
+void Hull::ConstructMesh(Core& objectCore)
 {
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {

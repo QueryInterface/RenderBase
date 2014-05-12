@@ -4,10 +4,10 @@
 
 using namespace ConstructorImpl;
 
-Compartment& BuildingBerth::GetCompartment()
+Core& BuildingBerth::GetCore()
 {
-    //assert(index < m_compartments.size());
-    return m_compartment;
+    //assert(index < m_cores.size());
+    return m_core;
 }
 
 bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours)
@@ -17,16 +17,16 @@ bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Direc
         return false;
     }
 
-    m_compartment.SetElement(ILibrary::library()->GetConstruction(type), position, direction, updateNeighbours);
+    m_core.SetElement(ILibrary::library()->GetConstruction(type), position, direction, updateNeighbours);
     return true;
 }
 
 IMesh& BuildingBerth::GetHull()
 {
-    if (m_compartment.IsOutdated())
+    if (m_core.IsOutdated())
     {
-        m_compartment.ResetCore();
-        m_hull.ConstructMesh(m_compartment);
+        m_core.ResetCore();
+        m_hull.ConstructMesh(m_core);
     }
     return m_hull;
 }
