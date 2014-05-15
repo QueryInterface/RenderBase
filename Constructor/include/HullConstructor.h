@@ -22,11 +22,12 @@ namespace ConstructorImpl
 // on a low level object consists from a set of Cores
     class Hull : public IMesh
     {
+        typedef std::vector<LayoutItem>     LayoutData_t;
+        typedef std::vector<float>          VertexData_t;
+        typedef std::vector<unsigned int>   IndexData_t;
     public:
         // IMesh interface
-        virtual const LayoutData_t& GetLayout()     const {return m_layout;};
-        virtual const VertexData_t& GetMeshBuffer() const {return m_vertices;};
-        virtual void GetIndexData(unsigned int, IndexData_t&) const;
+        virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const;
 
         // IHandle interface
         virtual void Release() {};

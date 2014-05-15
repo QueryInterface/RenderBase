@@ -22,17 +22,19 @@ void Hull::ConstructMesh(Core& objectCore)
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {
         x;y;z;
-        const IMesh& mesh = ILibrary::library()->GetMesh(e.type);
-        m_vertices.insert(m_vertices.end(), mesh.GetMeshBuffer().begin(), mesh.GetMeshBuffer().end());
-        IndexData_t indices;
-        // TODO: I don't like the interface
-        mesh.GetIndexData(~e.neighbourhood, indices);
-        m_indices.insert(m_indices.end(), indices.begin(), indices.end());
+        GeometryDesc desc;
+        ILibrary::library()->GetMesh(e.type).GetGeometryDesc(~e.neighbourhood, desc);
+        for (size_t i = 0; i < desc.groups.size(); ++i)
+            m_indices.insert(m_indices.end(), desc.groups[i].indices, desc.groups[i].indices + desc.groups[i].count);
     });
 }
 
-void Hull::GetIndexData(unsigned int, IndexData_t& indices) const
+void Hull::GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const
 {
-    indices.assign(m_indices.begin(), m_indices.end());
+    flags;
+    MeshComponent mc;
+    mc.indices = m_indices.data();
+    mc.count = m_indices.size();
+    out_descriptor.groups.push_back(mc);
 }
 // eof

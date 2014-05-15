@@ -27,14 +27,20 @@ struct IMesh
         unsigned int    offset;
     };
 
-    typedef std::vector<LayoutItem> LayoutData_t;
-    typedef std::vector<float>      VertexData_t;
-    typedef std::vector<short>      IndexData_t;
+    struct MeshComponent
+    {
+        const float*          geometry;
+        const unsigned int*   indices;  // might be NULL
+        unsigned int          count;
+    };
 
-    virtual const LayoutData_t& GetLayout()     const = 0;
-    virtual const VertexData_t& GetMeshBuffer() const = 0;
-    virtual void GetIndexData(unsigned int, IndexData_t&) const = 0; 
+    struct GeometryDesc
+    {
+        std::vector<LayoutItem>     layout;
+        std::vector<MeshComponent>  groups;
+    };
 
+    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const = 0;
 };
 
 struct ITexture : public IResource 

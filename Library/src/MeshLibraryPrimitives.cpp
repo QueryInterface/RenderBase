@@ -7,13 +7,15 @@ class BaseMesh : public IMesh
 public:
     BaseMesh() { }
 
-    virtual const LayoutData_t& GetLayout() const                                 { return m_layout;   }
-    virtual const VertexData_t& GetMeshBuffer() const                             { return m_vertices; }
-    virtual void                GetIndexData(unsigned int, IndexData_t& ind) const    { ind.clear(); }
+    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    {
+        flags;
+        out_descriptor.groups.clear();
+    }
 
 protected:
-    VertexData_t    m_vertices;
-    LayoutData_t    m_layout;
+    std::vector<float>      m_vertices;
+    std::vector<LayoutItem> m_layout;
 };
 
 // Space mesh, this mesh will be provided as dummy mesh object
@@ -36,7 +38,7 @@ public:
     {
 #include "../models/Cube.mdl"
 
-        m_layout.assign(layout, layout + sizeof(layout)/sizeof(LayoutData_t));
+        m_layout.assign(layout, layout + sizeof(layout)/sizeof(LayoutItem));
 
         for (size_t i = 0; i < groupsCount; ++i)
         {
@@ -58,20 +60,24 @@ public:
         return std::make_shared<CubeMesh>(*this);
     };
 
-    virtual void GetIndexData(unsigned int flags, IndexData_t& indices) const
+    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
     {
-        indices.clear();
+        out_descriptor.groups.clear();
         for (size_t i = 0; i < 6; ++i )
         {
             if (flags & 1 << i)
             {
-                indices.insert(indices.end(), m_indices[i].begin(), m_indices[i].end());
+                MeshComponent mc;
+                mc.geometry = m_vertices.data();
+                mc.indices = m_indices[i].data();
+                mc.count = m_indices[i].size();
+                out_descriptor.groups.push_back(mc);
             }
         }
     }
 
 private:
-    IndexData_t     m_indices[6];
+    std::vector<unsigned int> m_indices[6];
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());

@@ -175,14 +175,14 @@ TEST_F(BuildingBerthTest, ElementsMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,4,0), Directions::pY, true);
 
-    const IMesh& mesh = m_builder->GetHull();
+    IMesh::GeometryDesc desc;
+    m_builder->GetHull().GetGeometryDesc(0, desc);
 
-    const IMesh::VertexData_t& vertices = mesh.GetMeshBuffer();
-    IMesh::IndexData_t indices;
-    mesh.GetIndexData(0, indices);
+    size_t verticesTotal = 0;
+    for (size_t i = 0; i < desc.groups.size(); ++i)
+        verticesTotal += desc.groups[i].count;
 
-    ASSERT_EQ(8 * 3 * 3, vertices.size());
-    ASSERT_EQ(36 * 3, indices.size());
+    ASSERT_EQ(36 * 3, verticesTotal);
 }
 
 TEST_F(BuildingBerthTest, SinglePillarMesh)
@@ -191,13 +191,13 @@ TEST_F(BuildingBerthTest, SinglePillarMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
 
-    const IMesh& mesh = m_builder->GetHull();
+    IMesh::GeometryDesc desc;
+    m_builder->GetHull().GetGeometryDesc(0, desc);
 
-    const IMesh::VertexData_t& vertices = mesh.GetMeshBuffer();
-    IMesh::IndexData_t indices;
-    mesh.GetIndexData(0, indices);
+    size_t verticesTotal = 0;
+    for (size_t i = 0; i < desc.groups.size(); ++i)
+        verticesTotal += desc.groups[i].count;
 
-    ASSERT_EQ(8 * 3 * 3, vertices.size());
-    ASSERT_EQ(84, indices.size());
+    ASSERT_EQ(84, verticesTotal);
 }
 // eof
