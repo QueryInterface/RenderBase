@@ -1,62 +1,34 @@
 #include "ResourceOverseerImpl.h"
 
-LoadedMesh::LoadedMesh()
+ResourceOverseerImpl::ResourceOverseerImpl()
 {
 
 }
 
-LoadedMesh::~LoadedMesh()
-{
-
-}
-
-void LoadedMesh::Release()
-{
-    delete this;
-}
-
-const LayoutData_t& LoadedMesh::GetLayout()     const
-{
-    return m_layoutData;
-}
-
-const VertexData_t& LoadedMesh::GetMeshBuffer() const
-{
-    return m_vertexData;
-}
-
-const IndexData_t& LoadedMesh::GetIndexData(unsigned int flags) const
-{
-    return m_indexData;
-}
-
-
-IResourceOverseerImpl::IResourceOverseerImpl()
-{
-
-}
-
-IResourceOverseerImpl::~IResourceOverseerImpl()
+ResourceOverseerImpl::~ResourceOverseerImpl()
 {
     
 }
 
-IMeshPtr ResourceOverseerImpl::CreateMesh(const wstring& path)
+IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
 {
+    path;
     return nullptr;
 }
 
-ITexturePtr ResourceOverseerImpl::CreateTexture(const wstring& path)
+ITexturePtr ResourceOverseerImpl::LoadTexture(const wstring& path)
 {
+    path;
     return nullptr;
 }
 
-IScriptPtr ResourceOverseerImpl::CreateScript(const wstring& path)
+IScriptPtr ResourceOverseerImpl::LoadScript(const wstring& path)
 {
+    path;
     return nullptr;
 }
 
-static IResourceOverseer* IResourceOverseer::instance()
+IResourceOverseer* IResourceOverseer::Instance()
 {
     static std::unique_ptr<IResourceOverseer> s_resourceOverseer;
     if (!s_resourceOverseer)

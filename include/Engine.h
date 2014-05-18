@@ -14,8 +14,6 @@ using std::shared_ptr;
 using std::string;
 using std::wstring;
 
-struct ISceneElement;
-struct ISceneElementHandle;
 struct IScene;
 
 struct IProgram;
@@ -23,18 +21,12 @@ struct ILight;
 struct ICamera;
 
 struct IWindow;
-struct IEngine;
 
-typedef shared_ptr<ISceneElement>       ISceneElementPtr;
-typedef shared_ptr<ISceneElementHandle> ISceneElementHandlePtr;
 typedef shared_ptr<IScene>              IScenePtr;
 
 typedef shared_ptr<IProgram>            IProgramPtr;
 typedef shared_ptr<ILight>              ILightPtr;
 typedef shared_ptr<ICamera>             ICameraPtr;
-
-typedef shared_ptr<IWindow>             IWindowPtr;
-typedef shared_ptr<IEngine>             IEnginePtr;
 
 struct EventCallback 
 {
@@ -60,6 +52,7 @@ struct IWindow
 struct ILight
     : public IClonable<ILight>
     , public ISceneElement 
+    , public IHandle
 {
     // Sets
     virtual void            SetPosition(Vector3<float> pos) = 0;
@@ -67,23 +60,24 @@ struct ILight
     virtual Vector3<float>  GetPosition() const             = 0;    
 };
 
-struct ICamera
+struct ICamera 
     : public IClonable<ICamera>
     , public ISceneElement 
+    , public IHandle
 {
 
 };
 
 // Base level of all objects
-struct IScene
+struct IScene : public IHandle
 {
-    virtual ISceneElementHandlePtr AddSceneElement(ISceneElementPtr obj) = 0;
 };
 
-struct IEngine : public IHandle 
+struct IEngine
 {
     virtual void                    SetScene(IScenePtr scene)   = 0;
-    virtual IWindowPtr              GetWindow() const           = 0;
+    virtual IWindow*                GetWindow() const           = 0;
     virtual void                    Run()                       = 0;
-    static IEnginePtr               Create();
+
+    static LIB_EXPORT IEngine*  CALLING_CONVENTION Instance();
 };

@@ -13,16 +13,16 @@ file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 
 # Form binaries
-add_executable(AppShell
+add_executable(Game
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
     ${SOURCE_FILES}
 )
 
-target_link_libraries(AppShell Engine)
+target_link_libraries(Game Engine ResourceOverseer)
 list(APPEND DEPENDS copy_angle_libraries)
 if (${DEPENDS})
-    add_dependencies(AppShell ${DEPENDS})
+    add_dependencies(Game ${DEPENDS})
 endif()
 
 # files layout for all targets

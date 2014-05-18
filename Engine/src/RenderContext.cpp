@@ -1,4 +1,4 @@
-#include "RenderContextImpl.h"
+#include "RenderContext.h"
 #include "ErrorHandler.h"
 #include <vector>
 #include "SDL_opengles2.h"
@@ -25,80 +25,54 @@ inline void WindowCallbackHandle::Release() {
 /// RenderContextBuilder ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RenderContextBuilder::RenderContextBuilder() 
-    : _width(640)
-    , _height(480)
-    , _fullscreen(false)
-    , _apiType(RC_API_TYPE::GLES2) 
-    , _title("Window") {
+    : m_width(640)
+    , m_height(480)
+    , m_fullscreen(false)
+    , m_title("Window") {
 }
 
 RenderContextBuilder::~RenderContextBuilder() {
 
 }
 
-void RenderContextBuilder::Release() {
-    delete this;
-}
-
 inline void RenderContextBuilder::SetWidth(uint32_t width) {
-    _width = width;
+    m_width = width;
 }
 
 inline void RenderContextBuilder::SetHeight(uint32_t height) {
-    _height = height;
+    m_height = height;
 }
 
 inline void RenderContextBuilder::SetTitle(const std::string& name) {
-    _title = name;
+    m_title = name;
 }
 
 inline void RenderContextBuilder::SetFullscreen(bool fullscreen) {
-    _fullscreen = fullscreen;
+    m_fullscreen = fullscreen;
 }
 
 inline uint32_t RenderContextBuilder::GetWidth() const {
-    return _width;
+    return m_width;
 }
 
 inline uint32_t RenderContextBuilder::GetHeight() const {
-    return _height;
+    return m_height;
 }
 
 inline std::string RenderContextBuilder::GetTitle() const {
-    return _title;
+    return m_title;
 }
 
 inline bool RenderContextBuilder::IsFullscreen() const {
-    return _fullscreen;
+    return m_fullscreen;
 }
 
-inline void RenderContextBuilder::SetApiType(RC_API_TYPE apiType) {
-    _apiType = apiType;
+IRenderContextPtr RenderContextBuilder::GetResult() {
+    return make_shared<RenderContextGLES2>(this);
 }
 
-inline RC_API_TYPE RenderContextBuilder::GetApiType() const {
-    return _apiType;
-}
-
-IRenderContext* RenderContextBuilder::GetResult() {
-    try {
-        switch (_apiType) {
-#ifdef _WIN32
-        case RC_API_TYPE::GLES2:
-            return new RenderContextGLES2(this);
-            break;
-#endif //_WIN32
-        default:
-            VE_ERROR(L"Failed to create render context");
-        }
-    }
-    catch (...) {
-    }
-    return nullptr;
-}
-
-IRenderContextBuilder* IRenderContextBuilder::Create() {
-    return new RenderContextBuilder();
+RenderContextBuilderPtr RenderContextBuilder::Create() {
+    return make_shared<RenderContextBuilder>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +187,7 @@ void RenderContextGLES2::Release() {
     delete this;
 }
 
-IWindow* RenderContextGLES2::GetWindow() {
+WindowBase* RenderContextGLES2::GetWindow() {
     return _window.get();
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "common.h"
 #include "MathBasics.h"
+#include "Resources.h"
 #include <memory>
 
 using std::shared_ptr;
@@ -29,4 +30,6 @@ struct IObject
     virtual IObjectPtr      GetAttached(uint32_t index) const                       = 0;
     virtual void            Detach()                                                = 0;
     virtual void            Detach(IObjectPtr object)             = 0;
+
+    static IObjectPtr CreateObject(IMeshPtr mesh, ITexturePtr texture);
 };

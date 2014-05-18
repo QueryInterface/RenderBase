@@ -57,21 +57,21 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 # Add projects
 add_subdirectory(3rdParty)
 add_subdirectory(Engine)
-add_subdirectory(AppShell)
+add_subdirectory(Game)
 add_subdirectory(Library)
 add_subdirectory(Constructor)
 add_subdirectory(Utils)
+add_subdirectory(ResourceOverseer)
 
 # Organize projects in folders
-set_property (TARGET AppShell         PROPERTY FOLDER "Executables")
+set_property (TARGET Game             PROPERTY FOLDER "Executables")
 set_property (TARGET Engine           PROPERTY FOLDER "Libraries")
 
 # Set additional targets' flags
-set_target_properties(Engine        PROPERTIES COMPILE_FLAGS -DDEFINE_EXPORT)
 set_target_properties(gtest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
 
 # set_target_properties(RenderBase    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
-# set_target_properties(AppShell      PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
+# set_target_properties(Game          PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 # set_target_properties(freetype      PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 # set_target_properties(Utils         PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 # set_target_properties(gtest         PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)

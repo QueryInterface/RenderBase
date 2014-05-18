@@ -50,6 +50,9 @@ list(APPEND EXTRA_LIBS SDL2)
 list(APPEND EXTRA_LIBS Utils)
 target_link_libraries(Engine ${EXTRA_LIBS})
 
+add_dependencies(Engine SDL2 SDL2main SDL2-static)
+add_definitions(-DDEFINE_EXPORT)
+
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})

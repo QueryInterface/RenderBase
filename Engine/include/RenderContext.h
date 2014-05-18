@@ -1,8 +1,5 @@
 #pragma once
-#ifdef _DEBUG
-#define D3D_DEBUG_INFO
-#endif // _DEBUG
-
+#include "common.h"
 #include "Engine.h"
 #include <list>
 #include <set>
@@ -12,43 +9,26 @@
 
 using std::list;
 using std::set;
-using std::unique_ptr;
 using std::mutex;
 
 class RenderContextGLES2;
 class WindowBase;
-class WindowQT;
+class RenderContextBuilder;
 
-enum class RC_API_TYPE {
-    GLES2 = 0,
-};
+struct IRenderContext;
 
-enum class WINDOW_MSG {
+typedef shared_ptr<RenderContextBuilder> RenderContextBuilderPtr;
+typedef shared_ptr<IRenderContext> IRenderContextPtr;
+
+enum class WINDOW_MSG 
+{
     FOREGROUND,
     BACKGROUND,
     QUIT
 };
 
-struct IRenderContext
+class WindowCallbackHandle : public IHandle 
 {
-};
-
-struct IRenderContextBuilder 
-    : public IHandle {
-
-    virtual void            SetWidth(uint32_t width) = 0;
-    virtual void            SetHeight(uint32_t height) = 0;
-    virtual void            SetTitle(const std::string& title) = 0;
-    virtual void            SetFullscreen(bool fullscreen) = 0;
-    virtual void            SetApiType(RC_API_TYPE apiType) = 0;
-
-    virtual IRenderContext* GetResult() = 0;
-
-    static LIB_EXPORT IRenderContextBuilder* CALLING_CONVENTION Create();
-};
-
-
-class WindowCallbackHandle : public IHandle {
 public:
     WindowCallbackHandle(WindowBase* windowContext, list< shared_ptr<EventCallback> >::iterator& iter);
     virtual ~WindowCallbackHandle();
@@ -61,41 +41,16 @@ private:
     PREVENT_COPY(WindowCallbackHandle);
 };
 
-class RenderContextBuilder : public IRenderContextBuilder {
-public:
-    RenderContextBuilder();
-    virtual ~RenderContextBuilder();
-    // IHandle
-    virtual void Release();
-    // IWindowSetup
-    virtual void            SetWidth(uint32_t width);
-    virtual void            SetHeight(uint32_t height);
-    virtual void            SetTitle(const std::string& name);
-    virtual void            SetFullscreen(bool fullscreen);
-    virtual uint32_t        GetWidth() const;
-    virtual uint32_t        GetHeight() const;
-    virtual std::string     GetTitle() const;
-    virtual bool            IsFullscreen() const;
-    // IRenderContextBuilder
-    virtual void            SetApiType(RC_API_TYPE apiType);
-    virtual RC_API_TYPE     GetApiType() const;
-    virtual IRenderContext* GetResult();
-private:
-    uint32_t        _width;
-    uint32_t        _height;
-    std::string    _title;
-    bool            _fullscreen;
-    RC_API_TYPE     _apiType;
-};
-
-class WindowBase : public IWindow {
+class WindowBase : public IWindow 
+{
     friend class WindowCallbackHandle;
 public:
     WindowBase();
     virtual ~WindowBase() = 0;
     // IWindow
-    virtual IHandle*        RegisterEventCallback(const std::shared_ptr<EventCallback>& callback);
+    virtual IHandle*        RegisterEventCallback(const std::shared_ptr<EventCallback>& callback) override;
     // WindowBase
+    virtual WINDOW_MSG      ProcessMessage() = 0;
     virtual void            Present() = 0;
 private:
     mutex                               _callbackMutex;
@@ -104,6 +59,37 @@ private:
     void _eraseCallback(list< shared_ptr<EventCallback> >::iterator& iter);
 
     PREVENT_COPY(WindowBase);
+};
+
+struct IRenderContext : public IHandle
+{
+	virtual WindowBase* GetWindow() = 0;
+	virtual void        Present()   = 0;
+};
+
+class RenderContextBuilder
+{
+public:
+    RenderContextBuilder();
+    virtual ~RenderContextBuilder();
+
+    void            SetWidth(uint32_t width);
+    void            SetHeight(uint32_t height);
+    void            SetTitle(const std::string& name);
+    void            SetFullscreen(bool fullscreen);
+    uint32_t        GetWidth() const;
+    uint32_t        GetHeight() const;
+    std::string     GetTitle() const;
+    bool            IsFullscreen() const;
+
+    IRenderContextPtr GetResult();
+
+    static RenderContextBuilderPtr Create();
+private:
+    uint32_t        m_width;
+    uint32_t        m_height;
+    std::string     m_title;
+    bool            m_fullscreen;
 };
 
 class WindowSDL final : public WindowBase {
@@ -133,8 +119,8 @@ public:
 	virtual ~RenderContextGLES2();
     // IHandle
 	virtual void        Release();
-	virtual IWindow*    GetWindow();
-	virtual void        Present();
+	virtual WindowBase* GetWindow() override;
+	virtual void        Present() override;
 private:
     unique_ptr<WindowBase> _window;
 
