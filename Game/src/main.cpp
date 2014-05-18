@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "ResourceOverseer.h"
+#include "Utils.h"
 
 int main() {
     try 
@@ -8,16 +9,14 @@ int main() {
         IEngine* engine = IEngine::Instance();
         IWindow* window = engine->GetWindow();
 
-        resourceOverseer;
-
         // Setup window
         window->SetWidth(640);
         window->SetHeight(480);
         window->SetFullscreen(false);
         // Load resources
-        // IMeshPtr mesh = resourceOverseer->LoadMesh("path");
-        // ITexturePtr texture0 = resourceOverseer->LoadTexture("path");
-        // ITexturePtr texture1 = resourceOverseer->LoadTexture("path");
+        IMeshPtr mesh = resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/cube.obj");
+        ITexturePtr texture0 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+        ITexturePtr texture1 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         // IObjectPtr object0 = IObject::CreateBasicObject(mesh, texture);
         // object0->SetPosition(0, 0, 0);

@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 2.8.11)
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
-#include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
+include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
+include_directories(${OBJ_LOADER_DIR})
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
@@ -19,7 +20,7 @@ add_library(ResourceOverseer SHARED
     ${SOURCE_FILES}
 )
 
-target_link_libraries(ResourceOverseer)
+target_link_libraries(ResourceOverseer tinyobjloader Utils)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

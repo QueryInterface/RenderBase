@@ -1,24 +1,25 @@
-import sys
 import zipfile
 import subprocess
 import os
 import tarfile
+import sys
+
 
 def Unzip(zipFilePath, destDir):
     zfile = zipfile.ZipFile(zipFilePath)
     for name in zfile.namelist():
         (dirName, fileName) = os.path.split(name)
-        if fileName == '':
-            # directory
-            newDir = destDir + '/' + dirName
-            if not os.path.exists(newDir):
-                os.mkdir(newDir)
-        else:
+        # directory
+        newDir = os.path.join(destDir, dirName)
+        if not os.path.exists(newDir):
+            os.makedirs(newDir)
+        if fileName:
             # file
-            fd = open(destDir + '/' + name, 'wb')
+            fd = open(os.path.join(destDir, name), 'wb')
             fd.write(zfile.read(name))
             fd.close()
     zfile.close()
+
 
 def Untar(path, destDir):
     absPath = os.path.abspath(path)
@@ -28,19 +29,19 @@ def Untar(path, destDir):
     tar = tarfile.open(absPath, "r:bz2")
     tar.extractall()
     tar.close()
-    
     os.chdir(savedir)
 
-def RunCmd(cmd, timeout = 60):
+
+def RunCmd(cmd, timeout=60):
     cwd = os.path.split(cmd[0])[0]
     if not os.path.exists(cwd):
-        cwd = './' 
+        cwd = './'
     p = subprocess.Popen(cmd, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT, cwd=cwd)
     t = time.time()
     strStdOut = []
     retcode = p.poll()
     isSuccess = False
-    while retcode == None:
+    while retcode is None:
         retcode = p.poll()
         if time.time() - t > timeout and retcode == None:
             print "[ERROR] Application timeout reached for cmd line:"
@@ -49,7 +50,6 @@ def RunCmd(cmd, timeout = 60):
             isSuccess = False
             break
 
-    if retcode == 0: 
+    if retcode == 0:
         isSuccess = True
     return isSuccess
-

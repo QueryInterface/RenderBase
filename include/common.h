@@ -5,6 +5,7 @@
 using std::shared_ptr;
 using std::unique_ptr;
 using std::make_shared;
+using std::static_pointer_cast;
 
 #ifdef _WIN32
 	#include "Windows.h"
@@ -60,58 +61,10 @@ private:
     uint32_t m_refCount;
 };
 
-class RefPtr
-{
-public:
-    RefPtr(RefCount* object)
-        : m_obj(object)
-    {
-    }
-    ~RefPtr()
-    {
-        m_obj->Release();
-        m_obj = nullptr;
-    }
-    void Reset(RefCount* object)
-    {
-        m_obj->Release();
-        m_obj = object;
-    }
-    RefPtr& operator=(RefPtr& ptr)
-    {
-        m_obj->Release();
-        ptr.m_obj->AddRef();
-        m_obj = ptr.m_obj;
-    }
-    RefPtr& operator=(RefCount* ptr)
-    {
-        m_obj->Release();
-        m_obj = ptr;
-    }
-    bool operator==(const RefPtr& ptr)
-    {
-        return m_obj == ptr.m_obj;
-    }
-    bool operator!=(const RefPtr& ptr)
-    {
-        return m_obj != ptr.m_obj;
-    }
-    bool operator>(const RefPtr& ptr)
-    {
-        return m_obj > ptr.m_obj;
-    }
-    bool operator<(const RefPtr& ptr)
-    {
-        return m_obj < ptr.m_obj;
-    }
-    bool operator>=(const RefPtr& ptr)
-    {
-        return m_obj >= ptr.m_obj;
-    }
-    bool operator<=(const RefPtr& ptr)
-    {
-        return m_obj <= ptr.m_obj;
-    }
-private:
-    RefCount* m_obj;
-};
+//template <typename BaseType, typename DerivedType, typename... Args>
+//std::shared_ptr<BaseType> make_shared_safe(const Args&... args)
+//{
+//    DerivedType* temp = new DerivedType(args...);
+//    std::shared_ptr<DerivedType> shared(temp, [&](BaseType* obj) {obj->Release();});
+//    return std::static_pointer_cast<BaseType>(shared);
+//}

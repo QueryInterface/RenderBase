@@ -10,6 +10,7 @@ check_apple_platform()
 set(3RDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdParty)
 set(SDL_DIR ${3RDPARTY_DIR}/_unpack/SDL/SDL2)
 set(ANGLE_DIR ${3RDPARTY_DIR}/angle)
+set(OBJ_LOADER_DIR ${3RDPARTY_DIR}/_unpack/tinyobjloader)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) 
     set(ARCH_64 TRUE) 

@@ -1,5 +1,16 @@
 #pragma once
 #include "ResourceOverseer.h"
+#include "tiny_obj_loader.h"
+
+class LoadedMesh : public IMesh
+{
+public:
+    LoadedMesh(const std::wstring& path);
+    ~LoadedMesh();
+    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const override;
+private:
+    std::vector<tinyobj::shape_t> m_shapes;
+};
 
 class ResourceOverseerImpl : public IResourceOverseer
 {
