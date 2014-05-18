@@ -80,9 +80,9 @@ set_target_properties(gtest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUP
 if (WIN32)
     add_custom_target(copy_angle_libraries
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/bin/libEGL.dll           ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/bin/libGLESv2.dll        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/bin/d3dcompiler_46.dll   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/binaries/libEGL.dll           ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/binaries/libGLESv2.dll        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ANGLE_DIR}/binaries/d3dcompiler_46.dll   ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/
         COMMENT "Copying ANGLE binaries to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>" VERBATIM
     )
     set_property (TARGET copy_angle_libraries  PROPERTY FOLDER "3rdParty")
