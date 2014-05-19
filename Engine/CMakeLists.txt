@@ -50,7 +50,6 @@ list(APPEND EXTRA_LIBS SDL2)
 list(APPEND EXTRA_LIBS Utils)
 target_link_libraries(Engine ${EXTRA_LIBS})
 
-add_dependencies(Engine SDL2)
 add_definitions(-DDEFINE_EXPORT)
 
 # files layout for all targets
