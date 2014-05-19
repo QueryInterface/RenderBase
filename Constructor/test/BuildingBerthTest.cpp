@@ -169,6 +169,39 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
     }));
 }
 
+
+TEST_F(BuildingBerthTest, DISABLED_SingleElementMesh)
+{
+    m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
+
+    IMesh::GeometryDesc desc;
+    m_builder->GetHull().GetGeometryDesc(0, desc);
+
+    Vector3<float> maximum(0,0,0);
+    Vector3<float> minimum(500,500,500);
+    for (size_t i = 0; i < desc.groups.size(); ++i)
+    {
+        for (size_t j = 0; j < desc.groups[i].count; ++j)
+        {
+            Vector3<float> current(&(desc.groups[i].geometry[desc.groups[i].indices[j] * 3]));
+            maximum.x = (max(maximum.x, current.x));
+            maximum.y = (max(maximum.y, current.y));
+            maximum.z = (max(maximum.z, current.z));
+
+            minimum.x = (min(maximum.x, current.x));
+            minimum.y = (min(maximum.y, current.y));
+            minimum.z = (min(maximum.z, current.z));
+        }
+    }
+    ASSERT_FLOAT_EQ(1, maximum.x);
+    ASSERT_FLOAT_EQ(1, maximum.y);
+    ASSERT_FLOAT_EQ(1, maximum.z);
+
+    ASSERT_FLOAT_EQ(0, minimum.x);
+    ASSERT_FLOAT_EQ(0, minimum.y);
+    ASSERT_FLOAT_EQ(0, minimum.z);
+}
+
 TEST_F(BuildingBerthTest, ElementsMesh)
 {
     m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);

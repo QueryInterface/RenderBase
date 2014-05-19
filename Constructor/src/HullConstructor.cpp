@@ -24,8 +24,14 @@ void Hull::ConstructMesh(Core& objectCore)
         x;y;z;
         GeometryDesc desc;
         ILibrary::library()->GetMesh(e.type).GetGeometryDesc(~e.neighbourhood, desc);
-        for (size_t i = 0; i < desc.groups.size(); ++i)
-            m_indices.insert(m_indices.end(), desc.groups[i].indices, desc.groups[i].indices + desc.groups[i].count);
+        for (auto group : desc.groups)
+        {
+            m_indices.insert(m_indices.end(), group.indices, group.indices + group.count);
+            for (size_t j = 0; j < group.count; ++j)
+            {
+                //m_vertices.insert(m_vertices.end(), &group.geometry[group.indices[j] * 3], &group.geometry[group.indices[j] * 3] + 3);
+            }
+        }
     });
 }
 
