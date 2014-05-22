@@ -179,27 +179,27 @@ TEST_F(BuildingBerthTest, SingleElementMesh)
 
     Vector3<float> maximum(0,0,0);
     Vector3<float> minimum(500,500,500);
-    for (size_t i = 0; i < desc.groups.size(); ++i)
+    for (auto group : desc.groups)
     {
-        for (size_t j = 0; j < desc.groups[i].count; ++j)
+        for (size_t j = 0; j < group.count; ++j)
         {
-            Vector3<float> current(&desc.layout[0].items[desc.groups[i].indices[j] * 3]);
+            Vector3<float> current(&desc.layout[0].items[group.indices[j] * 3]);
             maximum.x = (max(maximum.x, current.x));
             maximum.y = (max(maximum.y, current.y));
             maximum.z = (max(maximum.z, current.z));
 
-            minimum.x = (min(maximum.x, current.x));
-            minimum.y = (min(maximum.y, current.y));
-            minimum.z = (min(maximum.z, current.z));
+            minimum.x = (min(minimum.x, current.x));
+            minimum.y = (min(minimum.y, current.y));
+            minimum.z = (min(minimum.z, current.z));
         }
     }
-    ASSERT_FLOAT_EQ(1, maximum.x);
-    ASSERT_FLOAT_EQ(1, maximum.y);
-    ASSERT_FLOAT_EQ(1, maximum.z);
+    EXPECT_FLOAT_EQ(1, maximum.x);
+    EXPECT_FLOAT_EQ(1, maximum.y);
+    EXPECT_FLOAT_EQ(1, maximum.z);
 
-    ASSERT_FLOAT_EQ(0, minimum.x);
-    ASSERT_FLOAT_EQ(0, minimum.y);
-    ASSERT_FLOAT_EQ(0, minimum.z);
+    EXPECT_FLOAT_EQ(0, minimum.x);
+    EXPECT_FLOAT_EQ(0, minimum.y);
+    EXPECT_FLOAT_EQ(0, minimum.z);
 }
 
 TEST_F(BuildingBerthTest, ElementsMesh)
@@ -208,14 +208,39 @@ TEST_F(BuildingBerthTest, ElementsMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,4,0), Directions::pY, true);
 
+    Vector3<float> maximum(0,0,0);
+    Vector3<float> minimum(500,500,500);
+
     IMesh::GeometryDesc desc;
     m_builder->GetHull().GetGeometryDesc(0, desc);
 
     size_t verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
+    for (auto group : desc.groups)
+    {
+        verticesTotal += group.count;
+    }
+
+    for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
+    {
+        Vector3<float> current(&desc.layout[0].items[j]);
+        maximum.x = (max(maximum.x, current.x));
+        maximum.y = (max(maximum.y, current.y));
+        maximum.z = (max(maximum.z, current.z));
+
+        minimum.x = (min(minimum.x, current.x));
+        minimum.y = (min(minimum.y, current.y));
+        minimum.z = (min(minimum.z, current.z));
+    }
 
     ASSERT_EQ(36 * 3, verticesTotal);
+
+    ASSERT_FLOAT_EQ(1, maximum.x);
+    ASSERT_FLOAT_EQ(5, maximum.y);
+    ASSERT_FLOAT_EQ(1, maximum.z);
+
+    ASSERT_FLOAT_EQ(0, minimum.x);
+    ASSERT_FLOAT_EQ(0, minimum.y);
+    ASSERT_FLOAT_EQ(0, minimum.z);
 }
 
 TEST_F(BuildingBerthTest, SinglePillarMesh)

@@ -22,7 +22,7 @@ struct IMesh
 {
     enum class LayoutType : unsigned int
     {
-        Vertices,
+        Vertices = 0,
         Normals,
         Texcoord0,
         Texcoord1,

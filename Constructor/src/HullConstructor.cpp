@@ -23,14 +23,17 @@ void Hull::ConstructMesh(Core& objectCore)
     {
         x;y;z;
         GeometryDesc desc;
+        size_t blockStart = m_indices.size();
         ILibrary::library()->GetMesh(e.type).GetGeometryDesc(~e.neighbourhood, desc);
         for (auto group : desc.groups)
         {
             m_indices.insert(m_indices.end(), group.indices, group.indices + group.count);
         }
-        for (auto layout : desc.layout)
+        for (size_t i = blockStart; i < m_indices.size(); i += 3)
         {
-            m_vertices.insert(m_vertices.end(), &layout.items[0], &layout.items[0] + layout.itemsCount);
+            m_vertices.push_back(desc.layout[(unsigned int)LayoutType::Vertices].items[m_indices[i] + 0] + x);
+            m_vertices.push_back(desc.layout[(unsigned int)LayoutType::Vertices].items[m_indices[i] + 1] + y);
+            m_vertices.push_back(desc.layout[(unsigned int)LayoutType::Vertices].items[m_indices[i] + 2] + z);
         }
     });
 }
