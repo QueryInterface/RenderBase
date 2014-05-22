@@ -170,7 +170,7 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
 }
 
 
-TEST_F(BuildingBerthTest, DISABLED_SingleElementMesh)
+TEST_F(BuildingBerthTest, SingleElementMesh)
 {
     m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
 
@@ -183,7 +183,7 @@ TEST_F(BuildingBerthTest, DISABLED_SingleElementMesh)
     {
         for (size_t j = 0; j < desc.groups[i].count; ++j)
         {
-            Vector3<float> current(&(desc.groups[i].geometry[desc.groups[i].indices[j] * 3]));
+            Vector3<float> current(&desc.layout[0].items[desc.groups[i].indices[j] * 3]);
             maximum.x = (max(maximum.x, current.x));
             maximum.y = (max(maximum.y, current.y));
             maximum.z = (max(maximum.z, current.z));

@@ -38,8 +38,6 @@ public:
     {
 #include "../models/Cube.mdl"
 
-        m_layout.assign(layout, layout + sizeof(layout)/sizeof(LayoutItem));
-
         for (size_t i = 0; i < groupsCount; ++i)
         {
             m_indices[i].assign(indexGroups[i], indexGroups[i] + sizeof(indexGroups[i])/sizeof(short));
@@ -63,12 +61,18 @@ public:
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
     {
         out_descriptor.groups.clear();
+        LayoutItem li;
+        li.layoutType = LayoutType::Vertices;
+        li.itemSize = 3;
+        li.itemsCount = m_vertices.size();
+        li.items = (float*)m_vertices.data();
+        out_descriptor.layout.push_back(li);
+
         for (size_t i = 0; i < 6; ++i )
         {
             if (flags & 1 << i)
             {
-                MeshComponent mc;
-                mc.geometry = m_vertices.data();
+                IndexGroup mc;
                 mc.indices = m_indices[i].data();
                 mc.count = m_indices[i].size();
                 out_descriptor.groups.push_back(mc);

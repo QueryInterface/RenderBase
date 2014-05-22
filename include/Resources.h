@@ -20,24 +20,34 @@ struct IMesh
     , public IHandle
     , public IClonable<IMeshPtr> 
 {
-    struct LayoutItem
+    enum class LayoutType : unsigned int
     {
-        unsigned int    size;
-        unsigned int    stride;
-        unsigned int    offset;
+        Vertices,
+        Normals,
+        Texcoord0,
+        Texcoord1,
+        Tangent,
+        Binormal,
     };
 
-    struct MeshComponent
+    struct LayoutItem
     {
-        const float*          geometry;
-        const unsigned int*   indices;  // might be NULL
-        unsigned int          count;
+        LayoutType                  layoutType;
+        size_t                      itemSize;
+        size_t                      itemsCount;
+        float*                      items;
+    };
+
+    struct IndexGroup
+    {
+        const unsigned int*         indices;  // might be NULL
+        unsigned int                count;
     };
 
     struct GeometryDesc
     {
         std::vector<LayoutItem>     layout;
-        std::vector<MeshComponent>  groups;
+        std::vector<IndexGroup>     groups; // can be empty
     };
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const = 0;

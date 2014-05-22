@@ -27,10 +27,10 @@ void Hull::ConstructMesh(Core& objectCore)
         for (auto group : desc.groups)
         {
             m_indices.insert(m_indices.end(), group.indices, group.indices + group.count);
-            for (size_t j = 0; j < group.count; ++j)
-            {
-                //m_vertices.insert(m_vertices.end(), &group.geometry[group.indices[j] * 3], &group.geometry[group.indices[j] * 3] + 3);
-            }
+        }
+        for (auto layout : desc.layout)
+        {
+            m_vertices.insert(m_vertices.end(), &layout.items[0], &layout.items[0] + layout.itemsCount);
         }
     });
 }
@@ -38,9 +38,15 @@ void Hull::ConstructMesh(Core& objectCore)
 void Hull::GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const
 {
     flags;
-    MeshComponent mc;
+    IndexGroup mc;
     mc.indices = m_indices.data();
     mc.count = m_indices.size();
     out_descriptor.groups.push_back(mc);
+
+    LayoutItem li;
+    li.items = (float*)m_vertices.data();
+    li.itemSize = 3;
+    li.itemsCount = m_vertices.size();
+    out_descriptor.layout.push_back(li);
 }
 // eof
