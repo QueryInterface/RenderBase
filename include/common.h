@@ -35,7 +35,8 @@ struct ISceneElement
 
 struct IHandle
 {
-    virtual void Release() = 0; 
+    virtual uint32_t AddRef() = 0;
+    virtual uint32_t Release() = 0;
 };
 
 class RefCount
