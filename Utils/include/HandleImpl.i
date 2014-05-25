@@ -8858,20 +8858,13 @@ using  uintmax_t; using  uintptr_t;
 
 
 
-x,y,z, 6, 5, 4, 3, 2, 1
 
-x,y,z, t, 2, 6, 5, 4, 3, 2, 1
 
 
 
-    CONSTRUCTOR(T0) \
-    CONSTRUCTOR(T0, T1) \
-    CONSTRUCTOR(T0, T1, T2) \
-    CONSTRUCTOR(T0, T1, T2, T3) \
-    CONSTRUCTOR(T0, T1, T2, T3, T4) \
-    CONSTRUCTOR(T0, T1, T2, T3, T4, T5) \
 
 
+1
 
 
 
@@ -8942,5 +8935,18 @@ x,y,z, t, 2, 6, 5, 4, 3, 2, 1
 
 
 
-template <class ClassName, VARIADIC_TEMPLATE, 6, 5, 4, 3, 2, 1()> class HandleImpl : public ClassName { public: HandleImpl(VARIADIC_VALUES_LIST, 6, 5, 4, 3, 2, 1()) : m_refCount(1) , ClassName(VARIADIC_VALUES, 6, 5, 4, 3, 2, 1()) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, VARIADIC_TEMPLATE, 6, 5, 4, 3, 2, 1()> ClassName* CreateHandleObject(VARIADIC_VALUES_LIST, 6, 5, 4, 3, 2, 1() { return new HandleImpl<ClassName  >(VARIADIC_VALUES, 6, 5, 4, 3, 2, 1()); } \ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+template <class ClassName, > class HandleImpl : public ClassName { public: HandleImpl() : m_refCount(1) , ClassName() { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, > ClassName* CreateHandleObject( { return new HandleImpl<ClassName  >(); }
 

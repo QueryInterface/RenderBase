@@ -7,21 +7,26 @@
 //    return new HandleImpl<ClassName>();
 //}
 
-#define VA_NUM_ARGS(...) VA_NUM_ARGS_IMPL(__VA_ARGS__, 6,5,4,3,2,1,0)
-#define VA_NUM_ARGS_IMPL(_1, _2, _3, _4, _5, _6, _N, _N_1, _N_2, _N_3, _N_4, _N_5, N_6) _1, _2, _3, _4, _5, _6, _N
-
-VA_NUM_ARGS(x,y,z)
-
-VA_NUM_ARGS(x,y,z, t, 2)
+// Due to MSVC compiler issue expand of __VA_ARGS__ functions that accepts it should be 
+// wrapped with fake function. Otherwise the whole param list will go to first parameter of nested macro
+// MSVC compiler is GUANO!
+#define VA_NUM_ARGS(...) VA_NUM_ARGS_(__VA_ARGS__, VA_SEQ)
+#define VA_NUM_ARGS_(...) EXPAND(VA_NUM_ARGS__(__VA_ARGS__))
+#define VA_NUM_ARGS__(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, N, ...) N
+#define VA_SEQ 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+#define EXPAND(x) x
 
 #define VARIADIC_EXPAND(CONSTRUCTOR) \
-    CONSTRUCTOR() \    
+    CONSTRUCTOR() \
     CONSTRUCTOR(T0) \
     CONSTRUCTOR(T0, T1) \
     CONSTRUCTOR(T0, T1, T2) \
     CONSTRUCTOR(T0, T1, T2, T3) \
     CONSTRUCTOR(T0, T1, T2, T3, T4) \
-    CONSTRUCTOR(T0, T1, T2, T3, T4, T5) \
+    CONSTRUCTOR(T0, T1, T2, T3, T4, T5)*/
+
+#define VARIADIC_EXPAND(CONSTRUCTOR) \
+    CONSTRUCTOR() \
 
 #define MACRO_DISPATCHER(func, ...) \
             MACRO_DISPATCHER_(func, VA_NUM_ARGS(__VA_ARGS__))
