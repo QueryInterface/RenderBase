@@ -35,31 +35,8 @@ struct ISceneElement
 
 struct IHandle
 {
-    virtual uint32_t AddRef() = 0;
-    virtual uint32_t Release() = 0;
-};
-
-class RefCount
-{
-public:
-    RefCount()
-        : m_refCount(1)
-    {
-    }
-    virtual uint32_t AddRef()
-    {
-        return ++m_refCount;
-    }
-    virtual uint32_t Release()
-    {
-        if (m_refCount > 0)
-        {
-            --m_refCount;
-            if (!m_refCount) delete this;
-        }
-    }
-private:
-    uint32_t m_refCount;
+    //virtual uint32_t AddRef() = 0;
+    virtual void Release() = 0;
 };
 
 //template <typename BaseType, typename DerivedType, typename... Args>
