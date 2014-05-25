@@ -13,6 +13,9 @@ public:
         out_descriptor.groups.clear();
     }
 
+    virtual uint32_t AddRef() { return 0; };
+    virtual uint32_t Release() { return 0; };
+
 protected:
     std::vector<float>      m_vertices;
     std::vector<LayoutItem> m_layout;
@@ -23,7 +26,6 @@ class SpaceMesh : public BaseMesh
 {
 public:
     SpaceMesh() { ILibrary::library()->RegisterMesh(ElementType::Space, *this); };
-    virtual void Release() override {delete this;}
     virtual IMeshPtr Clone() const {return std::make_shared<SpaceMesh>(*this);};
 private:
     static std::unique_ptr<IMesh> self;
@@ -46,11 +48,6 @@ public:
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
 
         ILibrary::library()->RegisterMesh(ElementType::Cube, *this);
-    }
-
-    virtual void Release() override 
-    {
-        delete this;
     }
 
     virtual IMeshPtr Clone() const 
