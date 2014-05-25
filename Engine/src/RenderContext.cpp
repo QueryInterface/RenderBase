@@ -15,10 +15,11 @@ WindowCallbackHandle::WindowCallbackHandle(WindowBase* windowContext, list< shar
 WindowCallbackHandle::~WindowCallbackHandle() {
 }
 
-inline void WindowCallbackHandle::Release() {
+inline uint32_t WindowCallbackHandle::Release() {
     if (_window) {
         _window->_eraseCallback(_iter);
     }
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,8 +184,9 @@ RenderContextGLES2::RenderContextGLES2(const RenderContextBuilder* builder)
 RenderContextGLES2::~RenderContextGLES2() {
 }
 
-void RenderContextGLES2::Release() {
+uint32_t RenderContextGLES2::Release() {
     delete this;
+    return 0;
 }
 
 WindowBase* RenderContextGLES2::GetWindow() {

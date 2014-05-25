@@ -33,7 +33,8 @@ public:
     WindowCallbackHandle(WindowBase* windowContext, list< shared_ptr<EventCallback> >::iterator& iter);
     virtual ~WindowCallbackHandle();
     // IHandle
-    virtual void Release();
+    virtual uint32_t AddRef() {return 0;}
+    virtual uint32_t Release();
 private:
     WindowBase*                                 _window;
     list< shared_ptr<EventCallback> >::iterator _iter;
@@ -118,7 +119,8 @@ public:
 	RenderContextGLES2(const RenderContextBuilder* builder);
 	virtual ~RenderContextGLES2();
     // IHandle
-	virtual void        Release();
+    virtual uint32_t        AddRef() {return 0;}
+	virtual uint32_t        Release();
 	virtual WindowBase* GetWindow() override;
 	virtual void        Present() override;
 private:
