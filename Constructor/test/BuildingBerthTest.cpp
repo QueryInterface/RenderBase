@@ -79,7 +79,7 @@ protected:
         {
             Vector3<float> current(&desc.layout[0].items[j]);
             
-            fprintf(f, "f %u %u %u\n", j, j + 1, j + 2);
+            fprintf(f, "f %u %u %u\n", j + 1, j + 2, j + 3);
         }
         fclose(f);
     }
@@ -262,7 +262,7 @@ TEST_F(BuildingBerthTest, SinglePillarMesh)
 
 TEST_F(BuildingBerthTest, CubeMesh)
 {
-    const size_t cubeScales = 64;
+    const size_t cubeScales = 3;
     for (size_t x = 0; x < cubeScales; ++x)
         for (size_t y = 0; y < cubeScales; ++y)
             for (size_t z = 0; z < cubeScales; ++z)
@@ -270,12 +270,12 @@ TEST_F(BuildingBerthTest, CubeMesh)
                 m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY, true);
             }
     const float BBox = (float)cubeScales;
-    ASSERT_NO_FATAL_FAILURE(checkMesh(64*64*6*6, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\HugeCube.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh(cubeScales*cubeScales*6*6, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\HugeCube.obj"));
 }
 
 TEST_F(BuildingBerthTest, SpongeMesh)
 {
-    const size_t cubeScales = 64;
+    const size_t cubeScales = 6;
     for (size_t x = 0; x < cubeScales; ++x)
         for (size_t y = 0; y < cubeScales; ++y)
             for (size_t z = 0; z < cubeScales; ++z)
@@ -285,6 +285,22 @@ TEST_F(BuildingBerthTest, SpongeMesh)
             }
     const float BBox = (float)cubeScales;
     //hmmm... 64? * 64?
-    ASSERT_NO_FATAL_FAILURE(checkMesh(64*64*32*36, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\sponge.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh((cubeScales*cubeScales*cubeScales/2)*36, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\sponge.obj"));
+}
+
+TEST_F(BuildingBerthTest, AnyTypeMesh)
+{
+    const size_t basement = 64;
+    for (size_t x = 0; x < basement; ++x)
+        for (size_t z = 0; z < basement; ++z)
+        {
+            size_t height = (size_t)( 2*(1 + sin(x/3.0)) + 2*(1 + cos(z/3.0))) + 1;
+
+            for (size_t y = 0; y < height; ++y)
+                m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY, true);
+        }
+    IMesh::GeometryDesc desc;
+    m_builder->GetHull().GetGeometryDesc(0, desc);
+    exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 // eof
