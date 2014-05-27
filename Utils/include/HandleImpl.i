@@ -8865,9 +8865,6 @@ using  uintmax_t; using  uintptr_t;
 
 
 
-3
-2
-0
 
 
 
@@ -8949,5 +8946,72 @@ using  uintmax_t; using  uintptr_t;
 
 
 
-template <class ClassName, > class HandleImpl : public ClassName { public: HandleImpl() : m_refCount(1) , ClassName() { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, > ClassName* CreateHandleObject( { return new HandleImpl<ClassName  >(); } template <class ClassName, class T0> class HandleImpl : public ClassName { public: HandleImpl(T0 v0) : m_refCount(1) , ClassName(v0) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0> ClassName* CreateHandleObject(T0 v0 { return new HandleImpl<ClassName, T0>(v0); } template <class ClassName, class T0, class T1> class HandleImpl : public ClassName { public: HandleImpl(T0 v0, T1 v1) : m_refCount(1) , ClassName(v0, v1) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0, class T1> ClassName* CreateHandleObject(T0 v0, T1 v1 { return new HandleImpl<ClassName, T0, T1>(v0, v1); } template <class ClassName, class T0, class T1, class T2> class HandleImpl : public ClassName { public: HandleImpl(T0 v0, T1 v1, T2 v2) : m_refCount(1) , ClassName(v0, v1, v2) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0, class T1, class T2> ClassName* CreateHandleObject(T0 v0, T1 v1, T2 v2 { return new HandleImpl<ClassName, T0, T1, T2>(v0, v1, v2); } template <class ClassName, class T0, class T1, class T2, class T3> class HandleImpl : public ClassName { public: HandleImpl(T0 v0, T1 v1, T2 v2, T3 v3) : m_refCount(1) , ClassName(v0, v1, v2, v3) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0, class T1, class T2, class T3> ClassName* CreateHandleObject(T0 v0, T1 v1, T2 v2, T3 v3 { return new HandleImpl<ClassName, T0, T1, T2, T3>(v0, v1, v2, v3); } template <class ClassName, class T0, class T1, class T2, class T3, class T4> class HandleImpl : public ClassName { public: HandleImpl(T0 v0, T1 v1, T2 v2, T3 v3, T4 v4) : m_refCount(1) , ClassName(v0, v1, v2, v3, v4) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0, class T1, class T2, class T3, class T4> ClassName* CreateHandleObject(T0 v0, T1 v1, T2 v2, T3 v3, T4 v4 { return new HandleImpl<ClassName, T0, T1, T2, T3, T4>(v0, v1, v2, v3, v4); } template <class ClassName, class T0, class T1, class T2, class T3, class T4, class T5> class HandleImpl : public ClassName { public: HandleImpl(T0 v0, T1 v1, T2 v2, T3 v3, T4 v4, T5 v5) : m_refCount(1) , ClassName(v0, v1, v2, v3, v4, v5) { } virtual uint32_t AddRef() { return ++m_refCount; } virtual uint32_t Release() { if (m_refCount > 0) { --m_refCount; if (!m_refCount) delete this; } } private: uint32_t m_refCount; }; template<class ClassName, class T0, class T1, class T2, class T3, class T4, class T5> ClassName* CreateHandleObject(T0 v0, T1 v1, T2 v2, T3 v3, T4 v4, T5 v5 { return new HandleImpl<ClassName, T0, T1, T2, T3, T4, T5>(v0, v1, v2, v3, v4, v5); }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+template <class ClassName> 
+class HandleImpl0 : public ClassName { public: HandleImpl0() : ClassName() {} virtual ~HandleImpl0() {} virtual void Release() {delete this;} }; 
+
+template<class ClassName> 
+ClassName* make_handle() { 
+	return new HandleImpl0<ClassName>(); 
+} 
+
+template<class ClassName> 
+std::shared_ptr<ClassName> make_shared_handle() {
+	std::shared_ptr< HandleImpl0<ClassName> > t(make_handle<ClassName>(), [&](IHandle* obj) {obj->Release();});
+	return std::static_pointer_cast<ClassName>(t); 
+} 
+
+template <class ClassName , class T0> class HandleImpl1 : public ClassName { public: HandleImpl1(T0 v0) : ClassName(v0) {} virtual ~HandleImpl1() {} virtual void Release() {delete this;} }; 
+
+template<class ClassName, class T0> 
+ClassName* make_handle(T0 v0) { 
+	return new HandleImpl1<ClassName, T0>(v0);
+} 
+
+template<class ClassName, class T0> 
+std::shared_ptr<ClassName> make_shared_handle(T0 v0) {
+	std::shared_ptr< HandleImpl1<ClassName, T0> > t(make_handle<ClassName, T0>(v0), [&](IHandle* obj) {obj->Release();}); 
+	return std::static_pointer_cast<ClassName>(t);
+}
+
+
+
 

@@ -13,8 +13,7 @@ public:
         out_descriptor.groups.clear();
     }
 
-    virtual uint32_t AddRef() { return 0; };
-    virtual uint32_t Release() { return 0; };
+    virtual void Release() {};
 
 protected:
     std::vector<float>      m_vertices;

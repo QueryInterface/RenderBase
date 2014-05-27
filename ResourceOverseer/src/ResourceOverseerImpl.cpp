@@ -1,5 +1,6 @@
 #include "ResourceOverseerImpl.h"
 #include "ErrorHandler.h"
+#include "HandleImpl.h"
 
 //LoadedMesh
 LoadedMesh::LoadedMesh(const std::wstring& path)
@@ -35,6 +36,7 @@ ResourceOverseerImpl::~ResourceOverseerImpl()
 
 IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
 {
+    std::shared_ptr<LoadedMesh> mesh = make_shared_handle<LoadedMesh>(path);
     path;
     return nullptr;// make_shared_safe<IMesh, LoadedMesh>(path);
 }

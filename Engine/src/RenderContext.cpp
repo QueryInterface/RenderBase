@@ -3,6 +3,7 @@
 #include <vector>
 #include "SDL_opengles2.h"
 #include "SDL_egl.h"
+#include "HandleImpl.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// EventCallbackHandle ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13,13 +14,9 @@ WindowCallbackHandle::WindowCallbackHandle(WindowBase* windowContext, list< shar
 }
 
 WindowCallbackHandle::~WindowCallbackHandle() {
-}
-
-inline uint32_t WindowCallbackHandle::Release() {
     if (_window) {
         _window->_eraseCallback(_iter);
     }
-    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +85,7 @@ WindowBase::~WindowBase() {
 IHandle* WindowBase::RegisterEventCallback(const std::shared_ptr<EventCallback>& callback) {
     std::lock_guard<std::mutex> lock(_callbackMutex);
     _eventCallbacks.push_back(callback);
-    return new WindowCallbackHandle(this, --_eventCallbacks.end());
+    return make_handle<WindowCallbackHandle>(this, --_eventCallbacks.end());
 }
 
 inline void WindowBase::_eraseCallback(list< shared_ptr<EventCallback> >::iterator& iter) {
@@ -184,9 +181,8 @@ RenderContextGLES2::RenderContextGLES2(const RenderContextBuilder* builder)
 RenderContextGLES2::~RenderContextGLES2() {
 }
 
-uint32_t RenderContextGLES2::Release() {
+void RenderContextGLES2::Release() {
     delete this;
-    return 0;
 }
 
 WindowBase* RenderContextGLES2::GetWindow() {

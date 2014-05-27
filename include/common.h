@@ -35,8 +35,7 @@ struct ISceneElement
 
 struct IHandle
 {
-    virtual uint32_t AddRef() = 0;
-    virtual uint32_t Release() = 0;
+    virtual void Release() = 0;
 };
 
 //template <typename BaseType, typename DerivedType, typename... Args>

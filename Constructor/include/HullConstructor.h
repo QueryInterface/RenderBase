@@ -30,8 +30,7 @@ namespace ConstructorImpl
         virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const;
 
         // IHandle interface
-        virtual uint32_t AddRef() { return 0; };
-        virtual uint32_t Release() { return 0; };
+        virtual void Release() {};
 
         //IClonable interface
         virtual IMeshPtr Clone() const { return nullptr;};
