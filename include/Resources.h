@@ -40,8 +40,8 @@ struct IMesh
 
     struct IndexGroup
     {
-        const unsigned int*         indices;  // might be NULL
-        unsigned int                count;
+        const uint32_t*         indices;  // might be NULL
+        uint32_t                count;
     };
 
     struct GeometryDesc

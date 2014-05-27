@@ -38,10 +38,3 @@ struct IHandle
     virtual void Release() = 0;
 };
 
-//template <typename BaseType, typename DerivedType, typename... Args>
-//std::shared_ptr<BaseType> make_shared_safe(const Args&... args)
-//{
-//    DerivedType* temp = new DerivedType(args...);
-//    std::shared_ptr<DerivedType> shared(temp, [&](BaseType* obj) {obj->Release();});
-//    return std::static_pointer_cast<BaseType>(shared);
-//}
