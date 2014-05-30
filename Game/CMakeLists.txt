@@ -19,11 +19,7 @@ add_executable(Game
     ${SOURCE_FILES}
 )
 
-target_link_libraries(Game Engine ResourceOverseer)
-list(APPEND DEPENDS copy_angle_libraries)
-if (${DEPENDS})
-    add_dependencies(Game ${DEPENDS})
-endif()
+target_link_libraries(Game Engine ResourceOverseer Constructor)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

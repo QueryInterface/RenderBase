@@ -49,8 +49,13 @@ endif()
 list(APPEND EXTRA_LIBS SDL2)
 list(APPEND EXTRA_LIBS Utils)
 target_link_libraries(Engine ${EXTRA_LIBS})
-
+# Definitions
 add_definitions(-DDEFINE_EXPORT)
+# Dependencies
+if (WIN32)
+	add_dependencies(Engine copy_angle_libraries
+							copy_media_folder)
+endif()
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

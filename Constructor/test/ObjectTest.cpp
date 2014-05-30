@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "ObjectImpl.h"
+#include "HandleImpl.h"
 
 using namespace std;
 
@@ -9,8 +10,8 @@ public:
 
     void SetUp()
     {
-        m_object0 = static_pointer_cast<IObject>(make_shared<ComplexObject>());
-        m_object1 = static_pointer_cast<IObject>(make_shared<ComplexObject>());
+        m_object0 = static_pointer_cast<IObject>(make_shared_handle<BasicObject>(nullptr, nullptr));
+        m_object1 = static_pointer_cast<IObject>(make_shared_handle<BasicObject>(nullptr, nullptr));
     }
     void TearDown()
     {

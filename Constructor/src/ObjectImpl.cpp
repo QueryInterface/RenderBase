@@ -1,31 +1,34 @@
-#include "ObjectImpl.h"
 #include <algorithm>
+#include "ObjectImpl.h"
+#include "HandleImpl.h"
 
 using std::static_pointer_cast;
 
 #define NESTED_LOCK() if (m_nestedCall) return; ++m_nestedCall;
 #define NESTED_UNLOCK() --m_nestedCall;
 
-ComplexObject::ComplexObject()
-    : m_position(0., 0., 0.)
+BasicObject::BasicObject(IMeshPtr mesh, ITexturePtr texture)
+    : m_mesh(mesh)
+    , m_texture(texture)
+    , m_position(0., 0., 0.)
     , m_nestedCall(0)
 {
 
 }
 
-ComplexObject::~ComplexObject()
+BasicObject::~BasicObject()
 {
 
 }
 
-IObjectPtr ComplexObject::Clone() const
+IObjectPtr BasicObject::Clone() const
 {
-    std::shared_ptr<ComplexObject> obj = std::make_shared<ComplexObject>();
+    std::shared_ptr<BasicObject> obj = make_shared_handle<BasicObject>(m_mesh, m_texture);
     *obj = *this;
-    return std::static_pointer_cast<IObject>(obj);
+    return obj;
 }
 
-void ComplexObject::SetPosition(const Vector3<float>& pos) 
+void BasicObject::SetPosition(const Vector3<float>& pos) 
 {
     NESTED_LOCK();
     m_position = pos;
@@ -42,7 +45,12 @@ void ComplexObject::SetPosition(const Vector3<float>& pos)
     NESTED_UNLOCK();
 }
 
-void ComplexObject::Shift(const Vector3<float>& pos)
+void BasicObject::SetPosition(float x, float y, float z)
+{
+    SetPosition(Vector3<float>(x, y, z));
+}
+
+void BasicObject::Shift(const Vector3<float>& pos)
 {
     NESTED_LOCK();
     if (m_nestedCall) return;
@@ -62,28 +70,33 @@ void ComplexObject::Shift(const Vector3<float>& pos)
     NESTED_UNLOCK();
 }
 
-Vector3<float> ComplexObject::GetPosition() const 
+void BasicObject::Shift(float xShift, float yShift, float zShift)
+{
+    Shift(Vector3<float>(xShift, yShift, zShift));
+}
+
+Vector3<float> BasicObject::GetPosition() const 
 {
     return m_position;
 }
 
-void ComplexObject::AttachBidirectional(IObjectPtr object) 
+void BasicObject::AttachBidirectional(IObjectPtr object) 
 {
     object->AttachDirectional(static_pointer_cast<IObject>(shared_from_this()));
     m_connectionsWeak.push_back(object);
 }
 
-void ComplexObject::AttachDirectional(IObjectPtr object) 
+void BasicObject::AttachDirectional(IObjectPtr object) 
 {
     m_connections.push_back(object);
 }
 
-uint32_t ComplexObject::GetNumAttached() const 
+uint32_t BasicObject::GetNumAttached() const 
 {
     return m_connections.size() + m_connectionsWeak.size();
 }
 
-IObjectPtr ComplexObject::GetAttached(uint32_t index) const 
+IObjectPtr BasicObject::GetAttached(uint32_t index) const 
 {
     size_t size0 = m_connections.size();
     size_t size1 = size0 + m_connectionsWeak.size();
@@ -95,7 +108,7 @@ IObjectPtr ComplexObject::GetAttached(uint32_t index) const
         return m_connections[index];
 }
 
-void ComplexObject::Detach() 
+void BasicObject::Detach() 
 {
     vector<IObjectPtr> temp;
     temp.swap(m_connections);
@@ -111,7 +124,7 @@ void ComplexObject::Detach()
     }
 }
 
-void ComplexObject::Detach(IObjectPtr object) 
+void BasicObject::Detach(IObjectPtr object) 
 {
     auto elem0 = std::find(m_connections.begin(), m_connections.end(), object);
     if (elem0 != m_connections.end())
@@ -132,3 +145,7 @@ void ComplexObject::Detach(IObjectPtr object)
     }
 }
 
+IObjectPtr IObject::CreateBasicObject(IMeshPtr mesh, ITexturePtr texture)
+{
+    return static_pointer_cast<IObject>(make_shared_handle<BasicObject>(mesh, texture));
+}

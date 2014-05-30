@@ -11,6 +11,7 @@ set(3RDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdParty)
 set(SDL_DIR ${3RDPARTY_DIR}/_unpack/SDL/SDL2)
 set(ANGLE_DIR ${3RDPARTY_DIR}/angle)
 set(OBJ_LOADER_DIR ${3RDPARTY_DIR}/_unpack/tinyobjloader)
+set(MEDIA_DIR ${CMAKE_CURRENT_LIST_DIR}/Media)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8) 
     set(ARCH_64 TRUE) 
@@ -87,4 +88,11 @@ if (WIN32)
         COMMENT "Copying ANGLE binaries to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>" VERBATIM
     )
     set_property (TARGET copy_angle_libraries  PROPERTY FOLDER "3rdParty")
-endif()    
+endif()
+
+add_custom_target(copy_media_folder
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${MEDIA_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/Media/
+    COMMENT "Copying Media folder to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>" VERBATIM
+)
+set_property (TARGET copy_angle_libraries	PROPERTY FOLDER "3rdParty")
+set_property (TARGET copy_media_folder		PROPERTY FOLDER "3rdParty")

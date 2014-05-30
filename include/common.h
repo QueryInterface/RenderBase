@@ -29,12 +29,12 @@ struct IClonable
     virtual ClonableType Clone() const = 0;
 };
 
-struct ISceneElement 
-{
-};
-
 struct IHandle
 {
     virtual void Release() = 0;
+};
+
+struct ISceneElement : public IHandle
+{
 };
 

@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "ResourceOverseer.h"
+#include "Object.h"
 #include "Utils.h"
 
 int main() {
@@ -18,10 +19,10 @@ int main() {
         ITexturePtr texture0 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
         ITexturePtr texture1 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
-        // IObjectPtr object0 = IObject::CreateBasicObject(mesh, texture);
-        // object0->SetPosition(0, 0, 0);
-        // IObjectPtr object1 = IObject::CreaterBaseicObject(mesh, texture);
-        // object1->SetPosition(1, 1, 0);
+        IObjectPtr object0 = IObject::CreateBasicObject(mesh, texture0);
+        object0->SetPosition(0, 0, 0);
+        IObjectPtr object1 = IObject::CreateBasicObject(mesh, texture1);
+        object1->SetPosition(1, 1, 0);
         // // Create light
         // ILightPtr light = engine->CreateLight();
         // // CreateScene

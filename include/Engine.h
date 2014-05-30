@@ -52,7 +52,6 @@ struct IWindow
 struct ILight
     : public IClonable<ILight>
     , public ISceneElement 
-    , public IHandle
 {
     // Sets
     virtual void            SetPosition(Vector3<float> pos) = 0;
@@ -63,7 +62,6 @@ struct ILight
 struct ICamera 
     : public IClonable<ICamera>
     , public ISceneElement 
-    , public IHandle
 {
 
 };
