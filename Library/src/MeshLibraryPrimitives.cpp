@@ -37,7 +37,30 @@ class CubeMesh : public BaseMesh
 public:
     CubeMesh()
     {
-#include "../models/Cube.mdl"
+        const size_t groupsCount = 6;
+        short indexGroups[groupsCount][groupsCount] = 
+        {
+            {2, 3, 4, 2, 4, 5,}, // front  +x
+            {1, 6, 4, 1, 4, 3,}, // top    +y
+            {0, 1, 2, 2, 1, 3,}, // right  +z
+            {1, 0, 7, 1, 7, 6,}, // back   -x
+            {0, 2, 7, 2, 5, 7,}, // bottom -y
+            {7, 5, 4, 7, 4, 6,}, // left   -z
+        };
+
+        float vertices[] = 
+        {//     vertex         normal    texcoord
+        //     front face
+            0.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            1.0f, 1.0f, 1.0f,
+        //     back face
+            1.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+        };
 
         for (size_t i = 0; i < groupsCount; ++i)
         {
@@ -81,4 +104,66 @@ private:
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());
+
+// Simple Cube mesh
+class WedgeMesh : public BaseMesh
+{
+public:
+    WedgeMesh()
+    {
+        float vertices[] = 
+        {//     vertex         normal    texcoord
+        //     front edge
+            0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+        //     back face
+            1.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+        };
+
+        short indexGroups[] = 
+        {
+            0, 5, 4,          // front  +x
+            0, 2, 1, 0, 4, 2, // top    +y
+            1, 2, 3,          // back   -x
+            0, 2, 5, 2, 3, 5, // bottom -y
+            5, 3, 2, 5, 2, 4, // left   -z
+        };
+
+        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(short));
+
+        m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
+
+        ILibrary::library()->RegisterMesh(ElementType::Wedge, *this);
+    }
+
+    virtual IMeshPtr Clone() const 
+    {
+        return std::make_shared<WedgeMesh>(*this);
+    };
+
+    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    {
+        flags;
+        out_descriptor.groups.clear();
+        LayoutItem li;
+        li.layoutType = LayoutType::Vertices;
+        li.itemSize = 3;
+        li.itemsCount = m_vertices.size();
+        li.items = (float*)m_vertices.data();
+        out_descriptor.layout.push_back(li);
+
+        IndexGroup mc;
+        mc.indices = m_indices.data();
+        mc.count = m_indices.size();
+        out_descriptor.groups.push_back(mc);
+    }
+
+private:
+    std::vector<unsigned int> m_indices;
+    static std::unique_ptr<IMesh> self;
+};
+std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
 //eof
