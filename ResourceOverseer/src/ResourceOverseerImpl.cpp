@@ -51,9 +51,7 @@ Mesh::~Mesh()
 
 IMeshPtr Mesh::Clone() const
 {
-    std::shared_ptr<Mesh> obj = make_shared_handle<Mesh>();
-    *obj = *this;
-    return obj;
+    CLONE_HANDLE(IMesh, Mesh);
 }
 
 void Mesh::GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const

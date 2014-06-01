@@ -18,7 +18,7 @@ public:
     }
 protected:
 
-    void checkMesh(size_t refCount, Vector3<float> refmin, Vector3<float> refmax, std::string fileName = "")
+    void checkMesh(size_t refCount, vector3d refmin, vector3d refmax, std::string fileName = "")
     {
         IMesh::GeometryDesc desc;
         m_builder->GetHull().GetGeometryDesc(0, desc);
@@ -29,12 +29,12 @@ protected:
             verticesTotal += group.count;
         }
 
-        Vector3<float> maximum(0,0,0);
-        Vector3<float> minimum(500,500,500);
+        vector3d maximum(0,0,0);
+        vector3d minimum(500,500,500);
 
         for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
         {
-            Vector3<float> current(&desc.layout[0].items[j]);
+            vector3d current(&desc.layout[0].items[j]);
             maximum.x = (max(maximum.x, current.x));
             maximum.y = (max(maximum.y, current.y));
             maximum.z = (max(maximum.z, current.z));
@@ -70,14 +70,14 @@ protected:
         // save vertices
         for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
         {
-            Vector3<float> current(&desc.layout[0].items[j]);
+            vector3d current(&desc.layout[0].items[j]);
             fprintf(f, "v %.3f %.3f %.3f\n", current.x, current.y, current.z);
         }
 
         //save indices
         for (size_t j = 0; j < (desc.layout[0].itemsCount / desc.layout[0].itemSize); j += 3)
         {
-            Vector3<float> current(&desc.layout[0].items[j]);
+            vector3d current(&desc.layout[0].items[j]);
             
             fprintf(f, "f %u %u %u\n", j + 1, j + 2, j + 3);
         }
@@ -239,7 +239,7 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
 TEST_F(BuildingBerthTest, SingleElementMesh)
 {
     m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
-    ASSERT_NO_FATAL_FAILURE(checkMesh(36, Vector3<float>(0,0,0), Vector3<float>(1,1,1), "c:\\tmp\\cube.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh(36, vector3d(0,0,0), vector3d(1,1,1), "c:\\tmp\\cube.obj"));
 }
 
 TEST_F(BuildingBerthTest, ElementsMesh)
@@ -248,7 +248,7 @@ TEST_F(BuildingBerthTest, ElementsMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,4,0), Directions::pY, true);
 
-    ASSERT_NO_FATAL_FAILURE(checkMesh(36 * 3, Vector3<float>(0,0,0), Vector3<float>(1,5,1), "c:\\tmp\\cube_pillar.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh(36 * 3, vector3d(0,0,0), vector3d(1,5,1), "c:\\tmp\\cube_pillar.obj"));
 }
 
 TEST_F(BuildingBerthTest, SinglePillarMesh)
@@ -257,7 +257,7 @@ TEST_F(BuildingBerthTest, SinglePillarMesh)
     m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,2,0), Directions::pY, true);
 
-    ASSERT_NO_FATAL_FAILURE(checkMesh(84, Vector3<float>(0,0,0), Vector3<float>(1,3,1), "c:\\tmp\\united_pillar.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh(84, vector3d(0,0,0), vector3d(1,3,1), "c:\\tmp\\united_pillar.obj"));
 }
 
 TEST_F(BuildingBerthTest, CubeMesh)
@@ -270,7 +270,7 @@ TEST_F(BuildingBerthTest, CubeMesh)
                 m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY, true);
             }
     const float BBox = (float)cubeScales;
-    ASSERT_NO_FATAL_FAILURE(checkMesh(cubeScales*cubeScales*6*6, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\HugeCube.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh(cubeScales*cubeScales*6*6, vector3d(0,0,0), vector3d(BBox, BBox, BBox), "c:\\tmp\\HugeCube.obj"));
 }
 
 TEST_F(BuildingBerthTest, SpongeMesh)
@@ -285,7 +285,7 @@ TEST_F(BuildingBerthTest, SpongeMesh)
             }
     const float BBox = (float)cubeScales;
     //hmmm... 64? * 64?
-    ASSERT_NO_FATAL_FAILURE(checkMesh((cubeScales*cubeScales*cubeScales/2)*36, Vector3<float>(0,0,0), Vector3<float>(BBox, BBox, BBox), "c:\\tmp\\sponge.obj"));
+    ASSERT_NO_FATAL_FAILURE(checkMesh((cubeScales*cubeScales*cubeScales/2)*36, vector3d(0,0,0), vector3d(BBox, BBox, BBox), "c:\\tmp\\sponge.obj"));
 }
 
 TEST_F(BuildingBerthTest, AnyTypeMesh)

@@ -1,8 +1,6 @@
 #include "RenderContext.h"
 #include "ErrorHandler.h"
 #include <vector>
-#include "SDL_opengles2.h"
-#include "SDL_egl.h"
 #include "HandleImpl.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,8 +163,6 @@ WINDOW_MSG WindowSDL::ProcessMessage() {
 }
 
 void WindowSDL::Present() {
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
     SDL_GL_SwapWindow(_window);
 }
 

@@ -23,12 +23,10 @@ BasicObject::~BasicObject()
 
 IObjectPtr BasicObject::Clone() const
 {
-    std::shared_ptr<BasicObject> obj = make_shared_handle<BasicObject>(m_mesh, m_texture);
-    *obj = *this;
-    return obj;
+    CLONE_HANDLE(IObject, BasicObject, m_mesh, m_texture);
 }
 
-void BasicObject::SetPosition(const Vector3<float>& pos) 
+void BasicObject::SetPosition(const vector3d& pos) 
 {
     NESTED_LOCK();
     m_position = pos;
@@ -47,10 +45,10 @@ void BasicObject::SetPosition(const Vector3<float>& pos)
 
 void BasicObject::SetPosition(float x, float y, float z)
 {
-    SetPosition(Vector3<float>(x, y, z));
+    SetPosition(vector3d(x, y, z));
 }
 
-void BasicObject::Shift(const Vector3<float>& pos)
+void BasicObject::Shift(const vector3d& pos)
 {
     NESTED_LOCK();
     if (m_nestedCall) return;
@@ -72,10 +70,10 @@ void BasicObject::Shift(const Vector3<float>& pos)
 
 void BasicObject::Shift(float xShift, float yShift, float zShift)
 {
-    Shift(Vector3<float>(xShift, yShift, zShift));
+    Shift(vector3d(xShift, yShift, zShift));
 }
 
-Vector3<float> BasicObject::GetPosition() const 
+vector3d BasicObject::GetPosition() const 
 {
     return m_position;
 }

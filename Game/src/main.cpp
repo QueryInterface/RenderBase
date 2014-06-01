@@ -23,21 +23,20 @@ int main() {
         object0->SetPosition(0, 0, 0);
         IObjectPtr object1 = IObject::CreateBasicObject(mesh, texture1);
         object1->SetPosition(1, 1, 0);
-        // // Create light
-        // ILightPtr light = engine->CreateLight();
-        // // CreateScene
-        // IScenePtr scene = engine->CreateScene();
-        // // Create camera
-        // ICameraPtr camera = engine->CreateCamera();
-        // camera->MakeActive();
-        // // Attach objects to scene
-        // scene->AddObject(object0);
-        // scene->AddObject(object1);
-        // scene->SetCamera(camera);
-        // scene->AddLight(light);
-        // // Set scene
-        // engine->SetScene(scene);
-        // // Run
+        // Create light
+        ILightPtr light = engine->CreateLight();
+        // CreateScene
+        IScenePtr scene = engine->CreateScene();
+        // Create camera
+        ICameraPtr camera = engine->CreateCamera(vector3d(0.5, 0.5, 0.0), vector3d(0.0, 0.0, 1.0), vector3d(0., -1.0, 0.0));
+        // Attach objects to scene
+        scene->AddObject(object0);
+        scene->AddObject(object1);
+        scene->SetCamera(camera);
+        scene->AddLight(light);
+        // Set scene
+        engine->SetScene(scene);
+        // Run
         engine->Run();
 
     }

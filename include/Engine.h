@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include "Object.h"
 
 using std::shared_ptr;
 using std::string;
@@ -50,32 +51,41 @@ struct IWindow
 
 // scene interfaces
 struct ILight
-    : public IClonable<ILight>
+    : public IClonable<ILightPtr>
     , public ISceneElement 
 {
     // Sets
-    virtual void            SetPosition(Vector3<float> pos) = 0;
+    virtual void            SetPosition(vector3d pos) = 0;
+    virtual void            SetPosition(float x, float y, float z) = 0;
     // Gets
-    virtual Vector3<float>  GetPosition() const             = 0;    
+    virtual vector3d GetPosition() const             = 0;    
 };
 
 struct ICamera 
-    : public IClonable<ICamera>
+    : public IClonable<ICameraPtr>
     , public ISceneElement 
 {
-
 };
 
 // Base level of all objects
 struct IScene : public IHandle
 {
+    virtual void AddObject(IObjectPtr& object)  = 0;
+    virtual void AddLight(ILightPtr& light)     = 0;
+    virtual void SetCamera(ICameraPtr& camera)  = 0;
+
+    virtual void Render() const                 = 0;
 };
 
 struct IEngine
 {
-    virtual void                    SetScene(IScenePtr scene)   = 0;
-    virtual IWindow*                GetWindow() const           = 0;
-    virtual void                    Run()                       = 0;
+    virtual void                    SetScene(IScenePtr scene)                           = 0;
+    virtual IWindow*                GetWindow() const                                   = 0;
+    virtual void                    Run()                                               = 0;
+
+    virtual ILightPtr               CreateLight()                                       = 0;
+    virtual ICameraPtr              CreateCamera(vector3d eye, vector3d at, vector3d up)= 0;
+    virtual IScenePtr               CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine*  CALLING_CONVENTION Instance();
 };

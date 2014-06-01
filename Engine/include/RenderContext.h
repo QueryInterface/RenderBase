@@ -6,6 +6,8 @@
 #include <mutex>
 
 #include "SDL.h"
+#include "SDL_opengles2.h"
+#include "SDL_egl.h"
 
 using std::list;
 using std::set;
