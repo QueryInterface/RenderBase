@@ -25,13 +25,14 @@ namespace ConstructorImpl
 {
     struct Element
     {
-        ElementType     type;
-        Directions      direction;
-        unsigned int    neighbourhood;
+        const ConstructionDescription*  construction;
+        Directions                      direction;
+        unsigned int                    neighbourhood;
     };
 // on a low level object consists from a set of Cores
     class Core : public IConstructable
     {
+        ConstructionDescription m_reference;
         typedef Utils::RangeList<Element> Pillar_t;
     public:
         // IConstructable interface

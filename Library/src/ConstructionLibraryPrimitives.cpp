@@ -13,6 +13,7 @@ public:                                                                         
         m_desc.primitiveUID = ElementType::##PrimitiveType;                             \
         m_desc.LFT = (BBOX_LFT);                                                        \
         m_desc.RBB = (BBOX_RBB);                                                        \
+        m_desc.neighborsCount = 6;                                                      \
         m_desc.neighborRelations[0] = INFL_PX;                                          \
         m_desc.neighborRelations[1] = INFL_PY;                                          \
         m_desc.neighborRelations[2] = INFL_PZ;                                          \
@@ -41,21 +42,18 @@ BEGIN_PRIMITIVE_DEFINITION(Cube,                Vector3D(0, 0, 0),      Vector3D
 END_PRIMITIVE_DEFINITION(Cube);
 
 BEGIN_PRIMITIVE_DEFINITION(Wedge,               Vector3D(0, 0, 0),      Vector3D(1, 1, 1),
-                           Influences::PARTIAL_EDGE, Influences::NOT_AFFECTED,
-                           Influences::NOT_AFFECTED, Influences::PARTIAL_EDGE,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED);
+                           5, Influences::NOT_AFFECTED, Influences::NOT_AFFECTED,
+                           5, Influences::FULLY_COVERED, Influences::FULLY_COVERED);
 END_PRIMITIVE_DEFINITION(Wedge);
 
 BEGIN_PRIMITIVE_DEFINITION(Ledder,              Vector3D(0, 0, 0),      Vector3D(1, 1, 1),
-                           Influences::PARTIAL_EDGE, Influences::NOT_AFFECTED,
-                           Influences::NOT_AFFECTED, Influences::PARTIAL_EDGE,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED);
+                           6, Influences::NOT_AFFECTED, Influences::NOT_AFFECTED, 
+                           6, Influences::FULLY_COVERED, Influences::FULLY_COVERED);
 END_PRIMITIVE_DEFINITION(Ledder);
 
 BEGIN_PRIMITIVE_DEFINITION(Cilinder,            Vector3D(0, 0, 0),      Vector3D(1, 1, 1),
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-                           Influences::PARTIAL_EDGE, Influences::FULLY_COVERED,
-                           Influences::FULLY_COVERED, Influences::PARTIAL_EDGE);
+                           Influences::FULLY_COVERED, Influences::FULLY_COVERED, 8, 
+                           Influences::FULLY_COVERED, Influences::FULLY_COVERED, 8);
 END_PRIMITIVE_DEFINITION(Cilinder);
 
 BEGIN_PRIMITIVE_DEFINITION(CilindricPlatform,   Vector3D(-1, 0, -1),    Vector3D(2, 1, 2),

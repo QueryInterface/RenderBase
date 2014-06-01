@@ -37,7 +37,7 @@ void Core::SetElement(const ConstructionDescription& desc, const Vector3D& posit
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
     // Y is UP direction
-    Element element = {desc.primitiveUID, direction, 0};
+    Element element = {&desc, direction, 0};
     m_pillars.item(position.x, position.z).insert(position.y, element);
 
     // notify neighbours aboutnew element
@@ -54,7 +54,7 @@ void Core::SetElement(const ConstructionDescription& desc, const Vector3D& posit
             {
                 if (x || z)
                 {
-                    Element ref = {ElementType::Reference, direction, 0};
+                    Element ref = {&m_reference, direction, 0};
                     m_pillars.item(position.x + x, position.z + z).insert(position.y, ref);
                 }
             }
@@ -85,14 +85,18 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     item = pillar->get_item_at(y - 1);
     if (item)
     {
-        item->neighbourhood |= Directions::pY;
-        self->neighbourhood |= Directions::nY;
+        if (item->construction->neighborRelations[1] <= self->construction->neighborRelations[1])
+            item->neighbourhood |= Directions::pY;
+        if (self->construction->neighborRelations[4] <= item->construction->neighborRelations[4])
+            self->neighbourhood |= Directions::nY;
     }
     item = pillar->get_item_at(y + 1);
     if (item)
     {
-        item->neighbourhood |= Directions::nY;
-        self->neighbourhood |= Directions::pY;
+        if (item->construction->neighborRelations[4] <= self->construction->neighborRelations[4])
+            item->neighbourhood |= Directions::nY;
+        if (self->construction->neighborRelations[1] <= item->construction->neighborRelations[1])
+            self->neighbourhood |= Directions::pY;
     }
 
     pillar = m_pillars.get_item_at(x - 1, z);
@@ -101,8 +105,10 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::pX;
-            self->neighbourhood |= Directions::nX;
+            if (item->construction->neighborRelations[0] <= self->construction->neighborRelations[0])
+                item->neighbourhood |= Directions::pX;
+            if (self->construction->neighborRelations[3] <= item->construction->neighborRelations[3])
+                self->neighbourhood |= Directions::nX;
         }
     }
 
@@ -112,8 +118,10 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::nX;
-            self->neighbourhood |= Directions::pX;
+            if (item->construction->neighborRelations[3] <= self->construction->neighborRelations[3])
+                item->neighbourhood |= Directions::nX;
+            if (self->construction->neighborRelations[0] <= item->construction->neighborRelations[0])
+                self->neighbourhood |= Directions::pX;
         }
     }
 
@@ -123,8 +131,10 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::pZ;
-            self->neighbourhood |= Directions::nZ;
+            if (item->construction->neighborRelations[2] <= self->construction->neighborRelations[2])
+                item->neighbourhood |= Directions::pZ;
+            if (self->construction->neighborRelations[5] <= item->construction->neighborRelations[5])
+                self->neighbourhood |= Directions::nZ;
         }
     }
 
@@ -134,8 +144,10 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
         item = pillar->get_item_at(y);
         if (item)
         {
-            item->neighbourhood |= Directions::nZ;
-            self->neighbourhood |= Directions::pZ;
+            if (item->construction->neighborRelations[5] <= self->construction->neighborRelations[5])
+                item->neighbourhood |= Directions::nZ;
+            if (self->construction->neighborRelations[2] <= item->construction->neighborRelations[2])
+                self->neighbourhood |= Directions::pZ;
         }
     }
 }

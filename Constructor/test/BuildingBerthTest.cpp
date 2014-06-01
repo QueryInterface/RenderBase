@@ -290,15 +290,14 @@ TEST_F(BuildingBerthTest, SpongeMesh)
 
 TEST_F(BuildingBerthTest, AnyTypeMesh)
 {
-    const size_t basement = 64;
+    const size_t basement = 3;
     for (size_t x = 0; x < basement; ++x)
         for (size_t z = 0; z < basement; ++z)
         {
-            size_t height = (size_t)( 2*(1 + sin(x/3.0)) + 2*(1 + cos(z/3.0))) + 1;
-
-            for (size_t y = 0; y < height; ++y)
-                m_builder->SetElement(ElementType::Cube, Vector3D(x,y,z), Directions::pY, true);
+            if (x != 1 || z != 1)
+                m_builder->SetElement(ElementType::Cube, Vector3D(x,0,z), Directions::pY, true);
         }
+    m_builder->SetElement(ElementType::Wedge, Vector3D(1,0,1), Directions::pY, true);
     IMesh::GeometryDesc desc;
     m_builder->GetHull().GetGeometryDesc(0, desc);
     exportMesh(desc, "c:\\tmp\\piramid.obj");

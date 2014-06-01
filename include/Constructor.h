@@ -45,11 +45,11 @@ enum Directions : unsigned char
     All = 0xFF,
 };
 
-enum class Influences : unsigned int
+enum Influences : unsigned int
 {
-    NOT_AFFECTED,
-    PARTIAL_EDGE,
-    FULLY_COVERED,
+    NOT_AFFECTED = 0,
+
+    FULLY_COVERED = 10, // 10 parts will be enough
 };
 
 typedef Vector3<int> Vector3D;
@@ -66,7 +66,8 @@ struct ConstructionDescription
 
     // neighbor relations section
     // influence multiplers
-    Influences  neighborRelations[6];
+    unsigned int neighborsCount;
+    unsigned int neighborRelations[6];
 
     // default element direction is UP (for OpenGL coordinate system it is +Y)
     ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ) {};

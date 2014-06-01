@@ -23,7 +23,7 @@ void Hull::ConstructMesh(Core& objectCore)
     {
         GeometryDesc desc;
         size_t blockStart = m_indices.size();
-        ILibrary::library()->GetMesh(e.type).GetGeometryDesc(~e.neighbourhood, desc);
+        ILibrary::library()->GetMesh(e.construction->primitiveUID).GetGeometryDesc(~e.neighbourhood, desc);
         for (auto group : desc.groups)
         {
             m_indices.insert(m_indices.end(), group.indices, group.indices + group.count);
