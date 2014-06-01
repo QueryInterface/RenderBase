@@ -17,7 +17,7 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
     ASSERT_EQ(ElementType::##Type, desc.primitiveUID) << "incorrect primitive type expected: ElementType::" << #Type;   \
     EXPECT_EQ(desc.LFT, tlf);                                                                                           \
     EXPECT_EQ(desc.RBB, (brb));                                                                                         \
-    EXPECT_EQ(desc.direction, Directions::pY);
+    EXPECT_EQ(desc.direction, Directions::pZ);
 
 #define END_CHECK_PRIMITIVE_TEST() }
 

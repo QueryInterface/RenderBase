@@ -40,9 +40,18 @@ enum Directions : unsigned char
     nY = (1 << 4),
     nZ = (1 << 5),
 
+    UpSideDown,
+
     All = 0xFF,
 };
-    
+
+enum class Influences : unsigned int
+{
+    NOT_AFFECTED,
+    PARTIAL_EDGE,
+    FULLY_COVERED,
+};
+
 typedef Vector3<int> Vector3D;
 
 // description of element
@@ -55,8 +64,12 @@ struct ConstructionDescription
     Vector3D    LFT; // left, front, top
     Vector3D    RBB; // right, bottom, back
 
+    // neighbor relations section
+    // influence multiplers
+    Influences  neighborRelations[6];
+
     // default element direction is UP (for OpenGL coordinate system it is +Y)
-    ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pY) {};
+    ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ) {};
 };
 
 /////////////////////////////////////////////////////////////////////
