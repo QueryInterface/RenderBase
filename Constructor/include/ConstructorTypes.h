@@ -39,9 +39,9 @@ namespace Constructor
         ED_pY = 0x02,
         ED_pZ = 0x04,
 
-        ED_nX = 0x10,
-        ED_nY = 0x20,
-        ED_nZ = 0x40,
+        ED_nZ = 0x08,
+        ED_nY = 0x10,
+        ED_nX = 0x20,
 
         ED_All = 0xFF,
     };

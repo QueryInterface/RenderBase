@@ -42,8 +42,8 @@ BEGIN_PRIMITIVE_DEFINITION(Cube,                Vector3D(0, 0, 0),      Vector3D
 END_PRIMITIVE_DEFINITION(Cube);
 
 BEGIN_PRIMITIVE_DEFINITION(Wedge,               Vector3D(0, 0, 0),      Vector3D(1, 1, 1),
-                           5, Influences::NOT_AFFECTED, Influences::NOT_AFFECTED,
-                           5, Influences::FULLY_COVERED, Influences::FULLY_COVERED);
+                           5, Influences::NOT_AFFECTED, Influences::FULLY_COVERED,
+                           5, Influences::FULLY_COVERED, Influences::NOT_AFFECTED);
 END_PRIMITIVE_DEFINITION(Wedge);
 
 BEGIN_PRIMITIVE_DEFINITION(Ledder,              Vector3D(0, 0, 0),      Vector3D(1, 1, 1),
