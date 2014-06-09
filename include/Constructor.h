@@ -6,6 +6,8 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "MathBasics.h"
+#include <vector>
+#include <cstdint>
 
 enum ElementType : unsigned int
 {
@@ -67,10 +69,11 @@ struct ConstructionDescription
     // neighbor relations section
     // influence multiplers
     unsigned int neighborsCount;
-    unsigned int neighborRelations[6];
+    std::vector<uint32_t> neighborRelations;
+    std::vector<Vector3D> neighborDirections;
 
     // default element direction is UP (for OpenGL coordinate system it is +Y)
-    ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ) {};
+    ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ), neighborsCount(0) {};
 };
 
 /////////////////////////////////////////////////////////////////////

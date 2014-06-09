@@ -112,4 +112,23 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
+uint32_t Core::setNeighbor(Element* item, Vector3D& direction, uint32_t relationWeight)
+{
+    uint32_t flag = 0;
+    Vector3D negative(-direction.x, -direction.y, -direction.z);
+
+    for (size_t i = 0; i < item->construction->neighborDirections.size(); ++i)
+    {
+        if (item->construction->neighborDirections[i] == negative)
+        {
+            if (item->construction->neighborRelations[i] >= relationWeight)
+            {
+                //item->neighbourhood |= relation;
+            }
+        }
+    }
+
+    return flag;
+}
+
 // eof

@@ -55,6 +55,9 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
+        uint32_t setNeighbor(Element* item, Vector3D& direction, uint32_t relationWeight);
+
+    private:
         ConstructionDescription         m_desc;
         Utils::QuadTree< Pillar_t >     m_pillars;
 
