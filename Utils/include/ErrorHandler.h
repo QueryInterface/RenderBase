@@ -33,3 +33,18 @@ private:
 #define VE_WARNING_IF(cond, ...)    if (cond) {ErrorHandler::Instance()->Process(ERROR_TYPE_WARNING,    COMPONENT_NAME, __FILE__, __LINE__, __VA_ARGS__);}
 #define VE_INFO_IF(cond, ...)       if (cond) {ErrorHandler::Instance()->Process(ERROR_TYPE_INFO,       COMPONENT_NAME, __FILE__, __LINE__, __VA_ARGS__);}
 #define VE_DEBUG_IF(cond, ...)      if (cond) {ErrorHandler::Instance()->Process(ERROR_TYPE_DEBUG,      COMPONENT_NAME, __FILE__, __LINE__, __VA_ARGS__);}
+
+#ifdef DEBUG_OPENGL
+#define GL_CALL(expression)                             \
+	expression;					                        \
+	{                                                   \
+		GLuint err = glGetError();	                    \
+		while (err != GL_NO_ERROR)	                    \
+		{							                    \
+        VE_ERROR(L"[%s] error: %x", ##expression, err); \
+			err = glGetError();		                    \
+		}							                    \
+	}
+#else
+#define GL_CALL(expression) expression
+#endif
