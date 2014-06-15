@@ -16,13 +16,13 @@ public:
 
     IObjectPtr              Clone() const override;
 
-    virtual void            SetPosition(const vector3d& pos) override;
+    virtual void            SetPosition(const vector3f_t& pos) override;
     virtual void            SetPosition(float x, float y, float z) override;
 
-    virtual void            Shift(const vector3d& shift) override;
+    virtual void            Shift(const vector3f_t& shift) override;
     virtual void            Shift(float xShift, float yShift, float zShift) override;
 
-    virtual vector3d        GetPosition() const override;
+    virtual vector3f_t        GetPosition() const override;
 
     virtual void            AttachBidirectional(IObjectPtr object) override;
     virtual void            AttachDirectional(IObjectPtr object) override;
@@ -33,7 +33,7 @@ public:
 private:
     IMeshPtr                    m_mesh;
     ITexturePtr                 m_texture;
-    vector3d                    m_position;
+    vector3f_t                    m_position;
     vector<IObjectPtr>          m_connections;
     vector< weak_ptr<IObject> > m_connectionsWeak;
     uint32_t                    m_nestedCall;

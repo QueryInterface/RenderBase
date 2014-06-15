@@ -62,7 +62,12 @@ struct Vector4 {
     T w;
 };
 
-typedef Vector1<float> vector1d;
-typedef Vector2<float> vector2d;
-typedef Vector3<float> vector3d;
-typedef Vector4<float> vector4d;
+typedef Vector1<float> vector1f_t;
+typedef Vector2<float> vector2f_t;
+typedef Vector3<float> vector3f_t;
+typedef Vector4<float> vector4f_t;
+
+typedef Vector1<int> vector1i_t;
+typedef Vector2<int> vector2i_t;
+typedef Vector3<int> vector3i_t;
+typedef Vector4<int> vector4i_t;

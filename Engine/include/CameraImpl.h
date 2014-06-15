@@ -4,11 +4,11 @@
 class Camera : public ICamera
 {
 public:
-    Camera(vector3d eye, vector3d at, vector3d up);
+    Camera(vector3f_t eye, vector3f_t at, vector3f_t up);
     virtual ~Camera();
     virtual ICameraPtr Clone() const;
 private:
-    vector3d m_eye;
-    vector3d m_at;
-    vector3d m_up;
+    vector3f_t m_eye;
+    vector3f_t m_at;
+    vector3f_t m_up;
 };

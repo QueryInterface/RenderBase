@@ -10,7 +10,7 @@ Core& BuildingBerth::GetCore()
     return m_core;
 }
 
-bool BuildingBerth::SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours)
+bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours)
 {
     if (type == ElementType::Space) 
     {

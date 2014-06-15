@@ -55,10 +55,10 @@ struct ILight
     , public ISceneElement 
 {
     // Sets
-    virtual void            SetPosition(vector3d pos) = 0;
+    virtual void            SetPosition(vector3f_t pos) = 0;
     virtual void            SetPosition(float x, float y, float z) = 0;
     // Gets
-    virtual vector3d GetPosition() const             = 0;    
+    virtual vector3f_t GetPosition() const             = 0;    
 };
 
 struct ICamera 
@@ -84,7 +84,7 @@ struct IEngine
     virtual void                    Run()                                               = 0;
 
     virtual ILightPtr               CreateLight()                                       = 0;
-    virtual ICameraPtr              CreateCamera(vector3d eye, vector3d at, vector3d up)= 0;
+    virtual ICameraPtr              CreateCamera(vector3f_t eye, vector3f_t at, vector3f_t up)= 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine*  CALLING_CONVENTION Instance();

@@ -21,7 +21,7 @@ ILightPtr EngineImpl::CreateLight()
     return static_pointer_cast<ILight>(make_shared_handle<Light>());
 }
 
-ICameraPtr EngineImpl::CreateCamera(vector3d eye, vector3d at, vector3d up)
+ICameraPtr EngineImpl::CreateCamera(vector3f_t eye, vector3f_t at, vector3f_t up)
 {
     return static_pointer_cast<ICamera>(make_shared_handle<Camera>(eye, at, up));
 }
