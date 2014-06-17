@@ -62,7 +62,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
     }
 }
 
-Element* Core::GetElement(const Vector3D& position)
+Element* Core::GetElement(const vector3i_t& position)
 {
     auto pillar = m_pillars.get_item_at(position.x, position.z);
     return pillar ? pillar->get_item_at(position.y) : nullptr;
@@ -85,30 +85,10 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 
     Element* self = pillar->get_item_at(y);
 
-<<<<<<< HEAD
-    //const Vector3D nbrs[] = {
-    //    Vector3D( 1, 0, 0),
-    //    Vector3D(0,  1, 0),
-    //    Vector3D(0, 0,  1),
-    //    Vector3D(0, 0, -1),
-    //    Vector3D(0, -1, 0),
-    //    Vector3D(-1, 0, 0),
-    //};
-=======
-    const vector3i_t nbrs[] = {
-        vector3i_t( 1, 0, 0),
-        vector3i_t(0,  1, 0),
-        vector3i_t(0, 0,  1),
-        vector3i_t(0, 0, -1),
-        vector3i_t(0, -1, 0),
-        vector3i_t(-1, 0, 0),
-    };
->>>>>>> origin/master
-
     for (auto neighbor : self->construction->neighbors)
     {
         Element* item = GetElement(
-            Vector3D(x + neighbor.relationPosition.x, y + neighbor.relationPosition.y, z + neighbor.relationPosition.z));
+            vector3i_t(x + neighbor.relationPosition.x, y + neighbor.relationPosition.y, z + neighbor.relationPosition.z));
         if (!item)
         {
             continue;
@@ -132,17 +112,9 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
-<<<<<<< HEAD
-const NeighborDesc* Core::findRelation(const Element& item, Vector3D& direction)
+const NeighborDesc* Core::findRelation(const Element& item, vector3i_t& direction)
 {
-    const Vector3D negative(-direction.x, -direction.y, -direction.z);
-=======
-uint32_t Core::setNeighbor(Element* item, vector3i_t& direction, uint32_t relationWeight)
-{
-    uint32_t flag = 0;
-    vector3i_t negative(-direction.x, -direction.y, -direction.z);
->>>>>>> origin/master
-
+    const vector3i_t negative(-direction.x, -direction.y, -direction.z);
     for (const auto& relations : item.construction->neighbors)
     {
         if (negative == relations.relationPosition)

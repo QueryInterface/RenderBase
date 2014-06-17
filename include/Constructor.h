@@ -54,21 +54,17 @@ enum Influences : unsigned int
     FULLY_COVERED = 10, // 10 parts will be enough
 };
 
-<<<<<<< HEAD
-typedef Vector3<int> Vector3D;
 // struct neighbor description
 struct NeighborDesc
 {
-    uint32_t relationWeight;
-    Vector3D relationPosition;
+    uint32_t   relationWeight;
+    vector3i_t relationPosition;
     Directions relationFlag;
 
     NeighborDesc() : relationWeight(NOT_AFFECTED) {}
-    NeighborDesc(uint32_t weight, const Vector3D& position, Directions flag) : relationWeight(weight), relationPosition(position), relationFlag(flag) {}
+    NeighborDesc(uint32_t weight, const vector3i_t& position, Directions flag) : relationWeight(weight), relationPosition(position), relationFlag(flag) {}
 };
 
-=======
->>>>>>> origin/master
 // description of element
 struct ConstructionDescription
 {
@@ -81,13 +77,7 @@ struct ConstructionDescription
 
     // neighbor relations section
     // influence multiplers
-<<<<<<< HEAD
     std::vector<NeighborDesc> neighbors;
-=======
-    unsigned int neighborsCount;
-    std::vector<uint32_t> neighborRelations;
-    std::vector<vector3i_t> neighborDirections;
->>>>>>> origin/master
 
     // default element direction is UP (for OpenGL coordinate system it is +Y)
     ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ) {};

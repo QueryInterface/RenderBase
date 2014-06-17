@@ -19,18 +19,7 @@ public:                                                                         
 
 #define END_NEIGHBORS_LIST(count)                                                       \
         };                                                                              \
-<<<<<<< HEAD
-        m_desc.neighbors.assign(neighbors, neighbors + (count));
-=======
-        m_desc.neighborRelations.assign(neighbors, neighbors + m_desc.neighborsCount);
-
-#define BEGIN_NEIGHBORS_DIRECTIONS(count)                                               \
-        const vector3i_t neighborDirections[(count)] = {
-
-#define END_NEIGHBORS_DIRECTIONS()                                                      \
-        };                                                                              \
-        m_desc.neighborDirections.assign(neighborDirections, neighborDirections + m_desc.neighborsCount);
->>>>>>> origin/master
+        m_desc.neighbors.assign(neighbors, neighbors + count);
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                         \
         ILibrary::library()->RegisterConstruction(*this);                               \
@@ -47,124 +36,67 @@ END_PRIMITIVE_DEFINITION(Space);
 
 BEGIN_PRIMITIVE_DEFINITION(Cube,                vector3i_t(0, 0, 0),      vector3i_t(1, 1, 1))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(1,0,0),  Directions::pX), 
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,1,0),  Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(-1,0,0), Directions::nX),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,-1,0), Directions::nY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,-1), Directions::nZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(1,0,0),  Directions::pX), 
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,1,0),  Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(-1,0,0), Directions::nX),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,-1,0), Directions::nY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-        Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-        Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-        Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-    END_NEIGHBORS_LIST();
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(Cube);
 
 BEGIN_PRIMITIVE_DEFINITION(Wedge,               vector3i_t(0, 0, 0),      vector3i_t(1, 1, 1))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(5, Vector3D(1,0,0),                          Directions::pX), 
-        NeighborDesc(Influences::NOT_AFFECTED, Vector3D(0,1,0),   Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(5, Vector3D(-1,0,0),                         Directions::nX),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,-1,0), Directions::nY),
-        NeighborDesc(Influences::NOT_AFFECTED, Vector3D(0,0,-1),  Directions::nZ),
+        NeighborDesc(5, vector3i_t(1,0,0),                          Directions::pX), 
+        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,1,0),   Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(5, vector3i_t(-1,0,0),                         Directions::nX),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,-1,0), Directions::nY),
+        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,0,-1),  Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-                           5, Influences::NOT_AFFECTED, Influences::FULLY_COVERED,
-                           5, Influences::FULLY_COVERED, Influences::NOT_AFFECTED
-    END_NEIGHBORS_LIST()
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(Wedge);
 
 BEGIN_PRIMITIVE_DEFINITION(Ledder,              vector3i_t(0, 0, 0),      vector3i_t(1, 1, 1))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(6, Vector3D(1,0,0),                          Directions::pX), 
-        NeighborDesc(Influences::NOT_AFFECTED, Vector3D(0,1,0),   Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(6, Vector3D(-1,0,0),                         Directions::nX),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,-1,0), Directions::nY),
-        NeighborDesc(Influences::NOT_AFFECTED, Vector3D(0,0,-1),  Directions::nZ),
+        NeighborDesc(6, vector3i_t(1,0,0),                          Directions::pX), 
+        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,1,0),   Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(6, vector3i_t(-1,0,0),                         Directions::nX),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,-1,0), Directions::nY),
+        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,0,-1),  Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-                           6, Influences::NOT_AFFECTED, Influences::NOT_AFFECTED, 
-                           6, Influences::FULLY_COVERED, Influences::FULLY_COVERED
-    END_NEIGHBORS_LIST()
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(Ledder);
 
 BEGIN_PRIMITIVE_DEFINITION(Cilinder,            vector3i_t(0, 0, 0),      vector3i_t(1, 1, 1))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(1,0,0),  Directions::pX), 
-        NeighborDesc(8, Vector3D(0,1,0),                          Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(-1,0,0), Directions::nX),
-        NeighborDesc(8, Vector3D(0,-1,0),                         Directions::nY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,-1), Directions::nZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(1,0,0),  Directions::pX), 
+        NeighborDesc(8, vector3i_t(0,1,0),                          Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(-1,0,0), Directions::nX),
+        NeighborDesc(8, vector3i_t(0,-1,0),                         Directions::nY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED, 8, 
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED, 8
-    END_NEIGHBORS_LIST()
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(Cilinder);
 
 BEGIN_PRIMITIVE_DEFINITION(CilindricPlatform,   vector3i_t(-1, 0, -1),    vector3i_t(2, 1, 2))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(1,0,0),  Directions::pX), 
-        NeighborDesc(8, Vector3D(0,1,0),                          Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(-1,0,0), Directions::nX),
-        NeighborDesc(8, Vector3D(0,-1,0),                         Directions::nY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,-1), Directions::nZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(1,0,0),  Directions::pX), 
+        NeighborDesc(8, vector3i_t(0,1,0),                          Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(-1,0,0), Directions::nX),
+        NeighborDesc(8, vector3i_t(0,-1,0),                         Directions::nY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED
-    END_NEIGHBORS_LIST()
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(CilindricPlatform);
 
 BEGIN_PRIMITIVE_DEFINITION(Sphere,              vector3i_t(0, 0, 0),      vector3i_t(1, 1, 1))
     BEGIN_NEIGHBORS_LIST(6)
-<<<<<<< HEAD
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(1,0,0),  Directions::pX),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,1,0),  Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,1),  Directions::pZ),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(-1,0,0), Directions::nX),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,-1,0), Directions::nY),
-        NeighborDesc(Influences::FULLY_COVERED, Vector3D(0,0,-1), Directions::nZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(1,0,0),  Directions::pX),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,1,0),  Directions::pY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(-1,0,0), Directions::nX),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,-1,0), Directions::nY),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
-=======
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED,
-                           Influences::FULLY_COVERED, Influences::FULLY_COVERED
-    END_NEIGHBORS_LIST()
-    BEGIN_NEIGHBORS_DIRECTIONS(6)
-        vector3i_t(1,0,0), vector3i_t(0,1,0), vector3i_t(0,0,1), vector3i_t(-1,0,0), vector3i_t(0,-1,0), vector3i_t(0,0,-1)
-    END_NEIGHBORS_DIRECTIONS()
->>>>>>> origin/master
 END_PRIMITIVE_DEFINITION(Sphere);
 // eof

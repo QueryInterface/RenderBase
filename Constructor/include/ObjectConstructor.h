@@ -44,7 +44,7 @@ namespace ConstructorImpl
         // Adds element to specified position
         void SetElement(const ConstructionDescription& element, const vector3i_t& position, Directions direction, bool updateNeighbours);
 
-        Element* GetElement(const Vector3D& position);
+        Element* GetElement(const vector3i_t& position);
 
         // Updates neighborhoodof component in position x, y, z
         void UpdateNeighbourhood(size_t x, size_t y, size_t z);
@@ -57,18 +57,14 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
-<<<<<<< HEAD
-        const NeighborDesc* findRelation(const Element& item, Vector3D& direction);
-=======
-        uint32_t setNeighbor(Element* item, vector3i_t& direction, uint32_t relationWeight);
->>>>>>> origin/master
+        const NeighborDesc* findRelation(const Element& item, vector3i_t& direction);
 
     private:
         ConstructionDescription         m_desc;
         Utils::QuadTree< Pillar_t >     m_pillars;
 
         bool                            m_isDirty;
-    private:
+
         Core(const Core& arg);
         const Core& operator=(const Core& arg);
     };

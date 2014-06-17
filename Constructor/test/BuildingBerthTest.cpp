@@ -244,11 +244,11 @@ TEST_F(BuildingBerthTest, Neighbors)
         {
             if (x != 1 && z != 1)
             {
-                m_builder->SetElement(ElementType::Cube, Vector3D(x,0,z), Directions::pY, true);
+                m_builder->SetElement(ElementType::Cube, vector3i_t(x,0,z), Directions::pY, true);
             }
         }
-    m_builder->SetElement(ElementType::Cube, Vector3D(1,0,1), Directions::pY, true);
-    Element *el = m_builder->GetCore().GetElement(Vector3D(1,0,1));
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pY, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
     
     ASSERT_EQ(Directions::pX | Directions::pZ | Directions::nX | Directions::nZ, el->neighbourhood);
 }
