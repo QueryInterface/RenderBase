@@ -44,6 +44,8 @@ namespace ConstructorImpl
         // Adds element to specified position
         void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction, bool updateNeighbours);
 
+        Element* GetElement(const Vector3D& position);
+
         // Updates neighborhoodof component in position x, y, z
         void UpdateNeighbourhood(size_t x, size_t y, size_t z);
 
@@ -55,7 +57,7 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
-        uint32_t setNeighbor(Element* item, Vector3D& direction, uint32_t relationWeight);
+        const NeighborDesc* findRelation(const Element& item, Vector3D& direction);
 
     private:
         ConstructionDescription         m_desc;

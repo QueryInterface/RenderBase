@@ -215,7 +215,7 @@ TEST_F(BuildingBerthTest, IterateThroughSpongeSystem)
     }));
 }
 
-TEST_F(BuildingBerthTest, ElementNeighbourhood)
+TEST_F(BuildingBerthTest, ElementNeighborhood)
 {
     m_builder->SetElement(ElementType::Cube, Vector3D(0,0,0), Directions::pY, true);
     m_builder->SetElement(ElementType::Cube, Vector3D(0,1,0), Directions::pY, true);
@@ -234,6 +234,23 @@ TEST_F(BuildingBerthTest, ElementNeighbourhood)
                 FAIL();
             }
     }));
+}
+
+TEST_F(BuildingBerthTest, Neighbors)
+{
+    const size_t cubeScales = 3;
+    for (size_t x = 0; x < cubeScales; ++x)
+        for (size_t z = 0; z < cubeScales; ++z)
+        {
+            if (x != 1 && z != 1)
+            {
+                m_builder->SetElement(ElementType::Cube, Vector3D(x,0,z), Directions::pY, true);
+            }
+        }
+    m_builder->SetElement(ElementType::Cube, Vector3D(1,0,1), Directions::pY, true);
+    Element *el = m_builder->GetCore().GetElement(Vector3D(1,0,1));
+    
+    ASSERT_EQ(Directions::pX | Directions::pZ | Directions::nX | Directions::nZ, el->neighbourhood);
 }
 
 TEST_F(BuildingBerthTest, SingleElementMesh)

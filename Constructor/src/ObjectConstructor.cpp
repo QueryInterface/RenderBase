@@ -62,6 +62,12 @@ void Core::SetElement(const ConstructionDescription& desc, const Vector3D& posit
     }
 }
 
+Element* Core::GetElement(const Vector3D& position)
+{
+    auto pillar = m_pillars.get_item_at(position.x, position.z);
+    return pillar ? pillar->get_item_at(position.y) : nullptr;
+}
+
 void Core::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
 {
     //ACHTUNG: double lambda!!!!
@@ -79,56 +85,52 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 
     Element* self = pillar->get_item_at(y);
 
-    const Vector3D nbrs[] = {
-        Vector3D( 1, 0, 0),
-        Vector3D(0,  1, 0),
-        Vector3D(0, 0,  1),
-        Vector3D(0, 0, -1),
-        Vector3D(0, -1, 0),
-        Vector3D(-1, 0, 0),
-    };
+    //const Vector3D nbrs[] = {
+    //    Vector3D( 1, 0, 0),
+    //    Vector3D(0,  1, 0),
+    //    Vector3D(0, 0,  1),
+    //    Vector3D(0, 0, -1),
+    //    Vector3D(0, -1, 0),
+    //    Vector3D(-1, 0, 0),
+    //};
 
-    for (size_t i = 0; i < 6; ++i)
+    for (auto neighbor : self->construction->neighbors)
     {
-        auto pillar = m_pillars.get_item_at(x + nbrs[i].x, z + nbrs[i].z);
-        if (pillar)
+        Element* item = GetElement(
+            Vector3D(x + neighbor.relationPosition.x, y + neighbor.relationPosition.y, z + neighbor.relationPosition.z));
+        if (!item)
         {
-            Element* item = pillar->get_item_at(y + nbrs[i].y);
-            if (item)
-            {
-                uint32_t itemNeighbours = item->construction->neighborRelations[i];
-                uint32_t selfNeighbours = self->construction->neighborRelations[5 - i];
-                if ( itemNeighbours < selfNeighbours)
-                    item->neighbourhood |= (1 << (5 - i));
-                else if ( selfNeighbours == itemNeighbours )
-                {
-                    item->neighbourhood |= (1 << (5 - i));
-                    self->neighbourhood |= (1 << i);
-                }
-                else
-                    self->neighbourhood |= (1 << i);
-            }
+            continue;
         }
+
+        const NeighborDesc* itemNeighbour = findRelation(*item, neighbor.relationPosition);
+        if (!itemNeighbour)
+        {
+            continue;
+        }
+
+        if ( itemNeighbour->relationWeight < neighbor.relationWeight)
+            item->neighbourhood |= itemNeighbour->relationFlag;
+        else if ( neighbor.relationWeight == itemNeighbour->relationWeight )
+        {
+            item->neighbourhood |= itemNeighbour->relationFlag;
+            self->neighbourhood |= neighbor.relationFlag;
+        }
+        else
+            self->neighbourhood |= neighbor.relationFlag;
     }
 }
 
-uint32_t Core::setNeighbor(Element* item, Vector3D& direction, uint32_t relationWeight)
+const NeighborDesc* Core::findRelation(const Element& item, Vector3D& direction)
 {
-    uint32_t flag = 0;
-    Vector3D negative(-direction.x, -direction.y, -direction.z);
+    const Vector3D negative(-direction.x, -direction.y, -direction.z);
 
-    for (size_t i = 0; i < item->construction->neighborDirections.size(); ++i)
+    for (const auto& relations : item.construction->neighbors)
     {
-        if (item->construction->neighborDirections[i] == negative)
-        {
-            if (item->construction->neighborRelations[i] >= relationWeight)
-            {
-                //item->neighbourhood |= relation;
-            }
-        }
+        if (negative == relations.relationPosition)
+            return &relations;
     }
-
-    return flag;
+    return nullptr;
 }
 
 // eof
