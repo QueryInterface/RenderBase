@@ -43,9 +43,9 @@ public:
             {2, 3, 4, 2, 4, 5,}, // front  +x
             {1, 6, 4, 1, 4, 3,}, // top    +y
             {0, 1, 2, 2, 1, 3,}, // right  +z
-            {7, 5, 4, 7, 4, 6,}, // left   -z
-            {0, 2, 7, 2, 5, 7,}, // bottom -y
             {1, 0, 7, 1, 7, 6,}, // back   -x
+            {0, 2, 7, 2, 5, 7,}, // bottom -y
+            {7, 5, 4, 7, 4, 6,}, // left   -z
         };
 
         float vertices[] = 
@@ -89,7 +89,7 @@ public:
 
         for (size_t i = 0; i < 6; ++i )
         {
-            if (flags & 1 << i)
+            if (flags & (1 << i))
             {
                 IndexGroup mc;
                 mc.indices = m_indices[i].data();
