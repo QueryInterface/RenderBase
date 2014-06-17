@@ -238,19 +238,20 @@ TEST_F(BuildingBerthTest, ElementNeighborhood)
 
 TEST_F(BuildingBerthTest, Neighbors)
 {
-    const size_t cubeScales = 3;
-    for (size_t x = 0; x < cubeScales; ++x)
-        for (size_t z = 0; z < cubeScales; ++z)
-        {
-            if (x != 1 && z != 1)
-            {
-                m_builder->SetElement(ElementType::Cube, vector3i_t(x,0,z), Directions::pY, true);
-            }
-        }
     m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pY, true);
     Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
-    
-    ASSERT_EQ(Directions::pX | Directions::pZ | Directions::nX | Directions::nZ, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Cube, vector3i_t(2,0,1), Directions::pY, true);
+    ASSERT_EQ(Directions::pX, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,1), Directions::pY, true);
+    ASSERT_EQ(Directions::pX | Directions::nX, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,0), Directions::pY, true);
+    ASSERT_EQ(Directions::pX | Directions::nX | Directions::nZ, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,2), Directions::pY, true);
+    ASSERT_EQ(Directions::pX | Directions::nX | Directions::nZ | Directions::pZ, el->neighbourhood);
 }
 
 TEST_F(BuildingBerthTest, SingleElementMesh)
