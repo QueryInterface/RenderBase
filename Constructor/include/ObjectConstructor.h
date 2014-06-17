@@ -42,7 +42,7 @@ namespace ConstructorImpl
         virtual ~Core() {};
 
         // Adds element to specified position
-        void SetElement(const ConstructionDescription& element, const Vector3D& position, Directions direction, bool updateNeighbours);
+        void SetElement(const ConstructionDescription& element, const vector3i_t& position, Directions direction, bool updateNeighbours);
 
         Element* GetElement(const Vector3D& position);
 
@@ -57,7 +57,11 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
+<<<<<<< HEAD
         const NeighborDesc* findRelation(const Element& item, Vector3D& direction);
+=======
+        uint32_t setNeighbor(Element* item, vector3i_t& direction, uint32_t relationWeight);
+>>>>>>> origin/master
 
     private:
         ConstructionDescription         m_desc;

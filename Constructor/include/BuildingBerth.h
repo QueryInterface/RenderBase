@@ -31,7 +31,7 @@ namespace ConstructorImpl
         ~BuildingBerth() {};
 
         // Attaches element to Complartment. if new Core was created function returns true;
-        bool SetElement(ElementType type, const Vector3D& position, Directions direction, bool updateNeighbours = false);
+        bool SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false);
 
 //        size_t GetCoresCount() const {return m_Cores.size();}
         Core&  GetCore();

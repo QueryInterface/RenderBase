@@ -54,6 +54,7 @@ enum Influences : unsigned int
     FULLY_COVERED = 10, // 10 parts will be enough
 };
 
+<<<<<<< HEAD
 typedef Vector3<int> Vector3D;
 // struct neighbor description
 struct NeighborDesc
@@ -66,6 +67,8 @@ struct NeighborDesc
     NeighborDesc(uint32_t weight, const Vector3D& position, Directions flag) : relationWeight(weight), relationPosition(position), relationFlag(flag) {}
 };
 
+=======
+>>>>>>> origin/master
 // description of element
 struct ConstructionDescription
 {
@@ -73,12 +76,18 @@ struct ConstructionDescription
     Directions  direction; // for reference type it's an object position
 
     // bounding box
-    Vector3D    LFT; // left, front, top
-    Vector3D    RBB; // right, bottom, back
+    vector3i_t    LFT; // left, front, top
+    vector3i_t    RBB; // right, bottom, back
 
     // neighbor relations section
     // influence multiplers
+<<<<<<< HEAD
     std::vector<NeighborDesc> neighbors;
+=======
+    unsigned int neighborsCount;
+    std::vector<uint32_t> neighborRelations;
+    std::vector<vector3i_t> neighborDirections;
+>>>>>>> origin/master
 
     // default element direction is UP (for OpenGL coordinate system it is +Y)
     ConstructionDescription() : primitiveUID(ElementType::Space), direction(Directions::pZ) {};
@@ -104,7 +113,7 @@ struct IConstructable
 struct Constructor //: public ISceneObject
 {
     virtual void                    NewConstruction() = 0;
-    virtual bool                    AddElement(ElementType type, const Vector3D& position, Directions direction) = 0;
+    virtual bool                    AddElement(ElementType type, const vector3i_t& position, Directions direction) = 0;
     virtual const IConstructable&   GetBoundConstruction() = 0;
     
 };

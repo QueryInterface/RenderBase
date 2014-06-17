@@ -43,6 +43,7 @@ class Builder:
         self.__unpack('SDL')
         self.__unpack('WindowsKits')
         self.__unpack('tinyobjloader')
+        self.__unpack('GLM')
         # CMake generation
         print "Generating project " + self.__curGenType + "..."
         self.__outPath = './_build/' + self.__curGenType

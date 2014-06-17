@@ -17,4 +17,9 @@ private:
     std::list<IObjectPtr>   m_objects;
     std::list<ILightPtr>    m_lights;
     ICameraPtr              m_camera;
+
+	void initShaders();
+	void initGeometry();
+	void initTextures();
+	void initPipeline();
 };

@@ -22,25 +22,25 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 #define END_CHECK_PRIMITIVE_TEST() }
 
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Space, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Space, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Cube,  Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Cube,  vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Wedge, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Wedge, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Ledder, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Ledder, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Cilinder, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Cilinder, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, CilindricPlatform, Vector3D(-1, 0, -1), Vector3D(2, 1, 2))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, CilindricPlatform, vector3i_t(-1, 0, -1), vector3i_t(2, 1, 2))
 END_CHECK_PRIMITIVE_TEST();
 
-BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Sphere, Vector3D(0, 0, 0), Vector3D(1, 1, 1))
+BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Sphere, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
 // eof

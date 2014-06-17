@@ -26,7 +26,7 @@ IObjectPtr BasicObject::Clone() const
     CLONE_HANDLE(IObject, BasicObject, m_mesh, m_texture);
 }
 
-void BasicObject::SetPosition(const vector3d& pos) 
+void BasicObject::SetPosition(const vector3f_t& pos) 
 {
     NESTED_LOCK();
     m_position = pos;
@@ -45,10 +45,10 @@ void BasicObject::SetPosition(const vector3d& pos)
 
 void BasicObject::SetPosition(float x, float y, float z)
 {
-    SetPosition(vector3d(x, y, z));
+    SetPosition(vector3f_t(x, y, z));
 }
 
-void BasicObject::Shift(const vector3d& pos)
+void BasicObject::Shift(const vector3f_t& pos)
 {
     NESTED_LOCK();
     if (m_nestedCall) return;
@@ -70,10 +70,10 @@ void BasicObject::Shift(const vector3d& pos)
 
 void BasicObject::Shift(float xShift, float yShift, float zShift)
 {
-    Shift(vector3d(xShift, yShift, zShift));
+    Shift(vector3f_t(xShift, yShift, zShift));
 }
 
-vector3d BasicObject::GetPosition() const 
+vector3f_t BasicObject::GetPosition() const 
 {
     return m_position;
 }

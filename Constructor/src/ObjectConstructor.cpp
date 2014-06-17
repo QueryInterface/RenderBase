@@ -16,22 +16,22 @@ Core::Core()
     : m_pillars(256)
     , m_isDirty(false)
 {
-    m_desc.LFT = Vector3D(INT32_MAX, INT32_MAX, INT32_MAX);
-    m_desc.RBB = Vector3D(0,0,0);
+    m_desc.LFT = vector3i_t(INT32_MAX, INT32_MAX, INT32_MAX);
+    m_desc.RBB = vector3i_t(0,0,0);
 }
 
-void Core::SetElement(const ConstructionDescription& desc, const Vector3D& position, Directions direction, bool updateNeighbours)
+void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& position, Directions direction, bool updateNeighbours)
 {
     m_isDirty = true;
 
     m_desc.direction = direction;
     m_desc.primitiveUID = desc.primitiveUID;
 
-    m_desc.LFT = Vector3D(
+    m_desc.LFT = vector3i_t(
         min(position.x + desc.LFT.x, m_desc.LFT.x),
         min(position.y + desc.LFT.y, m_desc.LFT.y),
         min(position.z + desc.LFT.z, m_desc.LFT.z));
-    m_desc.RBB = Vector3D(
+    m_desc.RBB = vector3i_t(
         max(position.x + desc.RBB.x, m_desc.RBB.x),
         max(position.y + desc.RBB.y, m_desc.RBB.y),
         max(position.z + desc.RBB.z, m_desc.RBB.z));
@@ -46,7 +46,7 @@ void Core::SetElement(const ConstructionDescription& desc, const Vector3D& posit
         UpdateNeighbourhood(position.x, position.y, position.z);
     }
 
-    if (Vector3D(1,1,1) != (desc.RBB - desc.LFT))
+    if (vector3i_t(1,1,1) != (desc.RBB - desc.LFT))
     {
         for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
         {
@@ -85,6 +85,7 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
 
     Element* self = pillar->get_item_at(y);
 
+<<<<<<< HEAD
     //const Vector3D nbrs[] = {
     //    Vector3D( 1, 0, 0),
     //    Vector3D(0,  1, 0),
@@ -93,6 +94,16 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     //    Vector3D(0, -1, 0),
     //    Vector3D(-1, 0, 0),
     //};
+=======
+    const vector3i_t nbrs[] = {
+        vector3i_t( 1, 0, 0),
+        vector3i_t(0,  1, 0),
+        vector3i_t(0, 0,  1),
+        vector3i_t(0, 0, -1),
+        vector3i_t(0, -1, 0),
+        vector3i_t(-1, 0, 0),
+    };
+>>>>>>> origin/master
 
     for (auto neighbor : self->construction->neighbors)
     {
@@ -121,9 +132,16 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
+<<<<<<< HEAD
 const NeighborDesc* Core::findRelation(const Element& item, Vector3D& direction)
 {
     const Vector3D negative(-direction.x, -direction.y, -direction.z);
+=======
+uint32_t Core::setNeighbor(Element* item, vector3i_t& direction, uint32_t relationWeight)
+{
+    uint32_t flag = 0;
+    vector3i_t negative(-direction.x, -direction.y, -direction.z);
+>>>>>>> origin/master
 
     for (const auto& relations : item.construction->neighbors)
     {
