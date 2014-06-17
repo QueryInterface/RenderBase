@@ -49,10 +49,10 @@ BEGIN_PRIMITIVE_DEFINITION(Wedge,               vector3i_t(0, 0, 0),      vector
     BEGIN_NEIGHBORS_LIST(6)
         NeighborDesc(5, vector3i_t(1,0,0),                          Directions::pX), 
         NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,1,0),   Directions::pY),
-        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,1),  Directions::pZ),
+        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,0,1),   Directions::pZ),
         NeighborDesc(5, vector3i_t(-1,0,0),                         Directions::nX),
         NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,-1,0), Directions::nY),
-        NeighborDesc(Influences::NOT_AFFECTED, vector3i_t(0,0,-1),  Directions::nZ),
+        NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
 END_PRIMITIVE_DEFINITION(Wedge);
 

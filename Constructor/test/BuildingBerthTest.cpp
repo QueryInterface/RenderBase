@@ -236,7 +236,7 @@ TEST_F(BuildingBerthTest, ElementNeighborhood)
     }));
 }
 
-TEST_F(BuildingBerthTest, Neighbors)
+TEST_F(BuildingBerthTest, CubeToCubeNeighbors)
 {
     m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pY, true);
     Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
@@ -252,6 +252,28 @@ TEST_F(BuildingBerthTest, Neighbors)
 
     m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,2), Directions::pY, true);
     ASSERT_EQ(Directions::pX | Directions::nX | Directions::nZ | Directions::pZ, el->neighbourhood);
+}
+
+TEST_F(BuildingBerthTest, CubeToWedgeNeighbors)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pY, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(2,0,1), Directions::pY, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pY, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::pY, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pY, true);
+    ASSERT_EQ(Directions::pZ, el->neighbourhood);
+
+    IMesh::GeometryDesc desc;
+    m_builder->GetHull().GetGeometryDesc(0, desc);
+    exportMesh(desc, "c:\\tmp\\wedges.obj");
 }
 
 TEST_F(BuildingBerthTest, SingleElementMesh)
