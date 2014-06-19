@@ -49,9 +49,10 @@ enum Directions : unsigned char
 
 enum Influences : unsigned int
 {
-    NOT_AFFECTED = 0,
-
-    FULLY_COVERED = 10, // 10 parts will be enough
+    NOT_AFFECTED    = 0,
+    WEDGE_TRIANGLE  = 5,
+    LEDDER_TRIANGLE = 6,
+    FULLY_COVERED   = 10, // 10 parts will be enough
 };
 
 // struct neighbor description

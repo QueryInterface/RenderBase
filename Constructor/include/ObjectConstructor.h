@@ -57,7 +57,7 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
-        const NeighborDesc* findRelation(const Element& item, vector3i_t& direction);
+        const NeighborDesc* findRelation(const Element& item, const Element& self, vector3i_t& direction);
 
     private:
         ConstructionDescription         m_desc;

@@ -94,7 +94,7 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
             continue;
         }
 
-        const NeighborDesc* itemNeighbour = findRelation(*item, neighbor.relationPosition);
+        const NeighborDesc* itemNeighbour = findRelation(*item, *self, neighbor.relationPosition);
         if (!itemNeighbour)
         {
             continue;
@@ -112,12 +112,44 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
-const NeighborDesc* Core::findRelation(const Element& item, vector3i_t& direction)
+bool compareRotated(const vector3i_t& arg1, const vector3i_t& arg2, Directions src, Directions dst)
+{
+    // rotation volumes: 1: 90Deg, 2: 180Deg, -1: -90Deg
+    int delta = 0;
+    switch(src)
+    {
+    case Directions::nX : delta = -1; break;
+    case Directions::pX : delta =  1; break;
+    case Directions::nZ : delta =  2; break;
+    }
+
+    switch(dst)
+    {
+    case Directions::nX : delta -= -1; break;
+    case Directions::pX : delta -=  1; break;
+    case Directions::nZ : delta -=  2; break;
+    }
+    switch(delta)
+    {
+    case -1: 
+        return arg1 == vector3i_t(-arg2.z, arg2.y, -arg2.x);
+    case  1:
+    case -3:
+        return arg1 == vector3i_t(arg2.z, arg2.y, arg2.x);
+    case  2:
+    case -2: 
+        return arg1 == vector3i_t(-arg2.x, arg2.y, -arg2.z);
+    default: break;
+    }
+    return arg1 == arg2;
+}
+
+const NeighborDesc* Core::findRelation(const Element& item, const Element& self, vector3i_t& direction)
 {
     const vector3i_t negative(-direction.x, -direction.y, -direction.z);
     for (const auto& relations : item.construction->neighbors)
     {
-        if (negative == relations.relationPosition)
+        if (compareRotated(negative, relations.relationPosition, self.direction, item.direction))
             return &relations;
     }
     return nullptr;
