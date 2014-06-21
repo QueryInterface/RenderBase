@@ -48,6 +48,8 @@ bool       operator!=(const Vector3<T>& arg1, const Vector3<T>& arg2) {return ar
 template <class T>
 Vector3<T> operator- (const Vector3<T>& arg1, const Vector3<T>& arg2) {return Vector3<T>(arg1.x - arg2.x, arg1.y - arg2.y, arg1.z - arg2.z);}
 template <class T>
+Vector3<T> operator- (const Vector3<T>& arg) {return Vector3<T>(-arg.x, -arg.y, -arg.z);}
+template <class T>
 Vector3<T> operator+ (const Vector3<T>& arg1, const Vector3<T>& arg2) {return Vector3<T>(arg1.x + arg2.x, arg1.y + arg2.y, arg1.z + arg2.z);}
 
 template <class T>

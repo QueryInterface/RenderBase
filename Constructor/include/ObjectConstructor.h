@@ -46,8 +46,8 @@ namespace ConstructorImpl
 
         Element* GetElement(const vector3i_t& position);
 
-        // Updates neighborhoodof component in position x, y, z
-        void UpdateNeighbourhood(size_t x, size_t y, size_t z);
+        // Updates neighborhoodof component in pos
+        void UpdateNeighbourhood(const vector3i_t& pos);
 
         // Allows to iterrate through Core components
         void IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor);
@@ -57,7 +57,8 @@ namespace ConstructorImpl
         void ResetCore() {m_isDirty = false;}
 
     private:
-        const NeighborDesc* findRelation(const Element& item, const Element& self, vector3i_t& direction);
+        const NeighborDesc* findRelation(const Element& item, vector3i_t& direction);
+        vector3i_t rotate(const vector3i_t& vec, Directions dst) const;
 
     private:
         ConstructionDescription         m_desc;

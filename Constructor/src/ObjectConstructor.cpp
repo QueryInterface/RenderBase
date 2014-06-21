@@ -43,7 +43,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
     // notify neighbours aboutnew element
     if (updateNeighbours)
     {
-        UpdateNeighbourhood(position.x, position.y, position.z);
+        UpdateNeighbourhood(position);
     }
 
     if (vector3i_t(1,1,1) != (desc.RBB - desc.LFT))
@@ -78,23 +78,24 @@ void Core::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> 
     });
 }
 
-void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
+void Core::UpdateNeighbourhood(const vector3i_t& pos)
 {
-    auto pillar = m_pillars.get_item_at(x,z);
+    auto pillar = m_pillars.get_item_at(pos.x, pos.z);
     assert(nullptr != pillar);
 
-    Element* self = pillar->get_item_at(y);
+    Element* self = pillar->get_item_at(pos.y);
 
     for (auto neighbor : self->construction->neighbors)
     {
-        Element* item = GetElement(
-            vector3i_t(x + neighbor.relationPosition.x, y + neighbor.relationPosition.y, z + neighbor.relationPosition.z));
+        vector3i_t relativeDirection = rotate(neighbor.relationPosition, self->direction);
+
+        Element* item = GetElement(relativeDirection + pos);
         if (!item)
         {
             continue;
         }
 
-        const NeighborDesc* itemNeighbour = findRelation(*item, *self, neighbor.relationPosition);
+        const NeighborDesc* itemNeighbour = findRelation(*item, relativeDirection);
         if (!itemNeighbour)
         {
             continue;
@@ -112,47 +113,26 @@ void Core::UpdateNeighbourhood(size_t x, size_t y, size_t z)
     }
 }
 
-bool compareRotated(const vector3i_t& arg1, const vector3i_t& arg2, Directions src, Directions dst)
+const NeighborDesc* Core::findRelation(const Element& item, vector3i_t& direction)
 {
-    // rotation volumes: 1: 90Deg, 2: 180Deg, -1: -90Deg
-    int delta = 0;
-    switch(src)
-    {
-    case Directions::nX : delta = -1; break;
-    case Directions::pX : delta =  1; break;
-    case Directions::nZ : delta =  2; break;
-    }
-
-    switch(dst)
-    {
-    case Directions::nX : delta -= -1; break;
-    case Directions::pX : delta -=  1; break;
-    case Directions::nZ : delta -=  2; break;
-    }
-    switch(delta)
-    {
-    case -1: 
-        return arg1 == vector3i_t(-arg2.z, arg2.y, -arg2.x);
-    case  1:
-    case -3:
-        return arg1 == vector3i_t(arg2.z, arg2.y, arg2.x);
-    case  2:
-    case -2: 
-        return arg1 == vector3i_t(-arg2.x, arg2.y, -arg2.z);
-    default: break;
-    }
-    return arg1 == arg2;
-}
-
-const NeighborDesc* Core::findRelation(const Element& item, const Element& self, vector3i_t& direction)
-{
-    const vector3i_t negative(-direction.x, -direction.y, -direction.z);
+    const vector3i_t negative(-direction);
     for (const auto& relations : item.construction->neighbors)
     {
-        if (compareRotated(negative, relations.relationPosition, self.direction, item.direction))
+        if (rotate(relations.relationPosition, item.direction) == negative)
             return &relations;
     }
     return nullptr;
+}
+
+vector3i_t Core::rotate(const vector3i_t& vec, Directions dst) const
+{
+    switch(dst)
+    {
+    case Directions::nX : return vector3i_t(-vec.z, vec.y,  vec.x);
+    case Directions::pX : return vector3i_t( vec.z, vec.y, -vec.x);
+    case Directions::nZ : return vector3i_t(-vec.x, vec.y, -vec.z);
+    }
+    return vec;
 }
 
 // eof

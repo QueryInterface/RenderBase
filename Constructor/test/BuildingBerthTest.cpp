@@ -205,7 +205,7 @@ TEST_F(BuildingBerthTest, CubeToWedgeNeighbors)
     ASSERT_EQ(Directions::pZ, el->neighbourhood);
 }
 
-TEST_F(BuildingBerthTest, RotateWedge)
+TEST_F(BuildingBerthTest, RotatedNeighboursAffected)
 {
     m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pZ, true);
     Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
@@ -221,5 +221,23 @@ TEST_F(BuildingBerthTest, RotateWedge)
 
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pZ, true);
     ASSERT_EQ(Directions::pX | Directions::nX | Directions::nZ | Directions::pZ, el->neighbourhood);
+}
+
+TEST_F(BuildingBerthTest, RotatedNeighboursNotAffected)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,1), Directions::pZ, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(2,0,1), Directions::nX, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::pZ, true);
+    ASSERT_EQ(0, el->neighbourhood);
+
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::nZ, true);
+    ASSERT_EQ(0, el->neighbourhood);
 }
 // eof
