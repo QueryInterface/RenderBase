@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
-#include <list>
+#include "Program.h"
+#include <map>
 
 class Scene : public IScene
 {
@@ -14,9 +15,17 @@ public:
 
     virtual void Render() const override;
 private:
-    std::list<IObjectPtr>   m_objects;
-    std::list<ILightPtr>    m_lights;
-    ICameraPtr              m_camera;
+    struct ObjectGLDesc
+    {
+        GLuint vertexId;
+        GLuint textureId;
+        GLuint indexId;
+    };
+
+    std::map<IObjectPtr, ObjectGLDesc>  m_objects;
+    std::map<ILightPtr, ObjectGLDesc>   m_lights;
+    ICameraPtr                          m_camera;
+    Program                             m_program;
 
 	void initShaders();
 	void initGeometry();

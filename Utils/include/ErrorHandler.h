@@ -41,7 +41,7 @@ private:
 		GLuint err = glGetError();	                    \
 		while (err != GL_NO_ERROR)	                    \
 		{							                    \
-        VE_ERROR(L"[%s] error: %x", ##expression, err); \
+            VE_ERROR(L"[%s] error: %x", ##expression, err); \
 			err = glGetError();		                    \
 		}							                    \
 	}

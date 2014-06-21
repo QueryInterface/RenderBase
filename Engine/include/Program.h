@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "SDL_opengles2.h"
+#include "glm/glm.hpp"
 
 class Program
 {
@@ -11,6 +12,8 @@ public:
     
     virtual void SetVertexShader(const std::string& vertex);
     virtual void SetFragmentShader(const std::string& fragment);
+    virtual int  GetAttribLocation(const std::string& name);
+    virtual int  GetUniformLocation(const std::string& name);
 
     virtual GLuint GetGLProgram() const;
 
@@ -21,6 +24,7 @@ private:
     GLuint      m_vertexShader;
     GLuint	    m_fragmentShader;
     GLuint	    m_program;
+    bool        m_compiled;
 
     GLuint compileShader(GLenum shaderType);
 };

@@ -2,6 +2,40 @@
 #include "RenderContext.h"
 #include "glm/glm.hpp"
 
+const std::string g_vertexShaderSource =                \
+"   #version 120                                        \
+                                                        \
+    attribute vec3 position;                            \
+    attribute vec2 textureCoord;                        \
+                                                        \
+    uniform mat4 modelMatrix;                           \
+    uniform mat4 worldMatrix;                           \
+    uniform mat4 viewMatrix;                            \
+    uniform mat4 projMatrix;                            \
+                                                        \
+    varying vec2 f_textureCoord;                        \
+                                                        \
+    void main(void)                                     \
+    {                                                   \
+	    gl_Position = modelMatrix * vec4(position, 1.0);\
+	    gl_Position = worldMatrix * gl_Position;        \
+	    gl_Position = viewMatrix * gl_Position;         \
+	    gl_Position = projMatrix * gl_Position;         \
+	    f_textureCoord = textureCoord;                  \
+    }";
+
+const std::string g_fragmentShader =                        \
+"   #version 120                                            \
+                                                            \
+    uniform sampler2D texture0;                             \
+    varying vec2 f_textureCoord;                            \
+                                                            \
+    void main(void) {                                       \
+	    gl_FragColor = texture2D(texture0, f_textureCoord); \
+    }";
+
+
+
 Scene::Scene()
     : m_camera(nullptr)
 {
@@ -11,14 +45,14 @@ Scene::~Scene()
 {
 }
 
-void Scene::AddObject(IObjectPtr& object)
+void Scene::AddObject(IObjectPtr& /*object*/)
 {
-    m_objects.push_back(object);
+    //m_objects.push_back(object);
 }
 
-void Scene::AddLight(ILightPtr& light)
+void Scene::AddLight(ILightPtr& /*light*/)
 {
-    m_lights.push_back(light);
+    //m_lights.push_back(light);
 }
 
 void Scene::SetCamera(ICameraPtr& camera)
@@ -34,34 +68,9 @@ void Scene::Render() const
 
 void Scene::initShaders()
 {
-	//// Shader creation
-	//g_VertexShader = CompileShader("vs.glsl", GL_VERTEX_SHADER);
-	//if (!g_VertexShader) LOG_ERROR("main", "Init", "Failed to create vertex shader");
-	//g_PixelShader = CompileShader("ps.glsl", GL_FRAGMENT_SHADER);
-	//if (!g_PixelShader) LOG_ERROR("main", "Init", "Failed to create pixel shader");
-	//
-	//g_Program = GL_CALL(glCreateProgram());
-	//GL_CALL(glAttachShader(g_Program, g_VertexShader));
-	//GL_CALL(glAttachShader(g_Program, g_PixelShader));
-	//GL_CALL(glLinkProgram(g_Program));
-	//GLint result = 0;
-	//GL_CALL(glGetProgramiv(g_Program, GL_LINK_STATUS, &result));
-	//if (!result)
-	//{
-	//	GLchar errorLog[1024];
-	//	GL_CALL(glGetProgramInfoLog(g_Program, 1024, NULL, errorLog));
-	//	LOG_ERROR("main", "Init", "Failed to link program: %s", errorLog);
-	//}
-
-	//GL_CALL(glValidateProgram(g_Program));
-	//GL_CALL(glGetProgramiv(g_Program, GL_VALIDATE_STATUS, &result));
-	//if (!result)
-	//{
-	//	GLchar errorLog[1024];
-	//	GL_CALL(glGetProgramInfoLog(g_Program, 1024, NULL, errorLog));
-	//	LOG_ERROR("main", "Init", "Failed to validate program: %s", errorLog);
-	//}
-
+    m_program.SetVertexShader(g_vertexShaderSource);
+    m_program.SetFragmentShader(g_fragmentShader);
+    m_program.Compile();
 	//// Init shader variables
 	//g_AtribPosition = GL_CALL(glGetAttribLocation(g_Program, "position"));
 	//if (g_AtribPosition == -1) LOG_ERROR("main", "Init", "Failed to get location of attribute \"position\"");
@@ -83,4 +92,27 @@ void Scene::initShaders()
 
 	//g_UniformTexture0 = GL_CALL(glGetUniformLocation(g_Program, "texture0"));
 	//if (g_UniformTexture0 == -1) LOG_ERROR("main", "Init", "Failed to get location of attribute \"texture0\"");
+}
+
+void Scene::initGeometry()
+{
+	//// Geometry creation
+	//// Bind vertex positions
+	//GL_CALL(glGenBuffers(1, &g_VBOVertices));
+	//GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, g_VBOVertices));
+	//GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(g_pCubeVertices), g_pCubeVertices, GL_STATIC_DRAW));
+	//GL_CALL(glVertexAttribPointer(g_AtribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
+	//GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
+	//// Bind vertex tex coodinates
+	//glGenBuffers(1, &g_VBOTexCoords);
+	//glBindBuffer(GL_ARRAY_BUFFER, g_VBOTexCoords);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(g_pTexCoord), g_pTexCoord, GL_STATIC_DRAW);
+	//glVertexAttribPointer(g_AtribTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	//GL_CALL(glGenBuffers(1, &g_IBOElements));
+	//GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_IBOElements));
+	//GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_pElements), g_pElements, GL_STATIC_DRAW));
+	//GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
