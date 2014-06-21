@@ -42,6 +42,9 @@ namespace ConstructorImpl
         void ConstructMesh(Core& objectCore);
 
     private:
+
+        vector3f_t rotate(const vector3f_t& vec, Directions dst) const;
+
         LayoutData_t                    m_layout;
         VertexData_t                    m_vertices;
         IndexData_t                     m_indices;

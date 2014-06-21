@@ -17,6 +17,17 @@ Hull::Hull()
 {
 }
 
+vector3f_t Hull::rotate(const vector3f_t& vec, Directions dst) const
+{
+    switch(dst)
+    {
+    case Directions::nX : return vector3f_t(1-vec.z, vec.y,   vec.x);
+    case Directions::pX : return vector3f_t(  vec.z, vec.y, 1-vec.x);
+    case Directions::nZ : return vector3f_t(1-vec.x, vec.y, 1-vec.z);
+    }
+    return vec;
+}
+
 void Hull::ConstructMesh(Core& objectCore)
 {
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
@@ -31,9 +42,11 @@ void Hull::ConstructMesh(Core& objectCore)
         for (size_t i = blockStart; i < m_indices.size(); ++i)
         {
             size_t idx = m_indices[i] * 3;
-            m_vertices.push_back(desc.layout[(size_t)LayoutType::Vertices].items[idx + 0] + x);
-            m_vertices.push_back(desc.layout[(size_t)LayoutType::Vertices].items[idx + 1] + y);
-            m_vertices.push_back(desc.layout[(size_t)LayoutType::Vertices].items[idx + 2] + z);
+            vector3f_t vertex = rotate(&desc.layout[(size_t)LayoutType::Vertices].items[idx], e.direction);
+
+            m_vertices.push_back(vertex.x + x);
+            m_vertices.push_back(vertex.y + y);
+            m_vertices.push_back(vertex.z + z);
         }
     });
 }

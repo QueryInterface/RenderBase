@@ -15,6 +15,7 @@ enum ElementType : unsigned int
     Cube,                        // simple cube
 
     Wedge,                       // canted cube
+    WedgedAngle,                 // joint between two wedges; should not be created by user
     Ledder,                      // ledder object
 
     Cilinder,                    // 1 cell cilinder object
