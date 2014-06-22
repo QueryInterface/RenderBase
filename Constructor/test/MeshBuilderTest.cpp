@@ -34,7 +34,7 @@ protected:
 
         for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
         {
-            vector3f_t current(&desc.layout[0].items[j]);
+            vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j+1], desc.layout[0].items[j+2]);
             maximum.x = (max(maximum.x, current.x));
             maximum.y = (max(maximum.y, current.y));
             maximum.z = (max(maximum.z, current.z));
@@ -71,15 +71,14 @@ protected:
         // save vertices
         for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
         {
-            vector3f_t current(&desc.layout[0].items[j]);
+            vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j + 1], desc.layout[0].items[j + 2]);
             fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
         }
 
         //save indices
         for (size_t j = 0; j < (desc.layout[0].itemsCount / desc.layout[0].itemSize); j += 3)
         {
-            vector3f_t current(&desc.layout[0].items[j]);
-            
+            //vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j] + 1, desc.layout[0].items[j] + 2);
             fprintf(f, "f %u %u %u\n", j + 1, j + 2, j + 3);
         }
         fclose(f);
