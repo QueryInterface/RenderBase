@@ -42,7 +42,8 @@ void Hull::ConstructMesh(Core& objectCore)
         for (size_t i = blockStart; i < m_indices.size(); ++i)
         {
             size_t idx = m_indices[i] * 3;
-            vector3f_t vertex = rotate(&desc.layout[(size_t)LayoutType::Vertices].items[idx], e.direction);
+            float* v = &desc.layout[(size_t)LayoutType::Vertices].items[idx];
+            vector3f_t vertex = rotate(vector3f_t(v[0], v[1], v[2]), e.direction);
 
             m_vertices.push_back(vertex.x + x);
             m_vertices.push_back(vertex.y + y);
