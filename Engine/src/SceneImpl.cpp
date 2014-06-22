@@ -45,6 +45,27 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    if (m_program.Program)
+    {
+        glDeleteProgram(m_program.Program);
+        m_program.Program = 0;
+    }
+    for (auto object : m_objects)
+    {
+        // Get object desc
+        ObjectDesc objectDesc = m_objectDescs[object];
+        // Delete old buffers
+        if (objectDesc.VertexBuffer)
+        {
+            glDeleteBuffers(1, &objectDesc.VertexBuffer);
+            objectDesc.VertexBuffer = 0;
+        }
+        if (objectDesc.IndexBuffer)
+        {
+            glDeleteBuffers(1, &objectDesc.IndexBuffer);
+            objectDesc.IndexBuffer = 0;
+        }
+    }
 }
 
 void Scene::AddObject(IObjectPtr& object)
@@ -66,15 +87,53 @@ void Scene::Render()
 {
     initShaders();
     initObjectsData();
+    initPipeline();
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+	GL_CALL(glUseProgram(m_program.Program));
+	GL_CALL(glEnableVertexAttribArray(m_program.AttribPosition));
+	// GL_CALL(glEnableVertexAttribArray(g_AtribTexCoord));
+
+	// Draw
+    for (auto object : m_objects)
+    {
+        // Get object desc
+        ObjectDesc objectDesc = m_objectDescs[object];
+        IMesh::GeometryDesc meshDesc;
+        IMeshPtr mesh = nullptr;
+        mesh->GetGeometryDesc(0, meshDesc);
+	    // glActiveTexture(GL_TEXTURE0);
+	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
+        for (auto layoutItem : meshDesc.layout)
+        {
+            if (layoutItem.layoutType == IMesh::LayoutType::Vertices)
+            {
+                GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
+                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
+                GL_CALL(glDrawElements(GL_TRIANGLES, layoutItem.itemsCount / layoutItem.itemSize, GL_UNSIGNED_SHORT, 0));
+	            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
+                break;
+            }
+        }
+    }
+	// Disable shader variables
+	GL_CALL(glDisableVertexAttribArray(m_program.AttribPosition));
+	//GL_CALL(glDisableVertexAttribArray(g_AtribTexCoord));
 }
 
 void Scene::initShaders()
 {
     if (m_program.Valid)
         return;
+    if (m_program.Program)
+    {
+        // Delete old program
+        glDeleteProgram(m_program.Program);
+        m_program.Program = 0;
+    }
     // Shader creation
     GLuint vertexShader = compileShader(m_vertexShaderSource, GL_VERTEX_SHADER);
     VE_ERROR_IF(!vertexShader, L"Failed to create vertex shader with source: %s", m_vertexShaderSource.c_str());
@@ -138,8 +197,16 @@ void Scene::initObjectsData()
         if (objectDesc.Valid)
             continue;
         // Delete old buffers
-        glDeleteBuffers(1, &objectDesc.VertexBuffer);
-        glDeleteBuffers(1, &objectDesc.IndexBuffer);
+        if (objectDesc.VertexBuffer)
+        {
+            glDeleteBuffers(1, &objectDesc.VertexBuffer);
+            objectDesc.VertexBuffer = 0;
+        }
+        if (objectDesc.IndexBuffer)
+        {
+            glDeleteBuffers(1, &objectDesc.IndexBuffer);
+            objectDesc.IndexBuffer = 0;
+        }
         // Init new data
         IMesh::GeometryDesc meshDesc;
         IMeshPtr mesh = nullptr;
