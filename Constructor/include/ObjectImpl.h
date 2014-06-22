@@ -33,7 +33,7 @@ public:
 private:
     IMeshPtr                    m_mesh;
     ITexturePtr                 m_texture;
-    vector3f_t                    m_position;
+    vector3f_t                  m_position;
     vector<IObjectPtr>          m_connections;
     vector< weak_ptr<IObject> > m_connectionsWeak;
     uint32_t                    m_nestedCall;

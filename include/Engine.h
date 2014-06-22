@@ -74,7 +74,7 @@ struct IScene : public IHandle
     virtual void AddLight(ILightPtr& light)     = 0;
     virtual void SetCamera(ICameraPtr& camera)  = 0;
 
-    virtual void Render() const                 = 0;
+    virtual void Render()                       = 0;
 };
 
 struct IEngine

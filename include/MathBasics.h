@@ -1,4 +1,5 @@
 #pragma once
+#include "../3rdParty/_unpack/GLM/glm/glm.hpp"
 
 template <class T>
 struct Rect {
@@ -64,12 +65,22 @@ struct Vector4 {
     T w;
 };
 
-typedef Vector1<float> vector1f_t;
-typedef Vector2<float> vector2f_t;
-typedef Vector3<float> vector3f_t;
-typedef Vector4<float> vector4f_t;
+//typedef Vector1<float> vector1f_t;
+//typedef Vector2<float> vector2f_t;
+//typedef Vector3<float> vector3f_t;
+//typedef Vector4<float> vector4f_t;
+//
+//typedef Vector1<int> vector1i_t;
+//typedef Vector2<int> vector2i_t;
+//typedef Vector3<int> vector3i_t;
+//typedef Vector4<int> vector4i_t;
 
-typedef Vector1<int> vector1i_t;
-typedef Vector2<int> vector2i_t;
-typedef Vector3<int> vector3i_t;
-typedef Vector4<int> vector4i_t;
+typedef glm::vec2 vector2f_t;
+typedef glm::vec3 vector3f_t;
+typedef glm::vec4 vector4f_t;
+
+typedef glm::highp_ivec2 vector2i_t;
+typedef glm::highp_ivec3 vector3i_t;
+typedef glm::highp_ivec4 vector4i_t;
+
+

@@ -18,14 +18,14 @@ struct IObject
     : public ISceneElement
     , public IClonable<IObjectPtr>
 {
-    virtual void            SetPosition(const Vector3<float>& pos)                  = 0;
+    virtual void            SetPosition(const vector3f_t& pos)                      = 0;
     virtual void            SetPosition(float x, float y, float z)                  = 0;
 
-    virtual void            Shift(const Vector3<float>& shift)                      = 0;
+    virtual void            Shift(const vector3f_t& shift)                          = 0;
     virtual void            Shift(float xShift, float yShift, float zShift)         = 0;
     //virtual void            Rotate(const Vector3<float>& angles)                    = 0;
 
-    virtual Vector3<float>  GetPosition() const                                     = 0;
+    virtual vector3f_t      GetPosition() const                                     = 0;
 
     virtual void            AttachBidirectional(IObjectPtr object)                  = 0;
     virtual void            AttachDirectional(IObjectPtr object)                    = 0;
