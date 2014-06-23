@@ -240,4 +240,12 @@ TEST_F(BuildingBerthTest, RotatedNeighboursNotAffected)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::nZ, true);
     ASSERT_EQ(0, el->neighbourhood);
 }
+
+TEST_F(BuildingBerthTest, Generated_OuterWedgeAngle)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nX, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeAngleOuter, el->construction->primitiveUID);
+}
 // eof
