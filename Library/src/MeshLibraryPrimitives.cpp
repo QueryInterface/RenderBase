@@ -216,7 +216,7 @@ public:
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
 
-        ILibrary::library()->RegisterMesh(ElementType::WedgeAngleOuter, *this);
+        ILibrary::library()->RegisterMesh(ElementType::WedgeOutCorner, *this);
     }
 
     virtual IMeshPtr Clone() const 

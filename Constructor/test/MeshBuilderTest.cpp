@@ -154,16 +154,16 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
 
 TEST_F(MeshBuilderTest, DISABLED_Pyramid)
 {
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(3,0,3), Directions::pX, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(3,0,3), Directions::pX, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(1,0,3), Directions::pZ, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(2,0,3), Directions::pZ, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(3,0,0), Directions::nZ, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(3,0,0), Directions::nZ, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(3,0,1), Directions::pX, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(3,0,2), Directions::pX, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(0,0,3), Directions::pZ, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(0,0,3), Directions::pZ, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(1,0,0), Directions::nZ, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(2,0,0), Directions::nZ, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(0,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(0,0,0), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(0,0,1), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge,       vector3i_t(0,0,2), Directions::nX, true);
     m_builder->SetElement(ElementType::Cube ,       vector3i_t(1,0,1), Directions::nX, true);
@@ -171,10 +171,10 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     m_builder->SetElement(ElementType::Cube ,       vector3i_t(2,0,2), Directions::nX, true);
     m_builder->SetElement(ElementType::Cube ,       vector3i_t(2,0,1), Directions::nX, true);
 
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(2,1,2), Directions::pX, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(2,1,1), Directions::nZ, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(1,1,2), Directions::pZ, true);
-    m_builder->SetElement(ElementType::WedgeAngleOuter, vector3i_t(1,1,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(2,1,2), Directions::pX, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(2,1,1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,2), Directions::pZ, true);
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,1), Directions::nX, true);
 
     IMesh::GeometryDesc desc;
     m_builder->GetHull().GetGeometryDesc(0, desc);

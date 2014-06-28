@@ -37,7 +37,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
     // Y is UP direction
-    Element element = {&desc, direction, 0};
+    Element element = {&desc, direction, Directions::NO, 0};
     m_pillars.item(position.x, position.z).insert(position.y, element);
 
     // notify neighbours aboutnew element
@@ -54,7 +54,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
             {
                 if (x || z)
                 {
-                    Element ref = {&m_reference, direction, 0};
+                    Element ref = {&m_reference, direction, Directions::NO, 0};
                     m_pillars.item(position.x + x, position.z + z).insert(position.y, ref);
                 }
             }
@@ -85,31 +85,52 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos)
 
     Element* self = pillar->get_item_at(pos.y);
 
+    // if priitive can be morfed, morf it
+    if (ElementType::Wedge == self->construction->primitiveUID)
+    {
+        morph(pos, *self);
+    }
+
     for (auto neighbor : self->construction->neighbors)
     {
         vector3i_t relativeDirection = rotate(neighbor.relationPosition, self->direction);
 
         Element* item = GetElement(relativeDirection + pos);
         if (!item)
-        {
             continue;
-        }
 
         const NeighborDesc* itemNeighbour = findRelation(*item, relativeDirection);
         if (!itemNeighbour)
-        {
             continue;
-        }
 
-        if ( itemNeighbour->relationWeight < neighbor.relationWeight)
+        if (itemNeighbour->relationWeight < neighbor.relationWeight)
             item->neighbourhood |= itemNeighbour->relationFlag;
-        else if ( neighbor.relationWeight == itemNeighbour->relationWeight )
+        else if (neighbor.relationWeight == itemNeighbour->relationWeight)
         {
             item->neighbourhood |= itemNeighbour->relationFlag;
             self->neighbourhood |= neighbor.relationFlag;
         }
         else
             self->neighbourhood |= neighbor.relationFlag;
+    }
+}
+
+void Core::morph(const vector3i_t& position, const Element& self)
+{
+    const int nZ_INDEX = 5;
+    const int pX_INDEX = 0;
+    assert(((1 << nZ_INDEX) == Directions::nZ));
+    assert(((1 << pX_INDEX) == Directions::pX));
+
+    vector3i_t relativeDirection = rotate(self.construction->neighbors[nZ_INDEX].relationPosition, self.direction);
+    Element* item = GetElement(relativeDirection + position);
+    if (item && item->construction->primitiveUID == Wedge) 
+    {
+        vector3i_t itemDirection = rotate(item->construction->neighbors[pX_INDEX].relationPosition, item->direction);
+        if (itemDirection.x * relativeDirection.z + itemDirection.z * relativeDirection.x == 0 )
+        {
+            SetElement(ILibrary::library()->GetConstruction(WedgeOutCorner), position, self.direction, true);
+        }
     }
 }
 

@@ -241,11 +241,19 @@ TEST_F(BuildingBerthTest, RotatedNeighboursNotAffected)
     ASSERT_EQ(0, el->neighbourhood);
 }
 
+TEST_F(BuildingBerthTest, Generated_NoWedgeMorfing)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pZ, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::Wedge, el->construction->primitiveUID);
+}
+
 TEST_F(BuildingBerthTest, Generated_OuterWedgeAngle)
 {
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pZ, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pZ, true);
     Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
-    ASSERT_EQ(ElementType::WedgeAngleOuter, el->construction->primitiveUID);
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
 }
 // eof
