@@ -25,8 +25,8 @@ public:
 
     // mesh library object
     // according to flags, mesh may contain different geometry
-    virtual const IMesh& GetMesh(unsigned int id);
-    virtual void RegisterMesh(unsigned int id, const IMesh& mesh);
+    virtual const ILibraryMesh& GetMesh(unsigned int id);
+    virtual void  RegisterMesh(unsigned int id, const ILibraryMesh& mesh);
 
     virtual ~Library() {};
 

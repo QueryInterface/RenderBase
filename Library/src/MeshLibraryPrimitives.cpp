@@ -2,10 +2,11 @@
 #include <memory>
 
 // base class for all primitive meshes
-class BaseMesh : public IMesh
+class BaseMesh : public ILibraryMesh
 {
 public:
     BaseMesh() { }
+    virtual void GetGeometryDesc(GeometryDesc&) const {};
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
     {

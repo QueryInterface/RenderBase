@@ -103,7 +103,7 @@ void Scene::Render()
         ObjectDesc objectDesc = m_objectDescs[object];
         IMesh::GeometryDesc meshDesc;
         IMeshPtr mesh = nullptr;
-        mesh->GetGeometryDesc(0, meshDesc);
+        mesh->GetGeometryDesc(meshDesc);
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
         for (auto layoutItem : meshDesc.layout)
@@ -210,7 +210,7 @@ void Scene::initObjectsData()
         // Init new data
         IMesh::GeometryDesc meshDesc;
         IMeshPtr mesh = nullptr;
-        mesh->GetGeometryDesc(0, meshDesc);
+        mesh->GetGeometryDesc(meshDesc);
         for (auto layoutItem : meshDesc.layout)
         {
             switch (layoutItem.layoutType)

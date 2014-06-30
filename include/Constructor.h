@@ -5,6 +5,7 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include <Resources.h>
 #include "MathBasics.h"
 #include <vector>
 #include <cstdint>
@@ -96,6 +97,17 @@ struct IConstructable
     virtual const ConstructionDescription& ConstructionDesc() const = 0;
 
     virtual ~IConstructable() {};
+};
+
+/////////////////////////////////////////////////////////////////////
+///
+/// Library implementation of Mesh object
+///
+/////////////////////////////////////////////////////////////////////
+struct ILibraryMesh : public IMesh
+{
+    virtual void GetGeometryDesc(uint32_t flags, GeometryDesc& out_descriptor) const = 0;
+    virtual ~ILibraryMesh() {};
 };
 
 /////////////////////////////////////////////////////////////////////

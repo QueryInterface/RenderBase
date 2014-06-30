@@ -50,7 +50,7 @@ struct IMesh
         std::vector<IndexGroup>     groups; // can be empty
     };
 
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const = 0;
+    virtual void GetGeometryDesc(GeometryDesc& out_descriptor) const = 0;
 };
 
 struct ITexture : public IResource 

@@ -18,14 +18,14 @@ namespace LibraryImpl
     class MeshLibrary
     {
     public:
-        const IMesh& GetMeshObject(unsigned int id);
-        void RegisterMesh(unsigned int id, const IMesh& mesh);
+        const ILibraryMesh& GetMeshObject(unsigned int id);
+        void RegisterMesh(unsigned int id, const ILibraryMesh& mesh);
 
         MeshLibrary();
         virtual ~MeshLibrary() {};
 
     private: // arguments
-        std::vector<const IMesh*>  m_primitives;
+        std::vector<const ILibraryMesh*>  m_primitives;
     };
 }
 //end  of namespace

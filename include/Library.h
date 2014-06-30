@@ -14,6 +14,7 @@
 /// Resource library public interface. object is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
+
 struct ILibrary
 {
     static ILibrary* library();
@@ -22,7 +23,7 @@ struct ILibrary
     virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
     virtual void RegisterConstruction(IConstructable& element) = 0;
 
-    virtual const IMesh& GetMesh(unsigned int id) = 0;
-    virtual void RegisterMesh(unsigned int id, const IMesh& mesh) = 0;
+    virtual const ILibraryMesh& GetMesh(unsigned int id) = 0;
+    virtual void RegisterMesh(unsigned int id, const ILibraryMesh& mesh) = 0;
 };
 // eof

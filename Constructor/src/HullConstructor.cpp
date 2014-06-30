@@ -52,9 +52,8 @@ void Hull::ConstructMesh(Core& objectCore)
     });
 }
 
-void Hull::GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const
+void Hull::GetGeometryDesc(GeometryDesc& out_descriptor) const
 {
-    flags;
     IndexGroup mc;
     mc.indices = m_indices.data();
     mc.count = m_indices.size();

@@ -8,7 +8,7 @@ public:
     Mesh(const IMesh::GeometryDesc& desc);
     ~Mesh();
     IMeshPtr Clone() const;
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const override;
+    virtual void GetGeometryDesc(GeometryDesc& out_descriptor) const override;
 private:
     GeometryDesc m_desc;
     std::vector< std::vector<float> >       m_vertices;

@@ -4,6 +4,14 @@
 
 using namespace ConstructorImpl;
 
+#ifndef min 
+#define min(a, b) (a)<(b) ? (a) : (b)
+#endif
+
+#ifndef max 
+#define max(a, b) (a)>(b) ? (a) : (b)
+#endif
+
 class MeshBuilderTest : public ::testing::Test
 {
 public:
@@ -21,7 +29,7 @@ protected:
     void checkMesh(size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
     {
         IMesh::GeometryDesc desc;
-        m_builder->GetHull().GetGeometryDesc(0, desc);
+        m_builder->GetHull().GetGeometryDesc(desc);
 
         size_t verticesTotal = 0;
         for (auto group : desc.groups)
@@ -148,7 +156,7 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pZ, true);
 
     IMesh::GeometryDesc desc;
-    m_builder->GetHull().GetGeometryDesc(0, desc);
+    m_builder->GetHull().GetGeometryDesc(desc);
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
@@ -177,7 +185,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,1), Directions::nX, true);
 
     IMesh::GeometryDesc desc;
-    m_builder->GetHull().GetGeometryDesc(0, desc);
+    m_builder->GetHull().GetGeometryDesc(desc);
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 // eof

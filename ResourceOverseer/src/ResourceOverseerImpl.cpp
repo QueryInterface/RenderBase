@@ -54,9 +54,8 @@ IMeshPtr Mesh::Clone() const
     CLONE_HANDLE(IMesh, Mesh);
 }
 
-void Mesh::GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const
+void Mesh::GetGeometryDesc(GeometryDesc& out_descriptor) const
 {
-    UNUSED(flags);
     out_descriptor = m_desc;
 }
 

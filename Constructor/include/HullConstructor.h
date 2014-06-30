@@ -27,7 +27,7 @@ namespace ConstructorImpl
         typedef std::vector<unsigned int>   IndexData_t;
     public:
         // IMesh interface
-        virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const;
+        virtual void GetGeometryDesc(GeometryDesc& out_descriptor) const;
 
         // IHandle interface
         virtual void Release() {};
