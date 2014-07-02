@@ -11,37 +11,17 @@ Mesh::Mesh()
 {
 }
 
-Mesh::Mesh(const IMesh::GeometryDesc& desc)
+Mesh::Mesh(const std::wstring& path)
 {
-    m_desc = desc;
-    // Make deep copy
-    for (auto layout : m_desc.layout)
+    size_t pos = path.find_last_of(L".");
+    std::wstring ext = path.substr(pos + 1, path.length() - pos - 1);
+    if (0 == ext.compare(L"obj"))
     {
-        vector<float> data(layout.items, layout.items + layout.itemsCount);
-        switch (layout.layoutType)
-        {
-        case IMesh::LayoutType::Vertices:
-            {
-                m_vertices.push_back(std::move(data));
-                layout.items = m_vertices.back().data();
-            }
-            break;
-        case IMesh::LayoutType::Normals:
-            {
-                m_normals.push_back(std::move(data));
-                layout.items = m_normals.back().data();
-            }
-            break;
-        case IMesh::LayoutType::Texcoord0:
-        case IMesh::LayoutType::Texcoord1:
-            {
-                m_textures.push_back(std::move(data));
-                layout.items = m_textures.back().data();
-            }
-            break;
-        default:
-            VE_ERROR(L"Invalid layout type");
-        }
+        parseObj(path);
+    }
+    else
+    {
+        VE_ERROR(L"Unsupported file type");
     }
 }
 
@@ -54,9 +34,23 @@ IMeshPtr Mesh::Clone() const
     CLONE_HANDLE(IMesh, Mesh);
 }
 
-void Mesh::GetGeometryDesc(GeometryDesc& out_descriptor) const
+IMesh::Desc* Mesh::GetDesc() const
 {
-    out_descriptor = m_desc;
+    return &m_desc;
+}
+
+void Mesh::parseObj(const std::wstring& path)
+{
+    std::vector<tinyobj::shape_t> shapes;
+    std::string err = tinyobj::LoadObj(shapes, path.c_str());
+    if (!err.empty())
+    {
+        VE_ERROR(L"%s", err.c_str());
+    }
+    for (auto shape : shapes)
+    {
+        m_desc.Positions.Data = shape.mesh.positions;
+    }
 }
 
 /// ResourceOversserImpl
@@ -72,12 +66,7 @@ ResourceOverseerImpl::~ResourceOverseerImpl()
 
 IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
 {
-    std::vector<tinyobj::shape_t> shapes;
-    std::string err = tinyobj::LoadObj(shapes, path.c_str());
-    if (!err.empty())
-    {
-        VE_ERROR(L"%s", err.c_str());
-    }
+
 
     IMesh::GeometryDesc desc;
     for (auto shape : shapes)

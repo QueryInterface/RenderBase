@@ -5,16 +5,14 @@ class Mesh : public IMesh
 {
 public:
     Mesh();
-    Mesh(const IMesh::GeometryDesc& desc);
+    Mesh(const std::wstring& path);
     ~Mesh();
     IMeshPtr Clone() const;
-    virtual void GetGeometryDesc(GeometryDesc& out_descriptor) const override;
+    virtual Desc* GetDesc() const override;
 private:
-    GeometryDesc m_desc;
-    std::vector< std::vector<float> >       m_vertices;
-    std::vector< std::vector<float> >       m_normals;
-    std::vector< std::vector<float> >       m_textures;
-    std::vector< std::vector<uint32_t> >    m_indices;
+    void parseObj(const std::wstring& path);
+
+    Desc m_desc;
 };
 
 class ResourceOverseerImpl : public IResourceOverseer

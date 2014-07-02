@@ -20,37 +20,39 @@ struct IMesh
     , public IHandle
     , public IClonable<IMeshPtr> 
 {
-    enum class LayoutType : unsigned int
+    enum class LayoutType
     {
-        Vertices = 0,
-        Normals,
-        Texcoord0,
-        Texcoord1,
-        Tangent,
-        Binormal,
+        Triangle,
+        Strip,
+        Fan,
+        Points
     };
 
-    struct LayoutItem
+    template <typename Type>
+    struct ElementDesc
     {
-        LayoutType                  layoutType;
-        size_t                      itemSize;
-        size_t                      itemsCount;
-        float*                      items;
+        std::vector<Type>   Data;
+        uint32_t            ElementSize;
     };
 
-    struct IndexGroup
+    struct PositionsDesc : public ElementDesc<float>
     {
-        const uint32_t*         indices;  // might be NULL
-        uint32_t                count;
+        LayoutType  LayoutType;
     };
 
-    struct GeometryDesc
+    typedef ElementDesc<float>      TexCoordDesc;
+    typedef ElementDesc<float>      NormalsDesc;
+    typedef ElementDesc<uint32_t>   IndicesDesc;
+
+    struct Desc
     {
-        std::vector<LayoutItem>     layout;
-        std::vector<IndexGroup>     groups; // can be empty
+        PositionsDesc   Positions;
+        TexCoordDesc    TexCoords;
+        NormalsDesc     Normals;
+        IndicesDesc     Indices;
     };
 
-    virtual void GetGeometryDesc(GeometryDesc& out_descriptor) const = 0;
+    virtual Desc* GetDesc() const = 0;
 };
 
 struct ITexture : public IResource 
