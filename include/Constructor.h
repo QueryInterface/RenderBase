@@ -106,6 +106,39 @@ struct IConstructable
 /////////////////////////////////////////////////////////////////////
 struct ILibraryMesh : public IMesh
 {
+    enum class LayoutType : unsigned int
+    {
+        Vertices = 0,
+        Normals,
+        Texcoord0,
+        Texcoord1,
+        Tangent,
+        Binormal,
+        Triangle,
+        Strip,
+        Fan,
+        Points
+    };
+
+    struct LayoutItem
+    {
+        LayoutType                  layoutType;
+        size_t                      itemSize;
+        size_t                      itemsCount;
+        float*                      items;
+    };
+
+    struct IndexGroup
+    {
+        const uint32_t*         indices;  // might be NULL
+        uint32_t                count;
+    };
+
+    struct GeometryDesc
+    {
+        std::vector<LayoutItem>     layout;
+        std::vector<IndexGroup>     groups; // can be empty
+    };
     virtual void GetGeometryDesc(uint32_t flags, GeometryDesc& out_descriptor) const = 0;
     virtual ~ILibraryMesh() {};
 };

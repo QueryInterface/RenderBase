@@ -44,7 +44,7 @@ struct IMesh
     typedef ElementDesc<float>      NormalsDesc;
     typedef ElementDesc<uint32_t>   IndicesDesc;
 
-    struct Desc
+    struct Shape
     {
         PositionsDesc   Positions;
         TexCoordDesc    TexCoords;
@@ -52,7 +52,12 @@ struct IMesh
         IndicesDesc     Indices;
     };
 
-    virtual Desc* GetDesc() const = 0;
+    struct Desc
+    {
+        std::vector<Shape> Shapes;
+    };
+
+    virtual const Desc* GetDesc() const = 0;
 };
 
 struct ITexture : public IResource 

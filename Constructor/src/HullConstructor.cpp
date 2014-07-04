@@ -15,6 +15,10 @@ using namespace ConstructorImpl;
 
 Hull::Hull() 
 {
+    m_desc.Shapes.resize(1);
+    m_desc.Shapes[0].Indices.ElementSize = 1;
+    m_desc.Shapes[0].Positions.ElementSize = 3;
+    m_desc.Shapes[0].Positions.LayoutType = IMesh::LayoutType::Triangle;
 }
 
 vector3f_t Hull::rotate(const vector3f_t& vec, Directions dst) const
@@ -32,37 +36,29 @@ void Hull::ConstructMesh(Core& objectCore)
 {
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {
-        GeometryDesc desc;
-        size_t blockStart = m_indices.size();
+        ILibraryMesh::GeometryDesc desc;
+        auto& indices = m_desc.Shapes[0].Indices.Data;
+        size_t blockStart = indices.size();
         ILibrary::library()->GetMesh(e.construction->primitiveUID).GetGeometryDesc(~e.neighbourhood, desc);
         for (auto group : desc.groups)
         {
-            m_indices.insert(m_indices.end(), group.indices, group.indices + group.count);
+            indices.insert(indices.end(), group.indices, group.indices + group.count);
         }
-        for (size_t i = blockStart; i < m_indices.size(); ++i)
+        for (size_t i = blockStart; i < indices.size(); ++i)
         {
-            size_t idx = m_indices[i] * 3;
-            float* v = &desc.layout[(size_t)LayoutType::Vertices].items[idx];
+            size_t idx = indices[i] * 3;
+            float* v = &desc.layout[(size_t)ILibraryMesh::LayoutType::Vertices].items[idx];
             vector3f_t vertex = rotate(vector3f_t(v[0], v[1], v[2]), e.direction);
 
-            m_vertices.push_back(vertex.x + x);
-            m_vertices.push_back(vertex.y + y);
-            m_vertices.push_back(vertex.z + z);
+            m_desc.Shapes[0].Positions.Data.push_back(vertex.x + x);
+            m_desc.Shapes[0].Positions.Data.push_back(vertex.y + y);
+            m_desc.Shapes[0].Positions.Data.push_back(vertex.z + z);
         }
     });
 }
 
-void Hull::GetGeometryDesc(GeometryDesc& out_descriptor) const
+const IMesh::Desc* Hull::GetDesc() const
 {
-    IndexGroup mc;
-    mc.indices = m_indices.data();
-    mc.count = m_indices.size();
-    out_descriptor.groups.push_back(mc);
-
-    LayoutItem li;
-    li.items = (float*)m_vertices.data();
-    li.itemSize = 3;
-    li.itemsCount = m_vertices.size();
-    out_descriptor.layout.push_back(li);
+    return &m_desc;
 }
 // eof

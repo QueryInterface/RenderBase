@@ -6,7 +6,10 @@ class BaseMesh : public ILibraryMesh
 {
 public:
     BaseMesh() { }
-    virtual void GetGeometryDesc(GeometryDesc&) const {};
+    const IMesh::Desc* GetDesc() const override
+    {
+        return nullptr;
+    }
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
     {

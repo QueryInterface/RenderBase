@@ -34,7 +34,7 @@ IMeshPtr Mesh::Clone() const
     CLONE_HANDLE(IMesh, Mesh);
 }
 
-IMesh::Desc* Mesh::GetDesc() const
+const IMesh::Desc* Mesh::GetDesc() const
 {
     return &m_desc;
 }
@@ -47,9 +47,21 @@ void Mesh::parseObj(const std::wstring& path)
     {
         VE_ERROR(L"%s", err.c_str());
     }
-    for (auto shape : shapes)
+    m_desc.Shapes.resize(shapes.size());
+    for (uint32_t i = 0; i < shapes.size(); ++i)
     {
-        m_desc.Positions.Data = shape.mesh.positions;
+        m_desc.Shapes[i].Positions.Data = shapes[i].mesh.positions;
+        m_desc.Shapes[i].Positions.ElementSize = 3;
+        m_desc.Shapes[i].Positions.LayoutType = IMesh::LayoutType::Triangle;
+
+        m_desc.Shapes[i].Normals.Data = shapes[i].mesh.normals;
+        m_desc.Shapes[i].Normals.ElementSize = 2;
+        
+        m_desc.Shapes[i].TexCoords.Data = shapes[i].mesh.texcoords;
+        m_desc.Shapes[i].TexCoords.ElementSize = 2;
+
+        m_desc.Shapes[i].Indices.Data = shapes[i].mesh.indices;
+        m_desc.Shapes[i].Indices.ElementSize = 1;
     }
 }
 
@@ -66,40 +78,7 @@ ResourceOverseerImpl::~ResourceOverseerImpl()
 
 IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
 {
-
-
-    IMesh::GeometryDesc desc;
-    for (auto shape : shapes)
-    {
-        IMesh::LayoutItem vertexLayout;
-        vertexLayout.layoutType = IMesh::LayoutType::Vertices;
-        vertexLayout.items = shape.mesh.positions.data();
-        vertexLayout.itemsCount = shape.mesh.positions.size();
-        vertexLayout.itemSize = 3;
-
-        IMesh::LayoutItem normalLayout;
-        normalLayout.layoutType = IMesh::LayoutType::Normals;
-        normalLayout.items = shape.mesh.normals.data();
-        normalLayout.itemsCount = shape.mesh.normals.size();
-        normalLayout.itemSize = 3;
-
-        IMesh::LayoutItem textureLayout;
-        textureLayout.layoutType = IMesh::LayoutType::Texcoord0;
-        textureLayout.items = shape.mesh.texcoords.data();
-        textureLayout.itemsCount = shape.mesh.texcoords.size();
-        textureLayout.itemSize = 2;
-
-        IMesh::IndexGroup indexGroup;
-        indexGroup.indices = shape.mesh.indices.data();
-        indexGroup.count = shape.mesh.indices.size();
-
-        desc.layout.push_back(vertexLayout);
-        desc.layout.push_back(normalLayout);
-        desc.layout.push_back(textureLayout);
-        desc.groups.push_back(indexGroup);
-    }
-
-    std::shared_ptr<Mesh> mesh = make_shared_handle<Mesh>(desc);
+    std::shared_ptr<Mesh> mesh = make_shared_handle<Mesh>(path);
     path;
     return nullptr;// make_shared_safe<IMesh, Mesh>(path);
 }
