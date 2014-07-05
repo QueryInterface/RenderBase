@@ -14,5 +14,5 @@ Camera::~Camera()
 
 ICameraPtr Camera::Clone() const
 {
-    CLONE_HANDLE(ICamera, Camera, m_eye, m_at, m_up);
+    CLONE_HANDLE(ICamera, Camera);
 }

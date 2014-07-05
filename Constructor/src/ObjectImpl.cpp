@@ -23,7 +23,7 @@ BasicObject::~BasicObject()
 
 IObjectPtr BasicObject::Clone() const
 {
-    CLONE_HANDLE(IObject, BasicObject, m_mesh, m_texture);
+    CLONE_HANDLE(IObject, BasicObject);
 }
 
 void BasicObject::SetPosition(const vector3f_t& pos) 

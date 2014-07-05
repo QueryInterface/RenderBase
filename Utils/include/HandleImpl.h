@@ -141,5 +141,11 @@ VARIADIC_EXPAND(MAKE_SHARED_HANDLE)
 #undef MAKE_SHARED_HANDLE
 
 #define CLONE_HANDLE(OutType, InternalType) \
-    std::shared_ptr<InternalType> obj = make_shared_handle<InternalType>(*this);  \
+    std::shared_ptr<InternalType> obj = make_shared_handle<InternalType>(std::ref(*this));  \
     return static_pointer_cast<OutType>(obj);
+
+#define CLONE_HANDLE_IMPLEMENTATION(OutType, InternalType) \
+    virtual std::shared_ptr<OutType> InternalType::Clone() const { \
+        std::shared_ptr<InternalType> obj = make_shared_handle<InternalType>(*this);  \
+        return static_pointer_cast<OutType>(obj); \
+    }

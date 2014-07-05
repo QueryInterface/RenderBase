@@ -6,32 +6,32 @@
 #include <glm/gtc/type_ptr.hpp>
 
 const std::string g_vertexShaderSource =                \
-"   #version 120                                        \
-                                                        \
-    attribute vec3 position;                            \
-    attribute vec2 textureCoord;                        \
-                                                        \
-    uniform mat4 modelMatrix;                           \
-    uniform mat4 worldMatrix;                           \
-    uniform mat4 viewMatrix;                            \
-    uniform mat4 projMatrix;                            \
-                                                        \
-    varying vec2 f_textureCoord;                        \
-                                                        \
-    void main(void)                                     \
-    {                                                   \
-        gl_Position = modelMatrix * vec4(position, 1.0);\
-        gl_Position = worldMatrix * gl_Position;        \
-        gl_Position = viewMatrix * gl_Position;         \
-        gl_Position = projMatrix * gl_Position;         \
-        f_textureCoord = textureCoord;                  \
+"   #version 120                                        \n\
+                                                        \n\
+    attribute vec3 position;                            \n\
+    attribute vec2 textureCoord;                        \n\
+                                                        \n\
+    uniform mat4 modelMatrix;                           \n\
+    uniform mat4 worldMatrix;                           \n\
+    uniform mat4 viewMatrix;                            \n\
+    uniform mat4 projMatrix;                            \n\
+                                                        \n\
+    varying vec2 f_textureCoord;                        \n\
+                                                        \n\
+    void main(void)                                     \n\
+    {                                                   \n\
+        gl_Position = modelMatrix * vec4(position, 1.0);\n\
+        gl_Position = worldMatrix * gl_Position;        \n\
+        gl_Position = viewMatrix * gl_Position;         \n\
+        gl_Position = projMatrix * gl_Position;         \n\
+        f_textureCoord = textureCoord;                  \n\
     }";
 
 const std::string g_fragmentShader =                        \
-"   #version 120                                            \
-                                                            \
-    void main(void) {                                       \
-        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);            \
+"   #version 120                                            \n\
+                                                            \n\
+    void main(void) {                                       \n\
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);            \n\
     }";
 
 
