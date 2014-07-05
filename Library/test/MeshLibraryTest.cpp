@@ -7,13 +7,14 @@ TEST(MeshLibraryTest, GetSpaceMesh)
     ILibrary& lib = *ILibrary::library();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Space);
 
-    ILibraryMesh::GeometryDesc desc;
-    mesh.GetGeometryDesc(Directions::All, desc);
-    ASSERT_EQ(0, desc.groups.size());
+    GeometryMesh desc;
+    MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(0, desc.vertices.size());
     IMeshPtr meshCloneTemp = mesh.Clone();
     ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
-    meshClone->GetGeometryDesc(Directions::All, desc);
-    ASSERT_EQ(0, desc.groups.size()) << "incorrect cloned object";
+    meshClone->ConstructGeometry(prop, desc);
+    ASSERT_EQ(0, desc.vertices.size()) << "incorrect cloned object";
 }
 
 TEST(MeshLibraryTest, GetCubeMesh)
@@ -21,13 +22,11 @@ TEST(MeshLibraryTest, GetCubeMesh)
     ILibrary& lib = *ILibrary::library();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
 
-    ILibraryMesh::GeometryDesc desc;
-    mesh.GetGeometryDesc(Directions::All, desc);
-    ASSERT_EQ(6, desc.groups.size()) << "incorrect number of indices";
-    size_t verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(36, verticesTotal);
+    GeometryMesh desc;
+    MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of indices";
+    ASSERT_EQ(36, desc.vertices.size());
 }
 
 TEST(MeshLibraryTest, GetClonedCubeMesh)
@@ -35,34 +34,26 @@ TEST(MeshLibraryTest, GetClonedCubeMesh)
     ILibrary& lib = *ILibrary::library();
     IMeshPtr meshCloneTemp = lib.GetMesh(ElementType::Cube).Clone();
     ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
-    ILibraryMesh::GeometryDesc desc;
+    GeometryMesh desc;
 
-    meshClone->GetGeometryDesc(Directions::All, desc);
-    ASSERT_EQ(6, desc.groups.size()) << "incorrect number of indices";
-    size_t verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(36, verticesTotal);
+    MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
+    meshClone->ConstructGeometry(prop, desc);
+    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of indices";
+    ASSERT_EQ(36, desc.vertices.size());
 }
 
 TEST(MeshLibraryTest, GetCubeMeshFace)
 {
     ILibrary& lib = *ILibrary::library();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
-    ILibraryMesh::GeometryDesc desc;
-    mesh.GetGeometryDesc(Directions::pX, desc);
-    ASSERT_EQ(1, desc.groups.size()) << "incorrect number of faces returned";
-    size_t verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(6, verticesTotal);
+    GeometryMesh desc;
+    MeshProperties prop = {Directions::pX, vector3f_t(0,0,0)};
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of faces returned";
 
-    mesh.GetGeometryDesc(Directions::pX | Directions::nX | Directions::nZ, desc);
-    ASSERT_EQ(3, desc.groups.size()) << "incorrect number of faces returned";
-    verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(18, verticesTotal);
+    prop.flags = Directions::pX | Directions::nX | Directions::nZ;
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(18, desc.vertices.size());
 }
 
 

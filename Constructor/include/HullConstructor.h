@@ -39,10 +39,8 @@ namespace ConstructorImpl
         void ConstructMesh(Core& objectCore);
 
     private:
-
-        vector3f_t rotate(const vector3f_t& vec, Directions dst) const;
-
         IMesh::Desc m_desc;
+        GeometryMesh m_hullDescription;
 
         Hull(const Hull& arg);
         const Hull& operator=(const Hull& arg);
