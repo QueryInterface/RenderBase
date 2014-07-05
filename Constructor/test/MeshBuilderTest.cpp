@@ -31,7 +31,7 @@ protected:
         IMesh::GeometryDesc desc;
         m_builder->GetHull().GetGeometryDesc(desc);
 
-        size_t verticesTotal = 0;
+        size_t verticesTotal = desc.layout[0].itemsCount;
         for (auto group : desc.groups)
         {
             verticesTotal += group.count;
@@ -52,7 +52,7 @@ protected:
             minimum.z = (min(minimum.z, current.z));
         }
 
-        EXPECT_EQ(refCount, verticesTotal);
+        EXPECT_EQ(refCount, verticesTotal/3);
 
         ASSERT_FLOAT_EQ(refmax.x, maximum.x);
         ASSERT_FLOAT_EQ(refmax.y, maximum.y);
@@ -86,7 +86,6 @@ protected:
         //save indices
         for (size_t j = 0; j < (desc.layout[0].itemsCount / desc.layout[0].itemSize); j += 3)
         {
-            //vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j] + 1, desc.layout[0].items[j] + 2);
             fprintf(f, "f %u %u %u\n", j + 1, j + 2, j + 3);
         }
         fclose(f);

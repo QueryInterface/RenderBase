@@ -8,15 +8,38 @@ public:
     BaseMesh() { }
     virtual void GetGeometryDesc(GeometryDesc&) const {};
 
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
     {
-        flags;
-        out_descriptor.groups.clear();
+        properties;
+        out_descriptor.vertices.clear();
     }
 
     virtual void Release() {};
 
 protected:
+    vector3f_t rotate(const float* vec, uint32_t dst) const
+    {
+        switch(dst)
+        {
+        case Directions::nX : return vector3f_t(1-vec[2], vec[1],   vec[0]);
+        case Directions::pX : return vector3f_t(  vec[2], vec[1], 1-vec[0]);
+        case Directions::nZ : return vector3f_t(1-vec[0], vec[1], 1-vec[2]);
+        }
+        return vector3f_t(vec[0], vec[1], vec[2]);
+    }
+
+    void copyFaces(GeometryMesh& out_descriptor, const vector3f_t& offset, uint32_t orientation, const uint16_t* indexBlock, size_t size) const
+    {
+        out_descriptor.vertices.reserve(out_descriptor.vertices.size() + size * 3);
+        for (size_t i = 0; i < size; ++i)
+        {
+            vector3f_t vertex = rotate(&m_vertices[ indexBlock[i] * 3 ], orientation) + offset;
+            out_descriptor.vertices.push_back(vertex.x);
+            out_descriptor.vertices.push_back(vertex.y);
+            out_descriptor.vertices.push_back(vertex.z);
+        }
+    }
+
     std::vector<float>      m_vertices;
     std::vector<LayoutItem> m_layout;
 };
@@ -78,30 +101,19 @@ public:
         return std::make_shared<CubeMesh>(*this);
     };
 
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
     {
-        out_descriptor.groups.clear();
-        LayoutItem li;
-        li.layoutType = LayoutType::Vertices;
-        li.itemSize = 3;
-        li.itemsCount = m_vertices.size();
-        li.items = (float*)m_vertices.data();
-        out_descriptor.layout.push_back(li);
-
         for (size_t i = 0; i < 6; ++i )
         {
-            if (flags & (1 << i))
+            if (properties.flags & (1 << i))
             {
-                IndexGroup mc;
-                mc.indices = m_indices[i].data();
-                mc.count = m_indices[i].size();
-                out_descriptor.groups.push_back(mc);
+                copyFaces(out_descriptor, properties.offset, properties.orientation, m_indices[i].data(), m_indices[i].size()); 
             }
         }
     }
 
 private:
-    std::vector<unsigned int> m_indices[6];
+    std::vector<uint16_t> m_indices[6];
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());
@@ -145,25 +157,13 @@ public:
         return std::make_shared<WedgeMesh>(*this);
     };
 
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
     {
-        flags;
-        out_descriptor.groups.clear();
-        LayoutItem li;
-        li.layoutType = LayoutType::Vertices;
-        li.itemSize = 3;
-        li.itemsCount = m_vertices.size();
-        li.items = (float*)m_vertices.data();
-        out_descriptor.layout.push_back(li);
-
-        IndexGroup mc;
-
+        uint32_t flags = properties.flags;
         // pY, pZ
         if (flags & Directions::pX || flags & (size_t)Directions::nX || flags & (size_t)Directions::pZ || flags & (size_t)Directions::pY)
         {
-            mc.indices = &m_indices[3];
-            mc.count = 6;
-            out_descriptor.groups.push_back(mc);
+            copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[3], 6);
         }
 
         const int groups[] = {0, 3, 3, 9, 12, 18};
@@ -173,16 +173,13 @@ public:
         {
             if (flags & (1 << i) && i != 1 && i != 2)
             {
-                IndexGroup mc;
-                mc.indices = &m_indices[ groups[i] ];
-                mc.count = sizes[i];
-                out_descriptor.groups.push_back(mc);
+                copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
             }
         }
     }
 
 private:
-    std::vector<unsigned int> m_indices;
+    std::vector<uint16_t> m_indices;
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
@@ -225,26 +222,13 @@ public:
         return std::make_shared<WedgeAngleMesh>(*this);
     };
 
-    virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
+    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
     {
-        flags;
-        out_descriptor.groups.clear();
-        LayoutItem li;
-        li.layoutType = LayoutType::Vertices;
-        li.itemSize = 3;
-        li.itemsCount = m_vertices.size();
-        li.items = (float*)m_vertices.data();
-        out_descriptor.layout.push_back(li);
-
-        IndexGroup mc;
-        mc.indices = m_indices.data();
-        mc.count = m_indices.size();
-        out_descriptor.groups.push_back(mc);
-
+        copyFaces(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }
 
 private:
-    std::vector<unsigned int> m_indices;
+    std::vector<uint16_t> m_indices;
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> WedgeAngleMesh::self(new WedgeAngleMesh());

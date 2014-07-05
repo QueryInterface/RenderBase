@@ -47,20 +47,14 @@ TEST(MeshLibraryTest, GetCubeMeshFace)
 {
     ILibrary& lib = *ILibrary::library();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
-    IMesh::GeometryDesc desc;
-    mesh.GetGeometryDesc(Directions::pX, desc);
-    ASSERT_EQ(1, desc.groups.size()) << "incorrect number of faces returned";
-    size_t verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(6, verticesTotal);
+    GeometryMesh desc;
+    MeshProperties prop = {Directions::pX, vector3f_t(0,0,0)};
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of faces returned";
 
-    mesh.GetGeometryDesc(Directions::pX | Directions::nX | Directions::nZ, desc);
-    ASSERT_EQ(3, desc.groups.size()) << "incorrect number of faces returned";
-    verticesTotal = 0;
-    for (size_t i = 0; i < desc.groups.size(); ++i)
-        verticesTotal += desc.groups[i].count;
-    ASSERT_EQ(18, verticesTotal);
+    prop.flags = Directions::pX | Directions::nX | Directions::nZ;
+    mesh.ConstructGeometry(prop, desc);
+    ASSERT_EQ(18, desc.vertices.size());
 }
 
 
