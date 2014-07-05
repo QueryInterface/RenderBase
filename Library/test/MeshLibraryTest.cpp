@@ -25,8 +25,7 @@ TEST(MeshLibraryTest, GetCubeMesh)
     GeometryMesh desc;
     MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
     mesh.ConstructGeometry(prop, desc);
-    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of indices";
-    ASSERT_EQ(36, desc.vertices.size());
+    ASSERT_EQ(108, desc.vertices.size()) << "incorrect number of vertices";
 }
 
 TEST(MeshLibraryTest, GetClonedCubeMesh)
@@ -38,8 +37,7 @@ TEST(MeshLibraryTest, GetClonedCubeMesh)
 
     MeshProperties prop = {Directions::All, vector3f_t(0,0,0)};
     meshClone->ConstructGeometry(prop, desc);
-    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of indices";
-    ASSERT_EQ(36, desc.vertices.size());
+    ASSERT_EQ(108, desc.vertices.size()) << "incorrect number of vertices";
 }
 
 TEST(MeshLibraryTest, GetCubeMeshFace)
@@ -48,12 +46,9 @@ TEST(MeshLibraryTest, GetCubeMeshFace)
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
     GeometryMesh desc;
     MeshProperties prop = {Directions::pX, vector3f_t(0,0,0)};
-    mesh.ConstructGeometry(prop, desc);
-    ASSERT_EQ(6, desc.vertices.size()) << "incorrect number of faces returned";
-
     prop.flags = Directions::pX | Directions::nX | Directions::nZ;
     mesh.ConstructGeometry(prop, desc);
-    ASSERT_EQ(18, desc.vertices.size());
+    ASSERT_EQ(54, desc.vertices.size());
 }
 
 
