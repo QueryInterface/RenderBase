@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#define MAX_MESSAGE_SIZE 512
+#define MAX_MESSAGE_SIZE 4096
 ErrorHandler::ErrorHandler() {
 }
 

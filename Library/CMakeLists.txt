@@ -33,6 +33,8 @@ set_property (TARGET Library PROPERTY FOLDER "Libraries")
 set_property (TARGET LibraryTest  PROPERTY FOLDER "UnitTests")
 
 # set include directories
+include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
+
 # set property for library 
 set_property(
     TARGET Library 

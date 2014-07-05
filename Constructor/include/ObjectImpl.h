@@ -22,7 +22,10 @@ public:
     virtual void            Shift(const vector3f_t& shift) override;
     virtual void            Shift(float xShift, float yShift, float zShift) override;
 
-    virtual vector3f_t        GetPosition() const override;
+    virtual vector3f_t      GetPosition() const override;
+
+    virtual IMeshPtr        GetMesh() const;
+    virtual ITexturePtr     GetTexture() const;
 
     virtual void            AttachBidirectional(IObjectPtr object) override;
     virtual void            AttachDirectional(IObjectPtr object) override;

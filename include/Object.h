@@ -27,6 +27,9 @@ struct IObject
 
     virtual vector3f_t      GetPosition() const                                     = 0;
 
+    virtual IMeshPtr        GetMesh() const                                         = 0;
+    virtual ITexturePtr     GetTexture() const                                      = 0;
+
     virtual void            AttachBidirectional(IObjectPtr object)                  = 0;
     virtual void            AttachDirectional(IObjectPtr object)                    = 0;
     virtual uint32_t        GetNumAttached() const                                  = 0;

@@ -78,6 +78,16 @@ vector3f_t BasicObject::GetPosition() const
     return m_position;
 }
 
+IMeshPtr BasicObject::GetMesh() const
+{
+    return m_mesh;
+}
+
+ITexturePtr BasicObject::GetTexture() const
+{
+    return m_texture;
+}
+
 void BasicObject::AttachBidirectional(IObjectPtr object) 
 {
     object->AttachDirectional(static_pointer_cast<IObject>(shared_from_this()));
