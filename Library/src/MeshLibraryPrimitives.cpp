@@ -1,5 +1,6 @@
 #include "Library.h"
 #include <memory>
+#include "HandleImpl.h"
 
 // base class for all primitive meshes
 class BaseMesh : public ILibraryMesh
@@ -29,7 +30,10 @@ class SpaceMesh : public BaseMesh
 {
 public:
     SpaceMesh() { ILibrary::library()->RegisterMesh(ElementType::Space, *this); };
-    virtual IMeshPtr Clone() const {return std::make_shared<SpaceMesh>(*this);};
+    virtual IMeshPtr Clone() const 
+    {
+        CLONE_HANDLE(IMesh, SpaceMesh);
+    };
 private:
     static std::unique_ptr<IMesh> self;
 };
@@ -78,7 +82,7 @@ public:
 
     virtual IMeshPtr Clone() const 
     {
-        return std::make_shared<CubeMesh>(*this);
+        CLONE_HANDLE(IMesh, CubeMesh);
     };
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
@@ -145,7 +149,7 @@ public:
 
     virtual IMeshPtr Clone() const 
     {
-        return std::make_shared<WedgeMesh>(*this);
+        CLONE_HANDLE(IMesh, WedgeMesh);
     };
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 
@@ -225,7 +229,7 @@ public:
 
     virtual IMeshPtr Clone() const 
     {
-        return std::make_shared<WedgeAngleMesh>(*this);
+        CLONE_HANDLE(IMesh, WedgeAngleMesh);
     };
 
     virtual void GetGeometryDesc(unsigned int flags, GeometryDesc& out_descriptor) const 

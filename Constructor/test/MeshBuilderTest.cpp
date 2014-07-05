@@ -28,8 +28,9 @@ protected:
 
     void checkMesh(size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
     {
-        IMesh::GeometryDesc desc;
-        m_builder->GetHull().GetGeometryDesc(desc);
+        ILibraryMesh::GeometryDesc desc;
+        ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
+        mesh->GetGeometryDesc(Directions::All, desc);
 
         size_t verticesTotal = 0;
         for (auto group : desc.groups)
@@ -68,7 +69,7 @@ protected:
         }
     }
 
-    void exportMesh(const IMesh::GeometryDesc& desc, std::string fileName)
+    void exportMesh(const ILibraryMesh::GeometryDesc& desc, std::string fileName)
     {
         FILE *f = nullptr;
         fopen_s(&f, fileName.c_str(), "w");
@@ -155,8 +156,9 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nZ, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pZ, true);
 
-    IMesh::GeometryDesc desc;
-    m_builder->GetHull().GetGeometryDesc(desc);
+    ILibraryMesh::GeometryDesc desc;
+    ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
+    mesh->GetGeometryDesc(Directions::All, desc);
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
@@ -184,8 +186,9 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,2), Directions::pZ, true);
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,1), Directions::nX, true);
 
-    IMesh::GeometryDesc desc;
-    m_builder->GetHull().GetGeometryDesc(desc);
+    ILibraryMesh::GeometryDesc desc;
+    ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
+    mesh->GetGeometryDesc(Directions::All, desc);
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 // eof
