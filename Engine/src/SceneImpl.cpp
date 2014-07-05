@@ -53,17 +53,20 @@ Scene::~Scene()
     for (auto object : m_objects)
     {
         // Get object desc
-        ObjectDesc objectDesc = m_objectDescs[object];
+        object_descs_t& objectDescs = m_objectDescs[object];
         // Delete old buffers
-        if (objectDesc.VertexBuffer)
+        for (auto& desc : objectDescs)
         {
-            glDeleteBuffers(1, &objectDesc.VertexBuffer);
-            objectDesc.VertexBuffer = 0;
-        }
-        if (objectDesc.IndexBuffer)
-        {
-            glDeleteBuffers(1, &objectDesc.IndexBuffer);
-            objectDesc.IndexBuffer = 0;
+            if (desc.VertexBuffer)
+            {
+                glDeleteBuffers(1, &desc.VertexBuffer);
+                desc.VertexBuffer = 0;
+            }
+            if (desc.IndexBuffer)
+            {
+                glDeleteBuffers(1, &desc.IndexBuffer);
+                desc.IndexBuffer = 0;
+            }
         }
     }
 }
@@ -100,23 +103,19 @@ void Scene::Render()
     for (auto object : m_objects)
     {
         // Get object desc
-        ObjectDesc objectDesc = m_objectDescs[object];
-        IMesh::GeometryDesc meshDesc;
+        object_descs_t& objectDesc = m_objectDescs[object];
         IMeshPtr mesh = nullptr;
-        mesh->GetGeometryDesc(meshDesc);
+        const IMesh::Desc* meshDesc = mesh->GetDesc();
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-        for (auto layoutItem : meshDesc.layout)
+        for (uint32_t i = 0; i < objectDesc.size(); ++i)
         {
-            if (layoutItem.layoutType == IMesh::LayoutType::Vertices)
-            {
-                GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
-                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                GL_CALL(glDrawElements(GL_TRIANGLES, layoutItem.itemsCount / layoutItem.itemSize, GL_UNSIGNED_SHORT, 0));
-	            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-                break;
-            }
+            auto& shape = meshDesc->Shapes[i];
+            uint32_t numTriangles = shape.Positions.Data.size() / shape.Positions.ElementSize;
+            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc[i].VertexBuffer));
+            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc[i].IndexBuffer));
+            GL_CALL(glDrawElements(GL_TRIANGLES, numTriangles, GL_UNSIGNED_SHORT, 0));
+	        GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
         }
     }
 	// Disable shader variables
@@ -193,49 +192,53 @@ void Scene::initObjectsData()
     for (auto object : m_objects)
     {
         // Get object desc
-        ObjectDesc objectDesc = m_objectDescs[object];
-        if (objectDesc.Valid)
-            continue;
-        // Delete old buffers
-        if (objectDesc.VertexBuffer)
+        object_descs_t objectDescs = m_objectDescs[object];
+        for (uint32_t i = 0; i < objectDescs.size(); ++i)
         {
-            glDeleteBuffers(1, &objectDesc.VertexBuffer);
-            objectDesc.VertexBuffer = 0;
-        }
-        if (objectDesc.IndexBuffer)
-        {
-            glDeleteBuffers(1, &objectDesc.IndexBuffer);
-            objectDesc.IndexBuffer = 0;
-        }
-        // Init new data
-        IMesh::GeometryDesc meshDesc;
-        IMeshPtr mesh = nullptr;
-        mesh->GetGeometryDesc(meshDesc);
-        for (auto layoutItem : meshDesc.layout)
-        {
-            switch (layoutItem.layoutType)
+            if (objectDescs[i].Valid)
+                continue;
+
+            // Delete old buffers
+            if (objectDescs[i].VertexBuffer)
             {
-            case IMesh::LayoutType::Vertices:
-                {
-                    GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
-                    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
-                    GL_CALL(glBufferData(GL_ARRAY_BUFFER, layoutItem.itemsCount * sizeof(float), layoutItem.items, GL_STATIC_DRAW));
-                    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-                }
-                break;
-            default:
-                break;
+                glDeleteBuffers(1, &objectDescs[i].VertexBuffer);
+                objectDescs[i].VertexBuffer = 0;
             }
+            if (objectDescs[i].IndexBuffer)
+            {
+                glDeleteBuffers(1, &objectDescs[i].IndexBuffer);
+                objectDescs[i].IndexBuffer = 0;
+            }
+            // Init new data
+            IMesh::GeometryDesc meshDesc;
+            IMeshPtr mesh = nullptr;
+            mesh->GetGeometryDesc(meshDesc);
+            for (auto layoutItem : meshDesc.layout)
+            {
+                switch (layoutItem.layoutType)
+                {
+                case IMesh::LayoutType::Vertices:
+                    {
+                        GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
+                        GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
+                        GL_CALL(glBufferData(GL_ARRAY_BUFFER, layoutItem.itemsCount * sizeof(float), layoutItem.items, GL_STATIC_DRAW));
+                        GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+            // Init vertex indices
+            if (meshDesc.groups.size() && meshDesc.groups[0].indices)
+            {
+                GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
+                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
+                GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshDesc.groups[0].count * sizeof(uint32_t), meshDesc.groups[0].indices, GL_STATIC_DRAW));
+                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+            }
+            objectDesc.Valid = true;
         }
-        // Init vertex indices
-        if (meshDesc.groups.size() && meshDesc.groups[0].indices)
-        {
-            GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
-            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-            GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshDesc.groups[0].count * sizeof(uint32_t), meshDesc.groups[0].indices, GL_STATIC_DRAW));
-            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-        }
-        objectDesc.Valid = true;
     }
     //// Geometry creation
     //// Bind vertex positions

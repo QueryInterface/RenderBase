@@ -18,7 +18,14 @@ public:
 private:
     struct ProgramDesc
     {
-        ProgramDesc() : Program(0), Valid(false) {}
+        ProgramDesc() 
+            : Program(0)
+            , AttribPosition(0)
+            , UniformModelMatrix(0)
+            , UniformWorldMatrix(0)
+            , UniformViewMatrix(0)
+            , UniformProjMatrix(0) {}
+
         GLuint      Program;
         GLint       AttribPosition;
         GLint       UniformModelMatrix;
@@ -27,22 +34,27 @@ private:
         GLint       UniformProjMatrix;
         bool        Valid;
     };
+
     struct ObjectDesc
     {
-        ObjectDesc() : Valid(false) {}
+        ObjectDesc() 
+            : VertexBuffer(0)
+            , IndexBuffer(0) {}
 
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
         bool        Valid;
     };
-    std::set<IObjectPtr>                m_objects;
-    std::set<ILightPtr>                 m_lights;
-    std::map<IObjectPtr, ObjectDesc>    m_objectDescs;
-    ICameraPtr                          m_camera;
+    typedef std::vector<ObjectDesc> object_descs_t;
 
-    ProgramDesc                         m_program;
-    std::string                         m_vertexShaderSource;
-    std::string                         m_fragmentShaderSource;
+    std::set<IObjectPtr>                    m_objects;
+    std::set<ILightPtr>                     m_lights;
+    std::map<IObjectPtr, object_descs_t>    m_objectDescs;
+    ICameraPtr                              m_camera;
+
+    ProgramDesc                             m_program;
+    std::string                             m_vertexShaderSource;
+    std::string                             m_fragmentShaderSource;
     
 	void initShaders();
 	void initObjectsData();
