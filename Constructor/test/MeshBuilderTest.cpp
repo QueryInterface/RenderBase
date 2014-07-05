@@ -28,22 +28,17 @@ protected:
 
     void checkMesh(size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
     {
-        ILibraryMesh::GeometryDesc desc;
-        ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
-        mesh->GetGeometryDesc(Directions::All, desc);
+        const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
 
-        size_t verticesTotal = desc.layout[0].itemsCount;
-        for (auto group : desc.groups)
-        {
-            verticesTotal += group.count;
-        }
+        auto& positions = desc.Shapes[0].Positions;
+        size_t verticesTotal = positions.Data.size();
 
         vector3f_t maximum(0,0,0);
         vector3f_t minimum(500,500,500);
 
-        for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
+        for (size_t j = 0; j < verticesTotal; j += 3)
         {
-            vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j+1], desc.layout[0].items[j+2]);
+            vector3f_t current(positions.Data[j], positions.Data[j+1], positions.Data[j+2]);
             maximum.x = (max(maximum.x, current.x));
             maximum.y = (max(maximum.y, current.y));
             maximum.z = (max(maximum.z, current.z));
@@ -69,7 +64,7 @@ protected:
         }
     }
 
-    void exportMesh(const ILibraryMesh::GeometryDesc& desc, std::string fileName)
+    void exportMesh(const IMesh::Desc& desc, std::string fileName)
     {
         FILE *f = nullptr;
         fopen_s(&f, fileName.c_str(), "w");
@@ -78,14 +73,15 @@ protected:
         vector3i_t wlh = m_builder->GetCore().ConstructionDesc().RBB - m_builder->GetCore().ConstructionDesc().LFT;
         vector3i_t lft = m_builder->GetCore().ConstructionDesc().LFT;
         // save vertices
-        for (size_t j = 0; j < desc.layout[0].itemsCount; j += 3)
+        auto& positions = desc.Shapes[0].Positions;
+        for (size_t j = 0; j < positions.Data.size(); j += 3)
         {
-            vector3f_t current(desc.layout[0].items[j], desc.layout[0].items[j + 1], desc.layout[0].items[j + 2]);
+            vector3f_t current(positions.Data[j], positions.Data[j + 1], positions.Data[j + 2]);
             fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
         }
 
         //save indices
-        for (size_t j = 0; j < (desc.layout[0].itemsCount / desc.layout[0].itemSize); j += 3)
+        for (size_t j = 0; j < (positions.Data.size() / positions.ElementSize); j += 3)
         {
             fprintf(f, "f %u %u %u\n", j + 1, j + 2, j + 3);
         }
@@ -155,9 +151,7 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nZ, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pZ, true);
 
-    ILibraryMesh::GeometryDesc desc;
-    ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
-    mesh->GetGeometryDesc(Directions::All, desc);
+    const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
@@ -185,9 +179,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,2), Directions::pZ, true);
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,1), Directions::nX, true);
 
-    ILibraryMesh::GeometryDesc desc;
-    ILibraryMesh* mesh = (ILibraryMesh*)&m_builder->GetHull();
-    mesh->GetGeometryDesc(Directions::All, desc);
+    const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 // eof
