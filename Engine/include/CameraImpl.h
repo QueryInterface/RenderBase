@@ -5,7 +5,6 @@ class Camera : public ICamera
 {
 public:
     Camera(vector3f_t eye, vector3f_t at, vector3f_t up);
-    Camera(const Camera&) {}
     virtual ~Camera();
     virtual ICameraPtr Clone() const;
 private:
