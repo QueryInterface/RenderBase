@@ -78,9 +78,7 @@ ResourceOverseerImpl::~ResourceOverseerImpl()
 
 IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
 {
-    std::shared_ptr<Mesh> mesh = make_shared_handle<Mesh>(path);
-    path;
-    return nullptr;// make_shared_safe<IMesh, Mesh>(path);
+    return make_shared_handle<Mesh>(path);
 }
 
 ITexturePtr ResourceOverseerImpl::LoadTexture(const wstring& path)

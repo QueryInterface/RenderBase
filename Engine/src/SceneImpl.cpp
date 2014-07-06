@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 const std::string g_vertexShaderSource =                \
-"   #version 120                                        \n\
+"   #version 100                                        \n\
                                                         \n\
     attribute vec3 position;                            \n\
     attribute vec2 textureCoord;                        \n\
@@ -28,7 +28,7 @@ const std::string g_vertexShaderSource =                \
     }";
 
 const std::string g_fragmentShader =                        \
-"   #version 120                                            \n\
+"   #version 100                                            \n\
                                                             \n\
     void main(void) {                                       \n\
         gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);            \n\
@@ -111,16 +111,17 @@ void Scene::Render()
         {
             auto& objectDesc = objectDescs[i];
             auto& shape = meshDesc.Shapes[i];
-            uint32_t numTriangles = shape.Positions.Data.size() / shape.Positions.ElementSize;
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             if (objectDesc.IndexBuffer)
             {
+                uint32_t numVertices = shape.Indices.Data.size() / shape.Indices.ElementSize;
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                GL_CALL(glDrawElements(GL_TRIANGLES, numTriangles, GL_UNSIGNED_SHORT, 0));
+                GL_CALL(glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_SHORT, 0));
             }
             else
             {
-                GL_CALL(glDrawArrays(GL_TRIANGLES, 0, numTriangles));
+                uint32_t numVertices = shape.Positions.Data.size() / shape.Positions.ElementSize;
+                GL_CALL(glDrawArrays(GL_TRIANGLES, 0, numVertices));
             }
 	        GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
         }
@@ -200,7 +201,7 @@ void Scene::initObjectsData()
     {
         // Get object desc
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        object_descs_t objectDescs = m_objectDescs[object];
+        object_descs_t& objectDescs = m_objectDescs[object];
         if (objectDescs.empty())
             objectDescs.resize(meshDesc.Shapes.size());
         for (uint32_t s = 0; s < meshDesc.Shapes.size(); ++s)
@@ -226,6 +227,7 @@ void Scene::initObjectsData()
             GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
+            GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
             if (shape.Indices.Data.size())
             {
@@ -234,8 +236,8 @@ void Scene::initObjectsData()
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
                 GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-                objectDesc.Valid = true;
             }
+            objectDesc.Valid = true;
         }
     }
     //// Geometry creation
@@ -256,29 +258,36 @@ void Scene::initObjectsData()
 
 void Scene::initPipeline()
 {
-	// Set matrices
-    IWindow* window = IEngine::Instance()->GetWindow();
-    float aspect = 1.0f * window->GetWidth() / window->GetHeight();
-	glm::mat4 modelMatrix = glm::mat4(1.0);
-	glm::mat4 worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -7.0));
-	//glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
+    static bool g_init = false;
+    if (g_init)
+    {
+    }
+    else
+    {
+	    // Set matrices
+        IWindow* window = IEngine::Instance()->GetWindow();
+        float aspect = 1.0f * window->GetWidth() / window->GetHeight();
+	    glm::mat4 modelMatrix = glm::mat4(1.0);
+	    glm::mat4 worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -7.0));
+	    //glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
+	    glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
+	    glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
 
-	// Set pipline states
-	GL_CALL(glEnable(GL_DEPTH_TEST));
-	GL_CALL(glUseProgram(m_program.Program));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldMatrix)));
-	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
-	// Set texture
-	//GL_CALL(glActiveTexture(GL_TEXTURE0));
-	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-	//GL_CALL(glUniform1i(g_UniformTexture0, 0));
-	//GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
+	    // Set pipline states
+	    GL_CALL(glEnable(GL_DEPTH_TEST));
+	    GL_CALL(glUseProgram(m_program.Program));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldMatrix)));
+	    GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
+	    // Set texture
+	    //GL_CALL(glActiveTexture(GL_TEXTURE0));
+	    //GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
+	    //GL_CALL(glUniform1i(g_UniformTexture0, 0));
+	    //GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 
-	GL_CALL(glUseProgram(0));
+	    GL_CALL(glUseProgram(0));
+    }
 }
 
 GLuint Scene::compileShader(const std::string source, GLenum type)
@@ -294,7 +303,7 @@ GLuint Scene::compileShader(const std::string source, GLenum type)
     {
         GLchar errorLog[1024];
         glGetShaderInfoLog(shader, 1024, NULL, errorLog);
-        VE_ERROR(L"Failed to compile shader: %s", errorLog);
+        VE_ERROR(L"Failed to compile shader: %S", errorLog);
     }
 
     return shader;

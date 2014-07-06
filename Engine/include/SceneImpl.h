@@ -24,7 +24,8 @@ private:
             , UniformModelMatrix(0)
             , UniformWorldMatrix(0)
             , UniformViewMatrix(0)
-            , UniformProjMatrix(0) {}
+            , UniformProjMatrix(0)
+            , Valid(false) {}
 
         GLuint      Program;
         GLint       AttribPosition;
@@ -39,7 +40,8 @@ private:
     {
         ObjectDesc() 
             : VertexBuffer(0)
-            , IndexBuffer(0) {}
+            , IndexBuffer(0)
+            , Valid(false) {}
 
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
