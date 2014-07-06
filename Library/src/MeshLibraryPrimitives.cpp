@@ -7,9 +7,9 @@ class BaseMesh : public ILibraryMesh
 {
 public:
     BaseMesh() { }
-    const IMesh::Desc* GetDesc() const override
+    const IMesh::Desc& GetDesc() const override
     {
-        return nullptr;
+        return m_desc;
     }
 
     virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
@@ -45,6 +45,7 @@ protected:
     }
 
     std::vector<float>      m_vertices;
+    IMesh::Desc             m_desc;
 };
 
 // Space mesh, this mesh will be provided as dummy mesh object

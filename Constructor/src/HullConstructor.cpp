@@ -32,8 +32,8 @@ void Hull::ConstructMesh(Core& objectCore)
     });
 }
 
-const IMesh::Desc* Hull::GetDesc() const
+const IMesh::Desc& Hull::GetDesc() const
 {
-    return &m_desc;
+    return m_desc;
 }
 // eof

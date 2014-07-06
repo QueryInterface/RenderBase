@@ -104,13 +104,13 @@ void Scene::Render()
     {
         // Get object desc
         object_descs_t& objectDescs = m_objectDescs[object];
-        const IMesh::Desc* meshDesc = object->GetMesh()->GetDesc();
+        const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
         for (uint32_t i = 0; i < objectDescs.size(); ++i)
         {
             auto& objectDesc = objectDescs[i];
-            auto& shape = meshDesc->Shapes[i];
+            auto& shape = meshDesc.Shapes[i];
             uint32_t numTriangles = shape.Positions.Data.size() / shape.Positions.ElementSize;
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             if (objectDesc.IndexBuffer)
@@ -199,10 +199,13 @@ void Scene::initObjectsData()
     for (auto object : m_objects)
     {
         // Get object desc
+        const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
         object_descs_t objectDescs = m_objectDescs[object];
-        for (uint32_t i = 0; i < objectDescs.size(); ++i)
+        if (objectDescs.empty())
+            objectDescs.resize(meshDesc.Shapes.size());
+        for (uint32_t s = 0; s < meshDesc.Shapes.size(); ++s)
         {
-            auto& objectDesc = objectDescs[i];
+            auto& objectDesc = objectDescs[s];
             if (objectDesc.Valid)
                 continue;
 
@@ -218,24 +221,20 @@ void Scene::initObjectsData()
                 objectDesc.IndexBuffer = 0;
             }
             // Init new data
-            const IMesh::Desc* meshDesc = object->GetMesh()->GetDesc();
-            for (uint32_t s = 0; s < meshDesc->Shapes.size(); ++s)
+            auto& shape = meshDesc.Shapes[s];
+            uint32_t posDataSize = shape.Positions.Data.size() * sizeof(shape.Positions.Data[0]);
+            GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
+            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
+            GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
+            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+            if (shape.Indices.Data.size())
             {
-                auto& shape = meshDesc->Shapes[s];
-                uint32_t posDataSize = shape.Positions.Data.size() * sizeof(shape.Positions.Data[0]);
-                GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
-                GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
-                GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
-                GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-                if (shape.Indices.Data.size())
-                {
-                    uint32_t indDataSize = shape.Indices.Data.size() * sizeof(uint32_t);
-                    GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
-                    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
-                    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-                    objectDesc.Valid = true;
-                }
+                uint32_t indDataSize = shape.Indices.Data.size() * sizeof(uint32_t);
+                GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
+                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
+                GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
+                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+                objectDesc.Valid = true;
             }
         }
     }

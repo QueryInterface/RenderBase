@@ -57,7 +57,7 @@ struct IMesh
         std::vector<Shape> Shapes;
     };
 
-    virtual const Desc* GetDesc() const = 0;
+    virtual const Desc& GetDesc() const = 0;
 };
 
 struct ITexture : public IResource 

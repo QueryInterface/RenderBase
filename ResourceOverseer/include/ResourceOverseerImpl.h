@@ -8,7 +8,7 @@ public:
     Mesh(const std::wstring& path);
     ~Mesh();
     IMeshPtr Clone() const;
-    virtual const Desc* GetDesc() const override;
+    virtual const Desc& GetDesc() const override;
 private:
     void parseObj(const std::wstring& path);
 

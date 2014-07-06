@@ -28,7 +28,7 @@ protected:
 
     void checkMesh(size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
     {
-        const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
+        const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
 
         auto& positions = desc.Shapes[0].Positions;
         size_t verticesTotal = positions.Data.size();
@@ -151,7 +151,7 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nZ, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::pZ, true);
 
-    const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
@@ -179,7 +179,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,2), Directions::pZ, true);
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(1,1,1), Directions::nX, true);
 
-    const IMesh::Desc desc = *m_builder->GetHull().GetDesc();
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 // eof

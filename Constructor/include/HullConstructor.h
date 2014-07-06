@@ -24,7 +24,7 @@ namespace ConstructorImpl
     {
     public:
         // IMesh interface
-        const IMesh::Desc* GetDesc() const override;
+        const IMesh::Desc& GetDesc() const override;
 
         // IHandle interface
         virtual void Release() {};

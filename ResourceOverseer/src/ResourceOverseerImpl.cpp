@@ -34,9 +34,9 @@ IMeshPtr Mesh::Clone() const
     CLONE_HANDLE(IMesh, Mesh);
 }
 
-const IMesh::Desc* Mesh::GetDesc() const
+const IMesh::Desc& Mesh::GetDesc() const
 {
-    return &m_desc;
+    return m_desc;
 }
 
 void Mesh::parseObj(const std::wstring& path)
