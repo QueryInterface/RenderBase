@@ -123,7 +123,9 @@ void Core::morph(const vector3i_t& position, Element& self)
         vector3i_t itemDirection = rotate(item->construction->neighbors[DirectionIndices::pX_idx].relationPosition, item->direction);
         if (itemDirection.x * relativeDirection.z + itemDirection.z * relativeDirection.x == 0 )
         {
+            self.secondaryDirection = self.direction;
             self.construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+            //if ()
         }
     }
 }

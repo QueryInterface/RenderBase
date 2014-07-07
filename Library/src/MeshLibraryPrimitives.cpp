@@ -191,7 +191,7 @@ public:
 
         for (size_t i = 0; i < 6; ++i )
         {
-            if (flags & (1 << i) && i != DirectionIndices::nY_idx && i != DirectionIndices::nZ_idx)
+            if (flags & (1 << i) && i != DirectionIndices::pY_idx && i != DirectionIndices::pZ_idx)
             {
                 copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
             }
