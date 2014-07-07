@@ -38,6 +38,11 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
 
     // Y is UP direction
     Element element = {&desc, direction, Directions::NO, 0};
+    // if priitive can be morfed, morf it
+    if (ElementType::Wedge == element.construction->primitiveUID)
+    {
+        morph(position, element);
+    }
     m_pillars.item(position.x, position.z).insert(position.y, element);
 
     // notify neighbours aboutnew element
@@ -85,12 +90,6 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos)
 
     Element* self = pillar->get_item_at(pos.y);
 
-    // if priitive can be morfed, morf it
-    if (ElementType::Wedge == self->construction->primitiveUID)
-    {
-        morph(pos, *self);
-    }
-
     for (auto neighbor : self->construction->neighbors)
     {
         vector3i_t relativeDirection = rotate(neighbor.relationPosition, self->direction);
@@ -115,21 +114,16 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos)
     }
 }
 
-void Core::morph(const vector3i_t& position, const Element& self)
+void Core::morph(const vector3i_t& position, Element& self)
 {
-    const int nZ_INDEX = 5;
-    const int pX_INDEX = 0;
-    assert(((1 << nZ_INDEX) == Directions::nZ));
-    assert(((1 << pX_INDEX) == Directions::pX));
-
-    vector3i_t relativeDirection = rotate(self.construction->neighbors[nZ_INDEX].relationPosition, self.direction);
+    vector3i_t relativeDirection = rotate(self.construction->neighbors[DirectionIndices::nZ_idx].relationPosition, self.direction);
     Element* item = GetElement(relativeDirection + position);
     if (item && item->construction->primitiveUID == Wedge) 
     {
-        vector3i_t itemDirection = rotate(item->construction->neighbors[pX_INDEX].relationPosition, item->direction);
+        vector3i_t itemDirection = rotate(item->construction->neighbors[DirectionIndices::pX_idx].relationPosition, item->direction);
         if (itemDirection.x * relativeDirection.z + itemDirection.z * relativeDirection.x == 0 )
         {
-            SetElement(ILibrary::library()->GetConstruction(WedgeOutCorner), position, self.direction, true);
+            self.construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
         }
     }
 }

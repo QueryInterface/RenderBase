@@ -31,19 +31,27 @@ enum ElementType : unsigned int
     Reference   = 0xffffffff,    // reference to an object located in different cell.
 };
 
+enum DirectionIndices : unsigned char
+{
+    pX_idx = 0,
+    pY_idx,
+    pZ_idx,
+    nX_idx,
+    nY_idx,
+    nZ_idx,
+};
 // enum represents direction of the element,
 // also the same enum is used for visible faces definitions
 enum Directions : unsigned char
 {
     NO = 0x00,
 
-    pX = (1 << 0),
-    pY = (1 << 1),
-    pZ = (1 << 2),
-
-    nX = (1 << 3),
-    nY = (1 << 4),
-    nZ = (1 << 5),
+    pX = (1 << DirectionIndices::pX_idx),
+    pY = (1 << DirectionIndices::pY_idx),
+    pZ = (1 << DirectionIndices::pZ_idx),
+    nX = (1 << DirectionIndices::nX_idx),
+    nY = (1 << DirectionIndices::nY_idx),
+    nZ = (1 << DirectionIndices::nZ_idx),
 
     UpSideDown,
 

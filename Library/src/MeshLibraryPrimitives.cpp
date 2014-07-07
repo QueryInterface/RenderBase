@@ -159,6 +159,7 @@ public:
         {
             0, 5, 4,          // front  +x
             0, 2, 1, 0, 4, 2, // top    +y
+                              //        +z
             1, 2, 3,          // back   -x
             0, 1, 5, 1, 3, 5, // bottom -y
             5, 3, 2, 5, 2, 4, // left   -z
@@ -190,7 +191,7 @@ public:
 
         for (size_t i = 0; i < 6; ++i )
         {
-            if (flags & (1 << i) && i != 1 && i != 2)
+            if (flags & (1 << i) && i != DirectionIndices::nY_idx && i != DirectionIndices::nZ_idx)
             {
                 copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
             }

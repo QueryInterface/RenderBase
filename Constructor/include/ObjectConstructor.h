@@ -59,7 +59,7 @@ namespace ConstructorImpl
 
     private:
         const NeighborDesc* findRelation(const Element& item, vector3i_t& direction);
-        void morph(const vector3i_t& position, const Element& item);
+        void morph(const vector3i_t& position, Element& item);
         vector3i_t rotate(const vector3i_t& vec, Directions dst) const;
 
     private:
