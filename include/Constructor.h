@@ -104,11 +104,6 @@ struct IConstructable
 /// Library implementation of Mesh object
 ///
 /////////////////////////////////////////////////////////////////////
-struct GeometryMesh
-{
-    std::vector<float> vertices;
-    // TODO: add other vertex parameters here
-};
 
 struct MeshProperties
 {
@@ -119,7 +114,7 @@ struct MeshProperties
 
 struct ILibraryMesh : public IMesh
 {
-    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const = 0;
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const = 0;
     virtual ~ILibraryMesh() {};
 };
 
