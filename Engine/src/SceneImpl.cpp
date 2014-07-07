@@ -93,7 +93,8 @@ void Scene::Render()
     initPipeline();
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearDepthf(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	GL_CALL(glUseProgram(m_program.Program));
 	GL_CALL(glEnableVertexAttribArray(m_program.AttribPosition));
@@ -112,11 +113,13 @@ void Scene::Render()
             auto& objectDesc = objectDescs[i];
             auto& shape = meshDesc.Shapes[i];
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
+            GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
+
             if (objectDesc.IndexBuffer)
             {
                 uint32_t numVertices = shape.Indices.Data.size() / shape.Indices.ElementSize;
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                GL_CALL(glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_SHORT, 0));
+                GL_CALL(glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0));
             }
             else
             {
@@ -227,11 +230,10 @@ void Scene::initObjectsData()
             GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
-            GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
             if (shape.Indices.Data.size())
             {
-                uint32_t indDataSize = shape.Indices.Data.size() * sizeof(uint32_t);
+                uint32_t indDataSize = shape.Indices.Data.size() * sizeof(shape.Indices.Data[0]);
                 GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
                 GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));

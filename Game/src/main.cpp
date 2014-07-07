@@ -31,7 +31,7 @@ int main() {
         ICameraPtr camera = engine->CreateCamera(vector3f_t(0.5, 0.5, 0.0), vector3f_t(0.0, 0.0, 1.0), vector3f_t(0., -1.0, 0.0));
         // Attach objects to scene
         scene->AddObject(object0);
-        scene->AddObject(object1);
+        //scene->AddObject(object1);
         scene->SetCamera(camera);
         scene->AddLight(light);
         // Set scene
