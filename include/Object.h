@@ -37,5 +37,5 @@ struct IObject
     virtual void            Detach()                                                = 0;
     virtual void            Detach(IObjectPtr object)                               = 0;
 
-    static IObjectPtr       CreateBasicObject(IMeshPtr mesh, ITexturePtr texture);
+    static LIB_EXPORT IObjectPtr CALLING_CONVENTION CreateBasicObject(IMeshPtr mesh, ITexturePtr texture);
 };
