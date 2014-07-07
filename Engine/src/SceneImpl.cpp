@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <chrono>
 
 const std::string g_vertexShaderSource =                \
 "   #version 100                                        \n\
@@ -260,36 +261,36 @@ void Scene::initObjectsData()
 
 void Scene::initPipeline()
 {
-    static bool g_init = false;
-    if (g_init)
-    {
-    }
-    else
-    {
-	    // Set matrices
-        IWindow* window = IEngine::Instance()->GetWindow();
-        float aspect = 1.0f * window->GetWidth() / window->GetHeight();
-	    glm::mat4 modelMatrix = glm::mat4(1.0);
-	    glm::mat4 worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -7.0));
-	    //glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-	    glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, -4.0), glm::vec3(0.0, 1.0, 0.0));
-	    glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
+	// Set matrices
+    IWindow* window = IEngine::Instance()->GetWindow();
+    float aspect = 1.0f * window->GetWidth() / window->GetHeight();
+	glm::mat4 modelMatrix = glm::mat4(1.0);
+	glm::mat4 worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 7.0));
+	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
 
-	    // Set pipline states
-	    GL_CALL(glEnable(GL_DEPTH_TEST));
-	    GL_CALL(glUseProgram(m_program.Program));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldMatrix)));
-	    GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
-	    // Set texture
-	    //GL_CALL(glActiveTexture(GL_TEXTURE0));
-	    //GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-	    //GL_CALL(glUniform1i(g_UniformTexture0, 0));
-	    //GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
+    static auto start = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
+    float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	float angle = elapsedTime / 1000.0f * 45;
+	modelMatrix *= glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0, 0.0, 0.0)) *
+					glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 1.0, 0.0)) *
+					glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 0.0, 1.0));
 
-	    GL_CALL(glUseProgram(0));
-    }
+	// Set pipline states
+	GL_CALL(glEnable(GL_DEPTH_TEST));
+	GL_CALL(glUseProgram(m_program.Program));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldMatrix)));
+	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
+	// Set texture
+	//GL_CALL(glActiveTexture(GL_TEXTURE0));
+	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
+	//GL_CALL(glUniform1i(g_UniformTexture0, 0));
+	//GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
+
+	GL_CALL(glUseProgram(0));
 }
 
 GLuint Scene::compileShader(const std::string source, GLenum type)
