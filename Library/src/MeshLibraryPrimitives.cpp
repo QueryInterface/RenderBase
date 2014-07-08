@@ -12,35 +12,47 @@ public:
         return m_desc;
     }
 
-    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         properties;
-        out_descriptor.vertices.clear();
+        out_descriptor.Positions.Data.clear();
     }
 
     virtual void Release() {};
 
 protected:
-    vector3f_t rotate(const float* vec, uint32_t dst) const
+    void rotate(const float* in, uint32_t dst, const vector3f_t& offset, float* out) const
     {
+        memcpy(out, in, sizeof(float) * 3);
         switch(dst)
         {
-        case Directions::nX : return vector3f_t(1-vec[2], vec[1],   vec[0]);
-        case Directions::pX : return vector3f_t(  vec[2], vec[1], 1-vec[0]);
-        case Directions::nZ : return vector3f_t(1-vec[0], vec[1], 1-vec[2]);
+        case Directions::nX :
+            out[0] = 1-in[2];
+            out[2] = in[0];
+            break;
+        case Directions::pX :
+            out[0] = in[2];
+            out[2] = 1 - in[0];
+            break;
+        case Directions::nZ : 
+            out[0] = 1 - in[0];
+            out[2] = 1 - in[2];
+            break;
+        default:
+            break;
         }
-        return vector3f_t(vec[0], vec[1], vec[2]);
+        out[0] += offset.x; out[1] += offset.y; out[2] += offset.z;
     }
 
-    void copyFaces(GeometryMesh& out_descriptor, const vector3f_t& offset, uint32_t orientation, const uint16_t* indexBlock, size_t size) const
+    void copyFaces(IMesh::Shape& out_descriptor, const vector3f_t& offset, uint32_t orientation, const uint16_t* indexBlock, size_t size) const
     {
-        out_descriptor.vertices.reserve(out_descriptor.vertices.size() + size * 3);
+        std::vector<float>& vertices = out_descriptor.Positions.Data;
+        vertices.reserve(vertices.size() + size * 3);
         for (size_t i = 0; i < size; ++i)
         {
-            vector3f_t vertex = rotate(&m_vertices[ indexBlock[i] * 3 ], orientation) + offset;
-            out_descriptor.vertices.push_back(vertex.x);
-            out_descriptor.vertices.push_back(vertex.y);
-            out_descriptor.vertices.push_back(vertex.z);
+            float outVertex[3] = {};
+            rotate(&m_vertices[ indexBlock[i] * 3 ], orientation, offset, outVertex);
+            vertices.insert(vertices.end(), outVertex, outVertex + 3);
         }
     }
 
@@ -108,7 +120,7 @@ public:
         CLONE_HANDLE(IMesh, CubeMesh);
     };
 
-    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         for (size_t i = 0; i < 6; ++i )
         {
@@ -147,6 +159,7 @@ public:
         {
             0, 5, 4,          // front  +x
             0, 2, 1, 0, 4, 2, // top    +y
+                              //        +z
             1, 2, 3,          // back   -x
             0, 1, 5, 1, 3, 5, // bottom -y
             5, 3, 2, 5, 2, 4, // left   -z
@@ -164,7 +177,7 @@ public:
         CLONE_HANDLE(IMesh, WedgeMesh);
     };
 
-    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         uint32_t flags = properties.flags;
         // pY, pZ
@@ -178,7 +191,7 @@ public:
 
         for (size_t i = 0; i < 6; ++i )
         {
-            if (flags & (1 << i) && i != 1 && i != 2)
+            if (flags & (1 << i) && i != DirectionIndices::pY_idx && i != DirectionIndices::pZ_idx)
             {
                 copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
             }
@@ -229,7 +242,7 @@ public:
         CLONE_HANDLE(IMesh, WedgeAngleMesh);
     };
 
-    virtual void ConstructGeometry(const MeshProperties& properties, GeometryMesh& out_descriptor) const
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
         copyFaces(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }

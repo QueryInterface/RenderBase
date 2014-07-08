@@ -39,8 +39,7 @@ namespace ConstructorImpl
         void ConstructMesh(Core& objectCore);
 
     private:
-        IMesh::Desc m_desc;
-        GeometryMesh m_hullDescription;
+        IMesh::Desc m_hullDescription;
 
         Hull(const Hull& arg);
         const Hull& operator=(const Hull& arg);

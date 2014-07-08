@@ -182,4 +182,17 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
+
+TEST_F(MeshBuilderTest, Generated_OuterWedgeAngle)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0),  Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0),  Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1),  Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1),  Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,-1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,-1), Directions::nZ, true);
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\corner.obj");
+}
 // eof
