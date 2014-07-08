@@ -83,4 +83,6 @@ typedef glm::highp_ivec2 vector2i_t;
 typedef glm::highp_ivec3 vector3i_t;
 typedef glm::highp_ivec4 vector4i_t;
 
+typedef short index_t;
+
 
