@@ -28,7 +28,7 @@ elseif(APPLE)
     set (STATIC_LIB_SUFIX .a)
 else()
     set (DYNAMIC_LIB_SUFIX .so)
-    set (STATIC_LIB_SUFIX .a)    
+    set (STATIC_LIB_SUFIX .a)
 endif()
 
 # Configure WinSDK
