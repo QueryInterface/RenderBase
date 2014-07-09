@@ -24,19 +24,28 @@ protected:
     void rotate(const float* in, uint32_t dst, const vector3f_t& offset, float* out) const
     {
         memcpy(out, in, sizeof(float) * 3);
-        switch(dst)
+
+        switch(dst & MODIFICATOR_MASK)
+        {
+        case Directions::LeftToRight:
+            out[0] = 1 - out[0];
+            break;
+        }
+        
+        float tmp = out[0];
+        switch(dst & DIRECTION_MASK)
         {
         case Directions::nX :
-            out[0] = 1-in[2];
-            out[2] = in[0];
+            out[0] = 1-out[2];
+            out[2] = tmp;
             break;
         case Directions::pX :
-            out[0] = in[2];
-            out[2] = 1 - in[0];
+            out[0] = out[2];
+            out[2] = 1 - tmp;
             break;
         case Directions::nZ : 
-            out[0] = 1 - in[0];
-            out[2] = 1 - in[2];
+            out[0] = 1 - out[0];
+            out[2] = 1 - out[2];
             break;
         default:
             break;
@@ -44,7 +53,7 @@ protected:
         out[0] += offset.x; out[1] += offset.y; out[2] += offset.z;
     }
 
-    void copyFaces(IMesh::Shape& out_descriptor, const vector3f_t& offset, uint32_t orientation, const uint16_t* indexBlock, size_t size) const
+    void copyFaces(IMesh::Shape& out_descriptor, const vector3f_t& offset, uint32_t orientation, const index_t* indexBlock, size_t size) const
     {
         std::vector<float>& vertices = out_descriptor.Positions.Data;
         vertices.reserve(vertices.size() + size * 3);
@@ -81,7 +90,7 @@ public:
     CubeMesh()
     {
         const size_t groupsCount = 6;
-        short indexGroups[groupsCount][groupsCount] = 
+        index_t indexGroups[groupsCount][groupsCount] = 
         {
             {2, 3, 4, 2, 4, 5,}, // front  +x
             {1, 6, 4, 1, 4, 3,}, // top    +y
@@ -132,7 +141,7 @@ public:
     }
 
 private:
-    std::vector<uint16_t> m_indices[6];
+    std::vector<index_t> m_indices[6];
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());
@@ -199,7 +208,7 @@ public:
     }
 
 private:
-    std::vector<uint16_t> m_indices;
+    std::vector<index_t> m_indices;
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
@@ -248,7 +257,7 @@ public:
     }
 
 private:
-    std::vector<uint16_t> m_indices;
+    std::vector<index_t> m_indices;
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> WedgeAngleMesh::self(new WedgeAngleMesh());
