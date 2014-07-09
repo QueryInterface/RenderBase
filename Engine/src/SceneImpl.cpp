@@ -78,23 +78,13 @@ void Scene::Render()
     IWindow* window = IEngine::Instance()->GetWindow();
     float aspect = 1.0f * window->GetWidth() / window->GetHeight();
 	glm::mat4 modelMatrix = glm::mat4(1.0);
-	glm::mat4 worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 7.0));
 	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
-
-    static auto start = std::chrono::high_resolution_clock::now();
-    auto end = std::chrono::high_resolution_clock::now();
-    float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	float angle = elapsedTime / 1000.0f * 45;
-	modelMatrix *= glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0, 0.0, 0.0)) *
-					glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 1.0, 0.0)) *
-					glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 0.0, 1.0));
 
 	// Set pipline states
 	GL_CALL(glEnable(GL_DEPTH_TEST));
 	GL_CALL(glUseProgram(m_program.Program));
     GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldMatrix)));
 	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
     GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
 	// Set texture
@@ -111,13 +101,15 @@ void Scene::Render()
     for (auto object : m_objects)
     {
         // Get object desc
-        auto& objectGLDescs = object->GetGLDesc();
+        const Object::GLDesc& objectGLDesc = object->GetGLDesc();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
+        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(objectGLDesc.ObjectMatrix)));
+
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-        for (uint32_t i = 0; i < objectGLDescs.size(); ++i)
+        for (uint32_t i = 0; i < objectGLDesc.MeshDescGL.size(); ++i)
         {
-            auto& objectDesc = objectGLDescs[i];
+            auto& objectDesc = objectGLDesc.MeshDescGL[i];
             auto& shape = meshDesc.Shapes[i];
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));

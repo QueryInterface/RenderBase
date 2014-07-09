@@ -20,9 +20,9 @@ int main() {
         ITexturePtr texture1 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetPosition(0, 0, 0);
+        object0->SetPosition(-1, -1, 7);
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetPosition(1, 1, 0);
+        object1->SetPosition(1, 0, 6);
         // Create light
         ILightPtr light = engine->CreateLight();
         // CreateScene
@@ -38,6 +38,14 @@ int main() {
         engine->SetScene(scene);
         // Run
         engine->Run();
+
+ //   static auto start = std::chrono::high_resolution_clock::now();
+ //   auto end = std::chrono::high_resolution_clock::now();
+ //   float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	//float angle = elapsedTime / 1000.0f * 45;
+	//modelMatrix *= glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0, 0.0, 0.0)) *
+	//				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 1.0, 0.0)) *
+	//				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 0.0, 1.0));
 
     }
     catch (std::exception& ex) 

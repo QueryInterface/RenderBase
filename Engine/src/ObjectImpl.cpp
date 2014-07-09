@@ -22,7 +22,7 @@ Object::Object(IMeshPtr mesh, ITexturePtr texture)
 
 Object::~Object()
 {
-    for (auto& desc : m_glDesc)
+    for (auto& desc : m_glDesc.MeshDescGL)
     {
         if (desc.VertexBuffer)
         {
@@ -157,8 +157,9 @@ void Object::Detach(IObjectPtr /*object*/)
     // TODO: implement
 }
 
-const std::vector<Object::GLDesc>& Object::GetGLDesc() const
+const Object::GLDesc& Object::GetGLDesc() const
 {
+    m_glDesc.ObjectMatrix = m_shiftMatrix * m_rotationMatrix * m_scaleMatrix;
     return m_glDesc;
 }
 
@@ -170,33 +171,33 @@ IObjectPtr IObject::CreateObject(IMeshPtr mesh, ITexturePtr texture)
 void Object::processMesh()
 {
     const IMesh::Desc& meshDesc = GetMesh()->GetDesc();
-    if (m_glDesc.size() != meshDesc.Shapes.size())
-        m_glDesc.resize(meshDesc.Shapes.size());
+    if (m_glDesc.MeshDescGL.size() != meshDesc.Shapes.size())
+        m_glDesc.MeshDescGL.resize(meshDesc.Shapes.size());
     for (uint32_t s = 0; s < meshDesc.Shapes.size(); ++s)
     {
         // Delete old buffers
-        if (m_glDesc[s].VertexBuffer)
+        if (m_glDesc.MeshDescGL[s].VertexBuffer)
         {
-            glDeleteBuffers(1, &m_glDesc[s].VertexBuffer);
-            m_glDesc[s].VertexBuffer = 0;
+            glDeleteBuffers(1, &m_glDesc.MeshDescGL[s].VertexBuffer);
+            m_glDesc.MeshDescGL[s].VertexBuffer = 0;
         }
-        if (m_glDesc[s].IndexBuffer)
+        if (m_glDesc.MeshDescGL[s].IndexBuffer)
         {
-            glDeleteBuffers(1, &m_glDesc[s].IndexBuffer);
-            m_glDesc[s].IndexBuffer = 0;
+            glDeleteBuffers(1, &m_glDesc.MeshDescGL[s].IndexBuffer);
+            m_glDesc.MeshDescGL[s].IndexBuffer = 0;
         }
         // Init new data
         auto& shape = meshDesc.Shapes[s];
         uint32_t posDataSize = shape.Positions.Data.size() * sizeof(shape.Positions.Data[0]);
-        GL_CALL(glGenBuffers(1, &m_glDesc[s].VertexBuffer));
-        GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_glDesc[s].VertexBuffer));
+        GL_CALL(glGenBuffers(1, &m_glDesc.MeshDescGL[s].VertexBuffer));
+        GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_glDesc.MeshDescGL[s].VertexBuffer));
         GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
         GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
         if (shape.Indices.Data.size())
         {
             uint32_t indDataSize = shape.Indices.Data.size() * sizeof(shape.Indices.Data[0]);
-            GL_CALL(glGenBuffers(1, &m_glDesc[s].IndexBuffer));
-            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glDesc[s].IndexBuffer));
+            GL_CALL(glGenBuffers(1, &m_glDesc.MeshDescGL[s].IndexBuffer));
+            GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_glDesc.MeshDescGL[s].IndexBuffer));
             GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
             GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
         }

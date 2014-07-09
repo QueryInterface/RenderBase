@@ -16,17 +16,22 @@ class Object
     , public enable_shared_from_this<Object> 
 {
 public:
-    struct GLDesc
+    struct GLMeshDesc
     {
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
-        glm::mat4   WorldMatrix;
+    };
+
+    struct GLDesc
+    {
+        std::vector<GLMeshDesc> MeshDescGL;
+        glm::mat4               ObjectMatrix;
     };
 public:
     Object(IMeshPtr mesh, ITexturePtr texture);
     virtual ~Object();
     // Object
-    const std::vector<GLDesc>& GetGLDesc() const;
+    const GLDesc&           GetGLDesc() const;
 
     // IObject
     IObjectPtr              Clone() const override;
@@ -64,7 +69,7 @@ private:
     ITexturePtr                 m_texture;
     vector3f_t                  m_position;
     uint32_t                    m_nestedCall;
-    std::vector<GLDesc>         m_glDesc;
+    mutable GLDesc              m_glDesc;
 
     glm::mat4                   m_shiftMatrix;
     glm::mat4                   m_rotationMatrix;
