@@ -52,7 +52,7 @@ void Mesh::parseObj(const std::wstring& path)
     {
         m_desc.Shapes[i].Positions.Data = shapes[i].mesh.positions;
         m_desc.Shapes[i].Positions.ElementSize = 3;
-        m_desc.Shapes[i].Positions.LayoutType = IMesh::LayoutType::Triangle;
+        m_desc.Shapes[i].LayoutType = IMesh::LayoutType::Triangle;
 
         m_desc.Shapes[i].Normals.Data = shapes[i].mesh.normals;
         m_desc.Shapes[i].Normals.ElementSize = 2;

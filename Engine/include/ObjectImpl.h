@@ -1,26 +1,55 @@
 #pragma once
 #include "Object.h"
 #include <vector>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include "SDL_opengles2.h"
 
 using std::enable_shared_from_this;
 using std::weak_ptr;
 using std::vector;
 
-class BasicObject 
+
+class Object 
     : public IObject
-    , public enable_shared_from_this<BasicObject> 
+    , public enable_shared_from_this<Object> 
 {
 public:
-    BasicObject(IMeshPtr mesh, ITexturePtr texture);
-    virtual ~BasicObject();
+    struct GLMeshDesc
+    {
+        GLuint      VertexBuffer;
+        GLuint      IndexBuffer;
+    };
 
+    struct GLDesc
+    {
+        std::vector<GLMeshDesc> MeshDescGL;
+        glm::mat4               ObjectMatrix;
+    };
+public:
+    Object(IMeshPtr mesh, ITexturePtr texture);
+    virtual ~Object();
+    // Object
+    const GLDesc&           GetGLDesc() const;
+
+    // IObject
     IObjectPtr              Clone() const override;
 
     virtual void            SetPosition(const vector3f_t& pos) override;
     virtual void            SetPosition(float x, float y, float z) override;
-
     virtual void            Shift(const vector3f_t& shift) override;
-    virtual void            Shift(float xShift, float yShift, float zShift) override;
+    virtual void            Shift(float shiftX, float shiftY, float shiftZ) override;
+
+    virtual void            SetAngle(const vector3f_t& angles) override;
+    virtual void            SetAngle(float angleX, float angleY, float angleZ) override;
+    virtual void            Rotate(const vector3f_t& angles) override;
+    virtual void            Rotate(float angleX, float angleY, float angleZ) override;
+
+    virtual void            SetScale(const vector3f_t& scales) override;
+    virtual void            SetScale(float angleX, float angleY, float angleZ) override;
+    virtual void            Scale(const vector3f_t& scales) override;
+    virtual void            Scale(float angleX, float angleY, float angleZ) override;
 
     virtual vector3f_t      GetPosition() const override;
 
@@ -34,10 +63,16 @@ public:
     virtual void            Detach() override;
     virtual void            Detach(IObjectPtr object) override;
 private:
-    IMeshPtr                    m_mesh;
-    ITexturePtr                 m_texture;
-    vector3f_t                  m_position;
-    vector<IObjectPtr>          m_connections;
-    vector< weak_ptr<IObject> > m_connectionsWeak;
-    uint32_t                    m_nestedCall;
+    void                    processMesh();
+
+    IMeshPtr                m_mesh;
+    ITexturePtr             m_texture;
+    uint32_t                m_nestedCall;
+    GLDesc                  m_glDesc;
+
+    vector3f_t              m_position;
+    vector3f_t              m_angle;
+    vector3f_t              m_scale;
 };
+
+typedef std::shared_ptr<Object> ObjectPtr;

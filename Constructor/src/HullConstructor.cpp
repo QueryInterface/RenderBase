@@ -18,7 +18,7 @@ Hull::Hull()
     m_hullDescription.Shapes.resize(1);
     m_hullDescription.Shapes[0].Indices.ElementSize = 1;
     m_hullDescription.Shapes[0].Positions.ElementSize = 3;
-    m_hullDescription.Shapes[0].Positions.LayoutType = IMesh::LayoutType::Triangle;
+    m_hullDescription.Shapes[0].LayoutType = IMesh::LayoutType::Triangle;
 }
 
 void Hull::ConstructMesh(Core& objectCore)
