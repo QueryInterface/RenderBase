@@ -39,10 +39,13 @@ enum DirectionIndices : unsigned char
     nX_idx,
     nY_idx,
     nZ_idx,
+
+    mirroredX_idx = 8,
+    mirroredZ_idx,
 };
 // enum represents direction of the element,
 // also the same enum is used for visible faces definitions
-enum Directions : unsigned char
+enum Directions : unsigned short
 {
     NO = 0x00,
 
@@ -53,10 +56,16 @@ enum Directions : unsigned char
     nY = (1 << DirectionIndices::nY_idx),
     nZ = (1 << DirectionIndices::nZ_idx),
 
+    FrontToBack = (1 << DirectionIndices::mirroredZ_idx),
+    LeftToRight = (1 << DirectionIndices::mirroredX_idx),
+
     UpSideDown,
 
     All = 0xFF,
 };
+
+#define DIRECTION_MASK   0x00ff
+#define MODIFICATOR_MASK 0xff00
 
 enum Influences : unsigned int
 {

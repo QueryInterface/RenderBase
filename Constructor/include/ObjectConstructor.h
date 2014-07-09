@@ -26,8 +26,8 @@ namespace ConstructorImpl
     struct Element
     {
         const ConstructionDescription*  construction;
-        Directions                      direction;
-        Directions                      secondaryDirection; //secondary direction required for generated elements
+        unsigned int                    direction;
+        unsigned int                    secondaryDirection; //secondary direction required for generated elements
         unsigned int                    neighbourhood;
     };
 // on a low level object consists from a set of Cores
@@ -60,7 +60,7 @@ namespace ConstructorImpl
     private:
         const NeighborDesc* findRelation(const Element& item, vector3i_t& direction);
         void morph(const vector3i_t& position, Element& item);
-        vector3i_t rotate(const vector3i_t& vec, Directions dst) const;
+        vector3i_t rotate(const vector3i_t& vec, unsigned int dst) const;
 
     private:
         ConstructionDescription         m_desc;
