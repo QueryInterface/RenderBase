@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine.h"
+#include "ObjectImpl.h"
 #include <map>
 #include <set>
 #include "SDL_opengles2.h"
@@ -36,22 +37,8 @@ private:
         bool        Valid;
     };
 
-    struct ObjectDesc
-    {
-        ObjectDesc() 
-            : VertexBuffer(0)
-            , IndexBuffer(0)
-            , Valid(false) {}
-
-        GLuint      VertexBuffer;
-        GLuint      IndexBuffer;
-        bool        Valid;
-    };
-    typedef std::vector<ObjectDesc> object_descs_t;
-
-    std::set<IObjectPtr>                    m_objects;
+    std::set<ObjectPtr>                     m_objects;
     std::set<ILightPtr>                     m_lights;
-    std::map<IObjectPtr, object_descs_t>    m_objectDescs;
     ICameraPtr                              m_camera;
 
     ProgramDesc                             m_program;
@@ -59,7 +46,6 @@ private:
     std::string                             m_fragmentShaderSource;
     
 	void initShaders();
-	void initObjectsData();
 	void initPipeline();
 
     void compileProgram(const std::string& vertex, const std::string fragment);

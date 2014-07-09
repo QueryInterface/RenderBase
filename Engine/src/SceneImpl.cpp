@@ -1,9 +1,6 @@
 #include "SceneImpl.h"
 #include "RenderContext.h"
 #include "ErrorHandler.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
 const std::string g_vertexShaderSource =                \
@@ -51,30 +48,11 @@ Scene::~Scene()
         glDeleteProgram(m_program.Program);
         m_program.Program = 0;
     }
-    for (auto object : m_objects)
-    {
-        // Get object desc
-        object_descs_t& objectDescs = m_objectDescs[object];
-        // Delete old buffers
-        for (auto& desc : objectDescs)
-        {
-            if (desc.VertexBuffer)
-            {
-                glDeleteBuffers(1, &desc.VertexBuffer);
-                desc.VertexBuffer = 0;
-            }
-            if (desc.IndexBuffer)
-            {
-                glDeleteBuffers(1, &desc.IndexBuffer);
-                desc.IndexBuffer = 0;
-            }
-        }
-    }
 }
 
 void Scene::AddObject(IObjectPtr& object)
 {
-    m_objects.insert(object);
+    m_objects.insert(static_pointer_cast<Object>(object));
 }
 
 void Scene::AddLight(ILightPtr& light)
@@ -90,7 +68,6 @@ void Scene::SetCamera(ICameraPtr& camera)
 void Scene::Render()
 {
     initShaders();
-    initObjectsData();
     initPipeline();
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
@@ -105,13 +82,13 @@ void Scene::Render()
     for (auto object : m_objects)
     {
         // Get object desc
-        object_descs_t& objectDescs = m_objectDescs[object];
+        auto& objectGLDescs = object->GetGLDesc();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-        for (uint32_t i = 0; i < objectDescs.size(); ++i)
+        for (uint32_t i = 0; i < objectGLDescs.size(); ++i)
         {
-            auto& objectDesc = objectDescs[i];
+            auto& objectDesc = objectGLDescs[i];
             auto& shape = meshDesc.Shapes[i];
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
@@ -197,66 +174,6 @@ void Scene::initShaders()
     //if (g_UniformTexture0 == -1) LOG_ERROR("main", "Init", "Failed to get location of attribute \"texture0\"");
 
     m_program.Valid = true;
-}
-
-void Scene::initObjectsData()
-{
-    for (auto object : m_objects)
-    {
-        // Get object desc
-        const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        object_descs_t& objectDescs = m_objectDescs[object];
-        if (objectDescs.empty())
-            objectDescs.resize(meshDesc.Shapes.size());
-        for (uint32_t s = 0; s < meshDesc.Shapes.size(); ++s)
-        {
-            auto& objectDesc = objectDescs[s];
-            if (objectDesc.Valid)
-                continue;
-
-            // Delete old buffers
-            if (objectDesc.VertexBuffer)
-            {
-                glDeleteBuffers(1, &objectDesc.VertexBuffer);
-                objectDesc.VertexBuffer = 0;
-            }
-            if (objectDesc.IndexBuffer)
-            {
-                glDeleteBuffers(1, &objectDesc.IndexBuffer);
-                objectDesc.IndexBuffer = 0;
-            }
-            // Init new data
-            auto& shape = meshDesc.Shapes[s];
-            uint32_t posDataSize = shape.Positions.Data.size() * sizeof(shape.Positions.Data[0]);
-            GL_CALL(glGenBuffers(1, &objectDesc.VertexBuffer));
-            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
-            GL_CALL(glBufferData(GL_ARRAY_BUFFER, posDataSize, shape.Positions.Data.data(), GL_STATIC_DRAW));
-            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-            if (shape.Indices.Data.size())
-            {
-                uint32_t indDataSize = shape.Indices.Data.size() * sizeof(shape.Indices.Data[0]);
-                GL_CALL(glGenBuffers(1, &objectDesc.IndexBuffer));
-                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
-                GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-            }
-            objectDesc.Valid = true;
-        }
-    }
-    //// Geometry creation
-    //// Bind vertex positions
-    //GL_CALL(glGenBuffers(1, &g_VBOVertices));
-    //GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, g_VBOVertices));
-    //GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(g_pCubeVertices), g_pCubeVertices, GL_STATIC_DRAW));
-    //GL_CALL(glVertexAttribPointer(g_AtribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
-    //GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-    //// Bind vertex tex coodinates
-    //glGenBuffers(1, &g_VBOTexCoords);
-    //glBindBuffer(GL_ARRAY_BUFFER, g_VBOTexCoords);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(g_pTexCoord), g_pTexCoord, GL_STATIC_DRAW);
-    //glVertexAttribPointer(g_AtribTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Scene::initPipeline()
