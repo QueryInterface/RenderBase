@@ -76,19 +76,13 @@ void Scene::Render()
     glClearDepthf(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Set matrices
-    IWindow* window = IEngine::Instance()->GetWindow();
-    float aspect = 1.0f * window->GetWidth() / window->GetHeight();
-	glm::mat4 modelMatrix = glm::mat4(1.0);
-	glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 1.0, 0.0));
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, aspect, 0.1f, 10.0f);
-
 	// Set pipline states
+    Camera::GLDesc cameraGLDesc = m_camera->GetGLDesc();
 	GL_CALL(glEnable(GL_DEPTH_TEST));
 	GL_CALL(glUseProgram(m_program.Program));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix)));
-	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(viewMatrix)));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix)));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0))));
+	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(cameraGLDesc.ViewMatrix)));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(cameraGLDesc.ProjMatrix)));
 	// Set texture
 	//GL_CALL(glActiveTexture(GL_TEXTURE0));
 	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));

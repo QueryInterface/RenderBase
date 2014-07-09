@@ -2,7 +2,6 @@
 #include "common.h"
 #include "MathBasics.h"
 #include "Resources.h"
-#include "glm/glm.hpp"
 #include <memory>
 
 using std::shared_ptr;

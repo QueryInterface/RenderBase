@@ -61,10 +61,22 @@ struct ILight
     virtual vector3f_t GetPosition() const             = 0;    
 };
 
+struct CameraSetup
+{
+    vector3f_t  Eye;
+    vector3f_t  At;
+    vector3f_t  Up;
+    float       FieldOfViewY;
+    float       NearZ;
+    float       FarZ;
+};
+
 struct ICamera 
     : public IClonable<ICameraPtr>
     , public ISceneElement 
 {
+    virtual const CameraSetup&  GetCameraSetup() const      = 0;
+    virtual void                SetFiledOfViewY(float fovy) = 0;
 };
 
 // Base level of all objects
@@ -84,7 +96,7 @@ struct IEngine
     virtual void                    Run()                                               = 0;
 
     virtual ILightPtr               CreateLight()                                       = 0;
-    virtual ICameraPtr              CreateCamera(vector3f_t eye, vector3f_t at, vector3f_t up)= 0;
+    virtual ICameraPtr              CreateCamera(const CameraSetup& setup)              = 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine*  CALLING_CONVENTION Instance();

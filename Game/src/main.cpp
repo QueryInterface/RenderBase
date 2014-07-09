@@ -28,7 +28,15 @@ int main() {
         // CreateScene
         IScenePtr scene = engine->CreateScene();
         // Create camera
-        ICameraPtr camera = engine->CreateCamera(vector3f_t(0.5, 0.5, 0.0), vector3f_t(0.0, 0.0, 1.0), vector3f_t(0., -1.0, 0.0));
+
+        CameraSetup cameraSetup;
+        cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
+        cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
+        cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
+        cameraSetup.FieldOfViewY = 45.0;
+        cameraSetup.NearZ = 0.1f;
+        cameraSetup.FarZ = 10.0f;
+        ICameraPtr camera = engine->CreateCamera(cameraSetup);
         // Attach objects to scene
         scene->AddObject(object0);
         //scene->AddObject(object1);
