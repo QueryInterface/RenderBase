@@ -35,11 +35,7 @@ struct IMesh
         uint32_t            ElementSize;
     };
 
-    struct PositionsDesc : public ElementDesc<float>
-    {
-        LayoutType  LayoutType;
-    };
-
+    typedef ElementDesc<float>      PositionsDesc;
     typedef ElementDesc<float>      TexCoordDesc;
     typedef ElementDesc<float>      NormalsDesc;
     typedef ElementDesc<uint32_t>   IndicesDesc;
@@ -50,6 +46,7 @@ struct IMesh
         TexCoordDesc    TexCoords;
         NormalsDesc     Normals;
         IndicesDesc     Indices;
+        LayoutType      LayoutType;
     };
 
     struct Desc
