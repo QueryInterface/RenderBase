@@ -20,6 +20,7 @@ public:
     {
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
+        glm::mat4   WorldMatrix;
     };
 public:
     Object(IMeshPtr mesh, ITexturePtr texture);
@@ -32,9 +33,18 @@ public:
 
     virtual void            SetPosition(const vector3f_t& pos) override;
     virtual void            SetPosition(float x, float y, float z) override;
-
     virtual void            Shift(const vector3f_t& shift) override;
-    virtual void            Shift(float xShift, float yShift, float zShift) override;
+    virtual void            Shift(float shiftX, float shiftY, float shiftZ) override;
+
+    virtual void            SetAngle(const vector3f_t& angles) override;
+    virtual void            SetAngle(float angleX, float angleY, float angleZ) override;
+    virtual void            Rotate(const vector3f_t& angles) override;
+    virtual void            Rotate(float angleX, float angleY, float angleZ) override;
+
+    virtual void            SetScale(const vector3f_t& scales) override;
+    virtual void            SetScale(float angleX, float angleY, float angleZ) override;
+    virtual void            Scale(const vector3f_t& scales) override;
+    virtual void            Scale(float angleX, float angleY, float angleZ) override;
 
     virtual vector3f_t      GetPosition() const override;
 
@@ -53,10 +63,12 @@ private:
     IMeshPtr                    m_mesh;
     ITexturePtr                 m_texture;
     vector3f_t                  m_position;
-    vector<IObjectPtr>          m_connections;
-    vector< weak_ptr<IObject> > m_connectionsWeak;
     uint32_t                    m_nestedCall;
     std::vector<GLDesc>         m_glDesc;
+
+    glm::mat4                   m_shiftMatrix;
+    glm::mat4                   m_rotationMatrix;
+    glm::mat4                   m_scaleMatrix;
 };
 
 typedef std::shared_ptr<Object> ObjectPtr;

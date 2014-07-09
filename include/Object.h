@@ -20,10 +20,18 @@ struct IObject
 {
     virtual void            SetPosition(const vector3f_t& pos)                      = 0;
     virtual void            SetPosition(float x, float y, float z)                  = 0;
-
     virtual void            Shift(const vector3f_t& shift)                          = 0;
-    virtual void            Shift(float xShift, float yShift, float zShift)         = 0;
-    //virtual void            Rotate(const Vector3<float>& angles)                    = 0;
+    virtual void            Shift(float shiftX, float shiftY, float shiftZ)         = 0;
+
+    virtual void            SetAngle(const vector3f_t& angles)                      = 0;
+    virtual void            SetAngle(float angleX, float angleY, float angleZ)      = 0;
+    virtual void            Rotate(const vector3f_t& angles)                        = 0;
+    virtual void            Rotate(float angleX, float angleY, float angleZ)        = 0;
+
+    virtual void            SetScale(const vector3f_t& scales)                      = 0;
+    virtual void            SetScale(float angleX, float angleY, float angleZ)      = 0;
+    virtual void            Scale(const vector3f_t& scales)                         = 0;
+    virtual void            Scale(float angleX, float angleY, float angleZ)         = 0;
 
     virtual vector3f_t      GetPosition() const                                     = 0;
 
