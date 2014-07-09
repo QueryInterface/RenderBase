@@ -6,13 +6,13 @@ using std::enable_shared_from_this;
 using std::weak_ptr;
 using std::vector;
 
-class BasicObject 
+class Object 
     : public IObject
-    , public enable_shared_from_this<BasicObject> 
+    , public enable_shared_from_this<Object> 
 {
 public:
-    BasicObject(IMeshPtr mesh, ITexturePtr texture);
-    virtual ~BasicObject();
+    Object(IMeshPtr mesh, ITexturePtr texture);
+    virtual ~Object();
 
     IObjectPtr              Clone() const override;
 
@@ -41,3 +41,5 @@ private:
     vector< weak_ptr<IObject> > m_connectionsWeak;
     uint32_t                    m_nestedCall;
 };
+
+typedef std::shared_ptr<Object> BasicObjectPtr;

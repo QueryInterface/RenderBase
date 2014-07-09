@@ -7,7 +7,7 @@ using std::static_pointer_cast;
 #define NESTED_LOCK() if (m_nestedCall) return; ++m_nestedCall;
 #define NESTED_UNLOCK() --m_nestedCall;
 
-BasicObject::BasicObject(IMeshPtr mesh, ITexturePtr texture)
+Object::Object(IMeshPtr mesh, ITexturePtr texture)
     : m_mesh(mesh)
     , m_texture(texture)
     , m_position(0., 0., 0.)
@@ -16,17 +16,17 @@ BasicObject::BasicObject(IMeshPtr mesh, ITexturePtr texture)
 
 }
 
-BasicObject::~BasicObject()
+Object::~Object()
 {
 
 }
 
-IObjectPtr BasicObject::Clone() const
+IObjectPtr Object::Clone() const
 {
-    CLONE_HANDLE(IObject, BasicObject);
+    CLONE_HANDLE(IObject, Object);
 }
 
-void BasicObject::SetPosition(const vector3f_t& pos) 
+void Object::SetPosition(const vector3f_t& pos) 
 {
     NESTED_LOCK();
     m_position = pos;
@@ -43,12 +43,12 @@ void BasicObject::SetPosition(const vector3f_t& pos)
     NESTED_UNLOCK();
 }
 
-void BasicObject::SetPosition(float x, float y, float z)
+void Object::SetPosition(float x, float y, float z)
 {
     SetPosition(vector3f_t(x, y, z));
 }
 
-void BasicObject::Shift(const vector3f_t& pos)
+void Object::Shift(const vector3f_t& pos)
 {
     NESTED_LOCK();
     if (m_nestedCall) return;
@@ -68,43 +68,43 @@ void BasicObject::Shift(const vector3f_t& pos)
     NESTED_UNLOCK();
 }
 
-void BasicObject::Shift(float xShift, float yShift, float zShift)
+void Object::Shift(float xShift, float yShift, float zShift)
 {
     Shift(vector3f_t(xShift, yShift, zShift));
 }
 
-vector3f_t BasicObject::GetPosition() const 
+vector3f_t Object::GetPosition() const 
 {
     return m_position;
 }
 
-IMeshPtr BasicObject::GetMesh() const
+IMeshPtr Object::GetMesh() const
 {
     return m_mesh;
 }
 
-ITexturePtr BasicObject::GetTexture() const
+ITexturePtr Object::GetTexture() const
 {
     return m_texture;
 }
 
-void BasicObject::AttachBidirectional(IObjectPtr object) 
+void Object::AttachBidirectional(IObjectPtr object) 
 {
     object->AttachDirectional(static_pointer_cast<IObject>(shared_from_this()));
     m_connectionsWeak.push_back(object);
 }
 
-void BasicObject::AttachDirectional(IObjectPtr object) 
+void Object::AttachDirectional(IObjectPtr object) 
 {
     m_connections.push_back(object);
 }
 
-uint32_t BasicObject::GetNumAttached() const 
+uint32_t Object::GetNumAttached() const 
 {
     return m_connections.size() + m_connectionsWeak.size();
 }
 
-IObjectPtr BasicObject::GetAttached(uint32_t index) const 
+IObjectPtr Object::GetAttached(uint32_t index) const 
 {
     size_t size0 = m_connections.size();
     size_t size1 = size0 + m_connectionsWeak.size();
@@ -116,7 +116,7 @@ IObjectPtr BasicObject::GetAttached(uint32_t index) const
         return m_connections[index];
 }
 
-void BasicObject::Detach() 
+void Object::Detach() 
 {
     vector<IObjectPtr> temp;
     temp.swap(m_connections);
@@ -132,7 +132,7 @@ void BasicObject::Detach()
     }
 }
 
-void BasicObject::Detach(IObjectPtr object) 
+void Object::Detach(IObjectPtr object) 
 {
     auto elem0 = std::find(m_connections.begin(), m_connections.end(), object);
     if (elem0 != m_connections.end())
@@ -153,7 +153,7 @@ void BasicObject::Detach(IObjectPtr object)
     }
 }
 
-IObjectPtr IObject::CreateBasicObject(IMeshPtr mesh, ITexturePtr texture)
+IObjectPtr IObject::CreateObject(IMeshPtr mesh, ITexturePtr texture)
 {
-    return static_pointer_cast<IObject>(make_shared_handle<BasicObject>(mesh, texture));
+    return static_pointer_cast<IObject>(make_shared_handle<Object>(mesh, texture));
 }

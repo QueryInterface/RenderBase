@@ -19,9 +19,9 @@ int main() {
         ITexturePtr texture0 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
         ITexturePtr texture1 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
-        IObjectPtr object0 = IObject::CreateBasicObject(mesh, texture0);
+        IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
         object0->SetPosition(0, 0, 0);
-        IObjectPtr object1 = IObject::CreateBasicObject(mesh, texture1);
+        IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
         object1->SetPosition(1, 1, 0);
         // Create light
         ILightPtr light = engine->CreateLight();
