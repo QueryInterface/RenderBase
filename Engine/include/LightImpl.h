@@ -15,3 +15,5 @@ public:
 private:
     vector3f_t m_position;
 };
+
+typedef std::shared_ptr<Light> LightPtr;

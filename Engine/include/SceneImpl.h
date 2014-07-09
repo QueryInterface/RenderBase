@@ -1,9 +1,16 @@
 #pragma once
 #include "Engine.h"
-#include "ObjectImpl.h"
 #include <map>
 #include <set>
 #include "SDL_opengles2.h"
+
+class Object;
+class Camera;
+class Light;
+
+typedef std::shared_ptr<Object> ObjectPtr;
+typedef std::shared_ptr<Camera> CameraPtr;
+typedef std::shared_ptr<Light>  LightPtr;
 
 class Scene : public IScene
 {
@@ -38,8 +45,8 @@ private:
     };
 
     std::set<ObjectPtr>                     m_objects;
-    std::set<ILightPtr>                     m_lights;
-    ICameraPtr                              m_camera;
+    std::set<LightPtr>                      m_lights;
+    CameraPtr                               m_camera;
 
     ProgramDesc                             m_program;
     std::string                             m_vertexShaderSource;

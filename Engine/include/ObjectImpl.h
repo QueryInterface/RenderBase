@@ -2,8 +2,6 @@
 #include "Object.h"
 #include <vector>
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include <glm/gtc/type_ptr.hpp>
 #include "SDL_opengles2.h"
 
 using std::enable_shared_from_this;

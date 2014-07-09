@@ -1,6 +1,9 @@
 #include "SceneImpl.h"
 #include "RenderContext.h"
 #include "ErrorHandler.h"
+#include "ObjectImpl.h"
+#include "CameraImpl.h"
+#include "LightImpl.h"
 #include <chrono>
 
 const std::string g_vertexShaderSource =                \
@@ -57,18 +60,17 @@ void Scene::AddObject(IObjectPtr& object)
 
 void Scene::AddLight(ILightPtr& light)
 {
-    m_lights.insert(light);
+    m_lights.insert(static_pointer_cast<Light>(light));
 }
 
 void Scene::SetCamera(ICameraPtr& camera)
 {
-    m_camera = camera;
+    m_camera = static_pointer_cast<Camera>(camera);
 }
 
 void Scene::Render()
 {
     initShaders();
-    initPipeline();
 
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     glClearDepthf(1.0f);
