@@ -9,7 +9,7 @@ public:
     ~EngineImpl();
 
     virtual ILightPtr               CreateLight() override;
-    virtual ICameraPtr              CreateCamera(vector3f_t eye, vector3f_t at, vector3f_t up) override;
+    virtual ICameraPtr              CreateCamera(const CameraSetup&) override;
     virtual IScenePtr               CreateScene() override;
 
     virtual void                    SetScene(IScenePtr scene) override;

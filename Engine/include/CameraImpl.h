@@ -1,14 +1,30 @@
 #pragma once
 #include "Engine.h"
+#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 class Camera : public ICamera
 {
 public:
-    Camera(vector3f_t eye, vector3f_t at, vector3f_t up);
+    struct GLDesc
+    {
+        glm::mat4 ViewMatrix;
+        glm::mat4 ProjMatrix;
+    };
+public:
+    Camera(const CameraSetup& setup);
     virtual ~Camera();
-    virtual ICameraPtr Clone() const;
+    virtual const GLDesc& GetGLDesc() const;
+
+    // ICamera
+    virtual ICameraPtr Clone() const override;
+    virtual const CameraSetup&  GetCameraSetup() const override;
+    virtual void                SetFiledOfViewY(float fovy) override;
 private:
-    vector3f_t m_eye;
-    vector3f_t m_at;
-    vector3f_t m_up;
+    void initCamera();
+    
+    CameraSetup m_setup;
+    GLDesc      m_glDesc;
 };
+
+typedef std::shared_ptr<Camera> CamerPtr;
