@@ -11,11 +11,10 @@ using std::static_pointer_cast;
 Object::Object(IMeshPtr mesh, ITexturePtr texture)
     : m_mesh(mesh)
     , m_texture(texture)
-    , m_position(0., 0., 0.)
     , m_nestedCall(0)
-    , m_shiftMatrix(glm::mat4(1.0))
-    , m_rotationMatrix(glm::mat4(1.0))
-    , m_scaleMatrix(glm::mat4(1.0))
+    , m_position(0, 0, 0)
+    , m_angle(0, 0, 0)
+    , m_scale(1, 1, 1)
 {
     processMesh();
 }
@@ -44,7 +43,9 @@ IObjectPtr Object::Clone() const
 
 void Object::SetPosition(const vector3f_t& pos) 
 {
-    m_shiftMatrix = glm::translate(glm::mat4(1.0f), pos);
+    vector3f_t delta = pos - m_position;
+    m_position = pos;
+    m_glDesc.ObjectMatrix = glm::translate(m_glDesc.ObjectMatrix, delta);
     // TODO: implement attahment
 }
 
@@ -55,8 +56,8 @@ void Object::SetPosition(float x, float y, float z)
 
 void Object::Shift(const vector3f_t& pos)
 {
-    m_shiftMatrix = glm::translate(m_shiftMatrix, pos);
-    m_position = pos;
+    m_position += pos;
+    m_glDesc.ObjectMatrix = glm::translate(m_glDesc.ObjectMatrix, pos);
     // TODO: implement attahment
 }
 
@@ -67,9 +68,11 @@ void Object::Shift(float shiftX, float shiftY, float shiftZ)
 
 void Object::SetAngle(const vector3f_t& angles)
 {
-    m_rotationMatrix =  glm::rotate(glm::mat4(1.0f), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
-					    glm::rotate(glm::mat4(1.0f), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
-					    glm::rotate(glm::mat4(1.0f), angles.z, glm::vec3(0.0, 0.0, 1.0));
+    vector3f_t delta = angles - m_angle;
+    m_angle = angles;
+    m_glDesc.ObjectMatrix *= glm::rotate(glm::mat4(1.0f), delta.x, glm::vec3(1.0, 0.0, 0.0)) *
+					         glm::rotate(glm::mat4(1.0f), delta.y, glm::vec3(0.0, 1.0, 0.0)) *
+					         glm::rotate(glm::mat4(1.0f), delta.z, glm::vec3(0.0, 0.0, 1.0));
 }
 
 void Object::SetAngle(float angleX, float angleY, float angleZ)
@@ -79,10 +82,10 @@ void Object::SetAngle(float angleX, float angleY, float angleZ)
 
 void Object::Rotate(const vector3f_t& angles)
 {
-    m_rotationMatrix =  m_rotationMatrix * 
-                        glm::rotate(glm::mat4(1.0f), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
-					    glm::rotate(glm::mat4(1.0f), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
-					    glm::rotate(glm::mat4(1.0f), angles.z, glm::vec3(0.0, 0.0, 1.0));
+    m_angle += angles;
+    m_glDesc.ObjectMatrix *= glm::rotate(glm::mat4(1.0f), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
+					         glm::rotate(glm::mat4(1.0f), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
+					         glm::rotate(glm::mat4(1.0f), angles.z, glm::vec3(0.0, 0.0, 1.0));
 }
 
 void Object::Rotate(float angleX, float angleY, float angleZ)
@@ -92,7 +95,8 @@ void Object::Rotate(float angleX, float angleY, float angleZ)
 
 void Object::SetScale(const vector3f_t& scales)
 {
-    m_scaleMatrix = glm::scale(glm::mat4(1.0), scales);
+    vector3f_t delta = m_scale / scales;
+    m_glDesc.ObjectMatrix *= glm::scale(glm::mat4(1.0), delta);
 }
 
 void Object::SetScale(float angleX, float angleY, float angleZ)
@@ -102,7 +106,8 @@ void Object::SetScale(float angleX, float angleY, float angleZ)
 
 void Object::Scale(const vector3f_t& scales)
 {
-    m_scaleMatrix = m_scaleMatrix * glm::scale(glm::mat4(1.0), scales);
+    m_scale *= scales;
+    m_glDesc.ObjectMatrix *= glm::scale(glm::mat4(1.0), scales);
 }
 
 void Object::Scale(float angleX, float angleY, float angleZ)
@@ -159,7 +164,6 @@ void Object::Detach(IObjectPtr /*object*/)
 
 const Object::GLDesc& Object::GetGLDesc() const
 {
-    m_glDesc.ObjectMatrix = m_shiftMatrix * m_rotationMatrix * m_scaleMatrix;
     return m_glDesc;
 }
 

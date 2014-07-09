@@ -65,15 +65,14 @@ public:
 private:
     void                    processMesh();
 
-    IMeshPtr                    m_mesh;
-    ITexturePtr                 m_texture;
-    vector3f_t                  m_position;
-    uint32_t                    m_nestedCall;
-    mutable GLDesc              m_glDesc;
+    IMeshPtr                m_mesh;
+    ITexturePtr             m_texture;
+    uint32_t                m_nestedCall;
+    GLDesc                  m_glDesc;
 
-    glm::mat4                   m_shiftMatrix;
-    glm::mat4                   m_rotationMatrix;
-    glm::mat4                   m_scaleMatrix;
+    vector3f_t              m_position;
+    vector3f_t              m_angle;
+    vector3f_t              m_scale;
 };
 
 typedef std::shared_ptr<Object> ObjectPtr;
