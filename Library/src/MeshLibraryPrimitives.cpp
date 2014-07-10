@@ -36,7 +36,7 @@ protected:
         switch(dst & DIRECTION_MASK)
         {
         case Directions::nX :
-            out[0] = 1-out[2];
+            out[0] = 1 - out[2];
             out[2] = tmp;
             break;
         case Directions::pX :
@@ -53,15 +53,25 @@ protected:
         out[0] += offset.x; out[1] += offset.y; out[2] += offset.z;
     }
 
-    void copyFaces(IMesh::Shape& out_descriptor, const vector3f_t& offset, uint32_t orientation, const index_t* indexBlock, size_t size) const
+    void copyTriangles(IMesh::Shape& out_descriptor, const vector3f_t& offset, uint32_t orientation, const index_t* indexBlock, size_t size) const
     {
+        // triangles supported only. for now
+        assert(0 == size % 3);
         std::vector<float>& vertices = out_descriptor.Positions.Data;
         vertices.reserve(vertices.size() + size * 3);
-        for (size_t i = 0; i < size; ++i)
+
+        const int directIndexOrder[3] = {0, 1, 2};
+        const int morrorIndexOrder[3] = {1, 0, 2};
+        const int *indexOrder = (orientation & MODIFICATOR_MASK) ? morrorIndexOrder : directIndexOrder;
+
+        // work with vertex triplets
+        for (size_t i = 0; i < size; i += 3)
         {
-            float outVertex[3] = {};
-            rotate(&m_vertices[ indexBlock[i] * 3 ], orientation, offset, outVertex);
-            vertices.insert(vertices.end(), outVertex, outVertex + 3);
+            float outVertex[9] = {};
+            rotate(&m_vertices[ indexBlock[i + indexOrder[0]] * 3], orientation, offset, outVertex);
+            rotate(&m_vertices[ indexBlock[i + indexOrder[1]] * 3], orientation, offset, outVertex + 3);
+            rotate(&m_vertices[ indexBlock[i + indexOrder[2]] * 3], orientation, offset, outVertex + 6);
+            vertices.insert(vertices.end(), outVertex, outVertex + 9);
         }
     }
 
@@ -135,7 +145,7 @@ public:
         {
             if (properties.flags & (1 << i))
             {
-                copyFaces(out_descriptor, properties.offset, properties.orientation, m_indices[i].data(), m_indices[i].size()); 
+                copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices[i].data(), m_indices[i].size()); 
             }
         }
     }
@@ -192,7 +202,7 @@ public:
         // pY, pZ
         if (flags & Directions::pX || flags & (size_t)Directions::nX || flags & (size_t)Directions::pZ || flags & (size_t)Directions::pY)
         {
-            copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[3], 6);
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[3], 6);
         }
 
         const int groups[] = {0, 3, 3, 9, 12, 18};
@@ -202,7 +212,7 @@ public:
         {
             if (flags & (1 << i) && i != DirectionIndices::pY_idx && i != DirectionIndices::pZ_idx)
             {
-                copyFaces(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
+                copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[ groups[i] ], sizes[i]);
             }
         }
     }
@@ -253,7 +263,7 @@ public:
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
-        copyFaces(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
+        copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }
 
 private:

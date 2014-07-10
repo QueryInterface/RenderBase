@@ -256,4 +256,21 @@ TEST_F(BuildingBerthTest, Generated_OuterWedgeAngle)
     Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
     ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
 }
+
+TEST_F(BuildingBerthTest, Generated_PiramidTop)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nZ, true);
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,0));
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
+}
 // eof
