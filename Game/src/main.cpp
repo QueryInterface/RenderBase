@@ -2,31 +2,59 @@
 #include "ResourceOverseer.h"
 #include "Object.h"
 #include "Utils.h"
+#include <chrono>
 
-int main() {
-    try 
+class Game : public IEngineCallbacks
+{
+public:
+    Game();
+    ~Game();
+    void Start();
+    // IEngineCallbacks
+    void OnSceneUpdate();
+private:
+    IEngine*                m_engine;
+    IWindow*                m_window;
+    IResourceOverseer*      m_resourceOverseer;
+    std::vector<IObjectPtr> m_objects;
+};
+
+Game::Game()
+    : m_engine(IEngine::Instance())
+    , m_window(m_engine->GetWindow())
+    , m_resourceOverseer(IResourceOverseer::Instance())
+{
+}
+
+Game::~Game()
+{
+}
+
+void Game::Start()
+{
+    try
     {
-        IResourceOverseer* resourceOverseer = IResourceOverseer::Instance();
-        IEngine* engine = IEngine::Instance();
-        IWindow* window = engine->GetWindow();
-
         // Setup window
-        window->SetWidth(640);
-        window->SetHeight(480);
-        window->SetFullscreen(false);
+        m_window->SetWidth(640);
+        m_window->SetHeight(480);
+        m_window->SetFullscreen(false);
         // Load resources
-        IMeshPtr mesh = resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/cube.obj");
-        ITexturePtr texture0 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
-        ITexturePtr texture1 = resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
+        IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/cube.obj");
+        ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+        ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetPosition(-1, -1, 7);
+        object0->SetCenter(1, 1, 1);
+        object0->SetPosition(0, 0, 7);
+        m_objects.push_back(object0);
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetPosition(1, 0, 6);
+        object1->SetCenter(1, 1, 1);
+        object1->SetPosition(0, 0, 6);
+        m_objects.push_back(object1);
         // Create light
-        ILightPtr light = engine->CreateLight();
+        ILightPtr light = m_engine->CreateLight();
         // CreateScene
-        IScenePtr scene = engine->CreateScene();
+        IScenePtr scene = m_engine->CreateScene();
         // Create camera
 
         CameraSetup cameraSetup;
@@ -36,29 +64,41 @@ int main() {
         cameraSetup.FieldOfViewY = 45.0;
         cameraSetup.NearZ = 0.1f;
         cameraSetup.FarZ = 10.0f;
-        ICameraPtr camera = engine->CreateCamera(cameraSetup);
+        ICameraPtr camera = m_engine->CreateCamera(cameraSetup);
         // Attach objects to scene
         scene->AddObject(object0);
         //scene->AddObject(object1);
         scene->SetCamera(camera);
         scene->AddLight(light);
         // Set scene
-        engine->SetScene(scene);
+        m_engine->SetScene(scene);
         // Run
-        engine->Run();
-
- //   static auto start = std::chrono::high_resolution_clock::now();
- //   auto end = std::chrono::high_resolution_clock::now();
- //   float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	//float angle = elapsedTime / 1000.0f * 45;
-	//modelMatrix *= glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0, 0.0, 0.0)) *
-	//				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 1.0, 0.0)) *
-	//				glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0, 0.0, 1.0));
-
+        m_engine->Run(this);
     }
     catch (std::exception& ex) 
     {
         ex;
     }
-    return 0;
+}
+
+void Game::OnSceneUpdate()
+{
+    static auto start = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
+    float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	float angle = elapsedTime / 1000.0f * 45;
+    start = end;
+    angle;
+    for (IObjectPtr& object : m_objects)
+    {
+        object;
+        //object->Rotate(0, angle, 0);
+    }
+}
+
+
+int main() 
+{
+    Game game;
+    game.Start();
 }

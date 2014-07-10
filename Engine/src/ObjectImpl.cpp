@@ -14,6 +14,7 @@ Object::Object(IMeshPtr mesh, ITexturePtr texture)
     : m_mesh(mesh)
     , m_texture(texture)
     , m_nestedCall(0)
+    , m_center(0, 0, 0)
     , m_position(0, 0, 0)
     , m_angle(0, 0, 0)
     , m_scale(1, 1, 1)
@@ -43,11 +44,34 @@ IObjectPtr Object::Clone() const
     CLONE_HANDLE(IObject, Object);
 }
 
+void Object::SetCenter(const vector3f_t& center)
+{
+    vector3f_t delta = center - m_center;
+    m_center = center;
+    m_glDesc.ObjectMatrix =  glm::translate(m_glDesc.ObjectMatrix, delta);
+}
+
+void Object::SetCenter(float x, float y, float z)
+{
+    SetCenter(vector3f_t(x, y, z));
+}
+
+void Object::ShiftCenter(const vector3f_t& shift)
+{
+    m_center += shift;
+    m_glDesc.ObjectMatrix =  glm::translate(m_glDesc.ObjectMatrix, shift);
+}
+
+void Object::ShiftCenter(float shiftX, float shiftY, float shiftZ)
+{
+    ShiftCenter(vector3f_t(shiftX, shiftY, shiftZ));;
+}
+
 void Object::SetPosition(const vector3f_t& pos) 
 {
     vector3f_t delta = pos - m_position;
     m_position = pos;
-    m_glDesc.ObjectMatrix = glm::translate(m_glDesc.ObjectMatrix, delta);
+    m_glDesc.WorldMatrix = glm::translate(m_glDesc.ObjectMatrix, delta);
     // TODO: implement attahment
 }
 
@@ -59,7 +83,7 @@ void Object::SetPosition(float x, float y, float z)
 void Object::Shift(const vector3f_t& pos)
 {
     m_position += pos;
-    m_glDesc.ObjectMatrix = glm::translate(m_glDesc.ObjectMatrix, pos);
+    m_glDesc.WorldMatrix = glm::translate(m_glDesc.ObjectMatrix, pos);
     // TODO: implement attahment
 }
 
@@ -72,9 +96,9 @@ void Object::SetAngle(const vector3f_t& angles)
 {
     vector3f_t delta = angles - m_angle;
     m_angle = angles;
-    m_glDesc.ObjectMatrix *= glm::rotate(glm::mat4(1.0f), delta.x, glm::vec3(1.0, 0.0, 0.0)) *
+    m_glDesc.ObjectMatrix = glm::rotate(glm::mat4(1.0f), delta.x, glm::vec3(1.0, 0.0, 0.0))  *
 					         glm::rotate(glm::mat4(1.0f), delta.y, glm::vec3(0.0, 1.0, 0.0)) *
-					         glm::rotate(glm::mat4(1.0f), delta.z, glm::vec3(0.0, 0.0, 1.0));
+					         glm::rotate(glm::mat4(1.0f), delta.z, glm::vec3(0.0, 0.0, 1.0)) * m_glDesc.ObjectMatrix;
 }
 
 void Object::SetAngle(float angleX, float angleY, float angleZ)
@@ -85,9 +109,9 @@ void Object::SetAngle(float angleX, float angleY, float angleZ)
 void Object::Rotate(const vector3f_t& angles)
 {
     m_angle += angles;
-    m_glDesc.ObjectMatrix *= glm::rotate(glm::mat4(1.0f), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
+    m_glDesc.ObjectMatrix = glm::rotate(glm::mat4(1.0f), angles.x, glm::vec3(1.0, 0.0, 0.0))  *
 					         glm::rotate(glm::mat4(1.0f), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
-					         glm::rotate(glm::mat4(1.0f), angles.z, glm::vec3(0.0, 0.0, 1.0));
+					         glm::rotate(glm::mat4(1.0f), angles.z, glm::vec3(0.0, 0.0, 1.0)) * m_glDesc.ObjectMatrix;
 }
 
 void Object::Rotate(float angleX, float angleY, float angleZ)

@@ -18,6 +18,11 @@ struct IObject
     : public ISceneElement
     , public IClonable<IObjectPtr>
 {
+    virtual void            SetCenter(const vector3f_t& m_center)                   = 0;
+    virtual void            SetCenter(float x, float y, float z)                    = 0;
+    virtual void            ShiftCenter(const vector3f_t& shift)                    = 0;
+    virtual void            ShiftCenter(float shiftX, float shiftY, float shiftZ)   = 0;
+
     virtual void            SetPosition(const vector3f_t& pos)                      = 0;
     virtual void            SetPosition(float x, float y, float z)                  = 0;
     virtual void            Shift(const vector3f_t& shift)                          = 0;

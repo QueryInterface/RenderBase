@@ -89,11 +89,16 @@ struct IScene : public IHandle
     virtual void Render()                       = 0;
 };
 
+struct IEngineCallbacks
+{
+    virtual void OnSceneUpdate() = 0;
+};
+
 struct IEngine
 {
     virtual void                    SetScene(IScenePtr scene)                           = 0;
     virtual IWindow*                GetWindow() const                                   = 0;
-    virtual void                    Run()                                               = 0;
+    virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
 
     virtual ILightPtr               CreateLight()                                       = 0;
     virtual ICameraPtr              CreateCamera(const CameraSetup& setup)              = 0;
