@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include "ResourceOverseer.h"
-#include "Object.h"
 #include "Utils.h"
 #include <chrono>
 
@@ -52,11 +51,10 @@ void Game::Start()
         object1->SetPosition(0, 0, 6);
         m_objects.push_back(object1);
         // Create light
-        ILightPtr light = m_engine->CreateLight();
+        ILightPtr light = m_engine->CreateLight(LightType::Spot, vector3f_t(-3, -3, 3));
         // CreateScene
         IScenePtr scene = m_engine->CreateScene();
         // Create camera
-
         CameraSetup cameraSetup;
         cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
         cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
@@ -88,11 +86,9 @@ void Game::OnSceneUpdate()
     float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	float angle = elapsedTime / 1000.0f * 45;
     start = end;
-    angle;
     for (IObjectPtr& object : m_objects)
     {
-        object;
-        //object->Rotate(0, angle, 0);
+        object->Rotate(angle, angle, angle);
     }
 }
 
