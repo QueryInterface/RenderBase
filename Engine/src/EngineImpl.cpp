@@ -41,13 +41,17 @@ IWindow* EngineImpl::GetWindow() const
     return m_renderContext->GetWindow();
 }
 
-void EngineImpl::Run()
+void EngineImpl::Run(IEngineCallbacks* callbacks)
 {
     WINDOW_MSG msg = WINDOW_MSG::FOREGROUND;
     while((msg = m_renderContext->GetWindow()->ProcessMessage()) != WINDOW_MSG::QUIT) 
     {
         if (msg == WINDOW_MSG::FOREGROUND)
         {
+            if (callbacks)
+            {
+                callbacks->OnSceneUpdate();
+            }
             m_scene->Render();
         }
         m_renderContext->Present();

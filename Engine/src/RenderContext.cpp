@@ -151,13 +151,15 @@ bool WindowSDL::IsFullscreen() const {
 
 WINDOW_MSG WindowSDL::ProcessMessage() {
     SDL_Event event;
-    SDL_PollEvent(&event);
-    switch(event.type) {
-    case SDL_KEYDOWN:
-        break;
-    case SDL_QUIT:
-        return WINDOW_MSG::QUIT;
-        break;
+    while (SDL_PollEvent(&event))
+    {
+        switch(event.type) {
+        case SDL_KEYDOWN:
+            break;
+        case SDL_QUIT:
+            return WINDOW_MSG::QUIT;
+            break;
+        }
     }
     return WINDOW_MSG::FOREGROUND;
 }

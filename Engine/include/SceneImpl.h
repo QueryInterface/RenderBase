@@ -53,7 +53,6 @@ private:
     std::string                             m_fragmentShaderSource;
     
 	void initShaders();
-	void initPipeline();
 
     void compileProgram(const std::string& vertex, const std::string fragment);
     GLuint compileShader(const std::string source, GLenum type);
