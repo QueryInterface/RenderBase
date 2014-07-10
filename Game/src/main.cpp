@@ -56,7 +56,6 @@ void Game::Start()
         // CreateScene
         IScenePtr scene = m_engine->CreateScene();
         // Create camera
-
         CameraSetup cameraSetup;
         cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
         cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
@@ -92,7 +91,7 @@ void Game::OnSceneUpdate()
     for (IObjectPtr& object : m_objects)
     {
         object;
-        //object->Rotate(0, angle, 0);
+        object->Rotate(angle, angle, angle);
     }
 }
 

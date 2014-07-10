@@ -46,7 +46,7 @@ IObjectPtr Object::Clone() const
 
 void Object::SetCenter(const vector3f_t& center)
 {
-    vector3f_t delta = center - m_center;
+    vector3f_t delta = m_center - center;
     m_center = center;
     m_glDesc.ObjectMatrix =  glm::translate(m_glDesc.ObjectMatrix, delta);
 }
@@ -71,7 +71,7 @@ void Object::SetPosition(const vector3f_t& pos)
 {
     vector3f_t delta = pos - m_position;
     m_position = pos;
-    m_glDesc.WorldMatrix = glm::translate(m_glDesc.ObjectMatrix, delta);
+    m_glDesc.WorldMatrix = glm::translate(m_glDesc.WorldMatrix, delta);
     // TODO: implement attahment
 }
 
@@ -83,7 +83,7 @@ void Object::SetPosition(float x, float y, float z)
 void Object::Shift(const vector3f_t& pos)
 {
     m_position += pos;
-    m_glDesc.WorldMatrix = glm::translate(m_glDesc.ObjectMatrix, pos);
+    m_glDesc.WorldMatrix = glm::translate(m_glDesc.WorldMatrix, pos);
     // TODO: implement attahment
 }
 
