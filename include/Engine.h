@@ -2,36 +2,69 @@
 
 #include "common.h"
 #include "MathBasics.h"
+#include "Resources.h"
 #include <string>
 #include <memory>
 #include <vector>
-#include "Object.h"
 
-using std::shared_ptr;
-using std::string;
 using std::vector;
-
 using std::shared_ptr;
 using std::string;
 using std::wstring;
 
 struct IScene;
-
 struct IProgram;
 struct ILight;
 struct ICamera;
-
+struct IObject;
 struct IWindow;
 
 typedef shared_ptr<IScene>              IScenePtr;
-
 typedef shared_ptr<IProgram>            IProgramPtr;
 typedef shared_ptr<ILight>              ILightPtr;
 typedef shared_ptr<ICamera>             ICameraPtr;
+typedef shared_ptr<IObject>             IObjectPtr;
+
+enum class LightType
+{
+    Spot
+};
 
 struct EventCallback 
 {
     virtual void OnKeyPress(uint32_t keyCode, bool isPress) {keyCode; isPress;}
+};
+
+struct ISceneElement : public IHandle
+{
+    virtual void            SetCenter(const vector3f_t& center)                     = 0;
+    virtual void            SetCenter(float x, float y, float z)                    = 0;
+    virtual void            ShiftCenter(const vector3f_t& shift)                    = 0;
+    virtual void            ShiftCenter(float shiftX, float shiftY, float shiftZ)   = 0;
+
+    virtual void            SetPosition(const vector3f_t& pos)                      = 0;
+    virtual void            SetPosition(float x, float y, float z)                  = 0;
+    virtual void            Shift(const vector3f_t& shift)                          = 0;
+    virtual void            Shift(float shiftX, float shiftY, float shiftZ)         = 0;
+
+    virtual void            SetAngle(const vector3f_t& angles)                      = 0;
+    virtual void            SetAngle(float angleX, float angleY, float angleZ)      = 0;
+    virtual void            Rotate(const vector3f_t& angles)                        = 0;
+    virtual void            Rotate(float angleX, float angleY, float angleZ)        = 0;
+
+    virtual vector3f_t      GetAngle() const                                        = 0;  
+    virtual vector3f_t      GetPosition() const                                     = 0;  
+    virtual vector3f_t      GetCenter() const                                       = 0;  
+};
+
+struct IScalable
+{
+    virtual void            SetScale(const vector3f_t& scales)                      = 0;
+    virtual void            SetScale(float angleX, float angleY, float angleZ)      = 0;
+    virtual void            Scale(const vector3f_t& scales)                         = 0;
+    virtual void            Scale(float angleX, float angleY, float angleZ)         = 0;
+
+    virtual vector3f_t      GetScale() const                                        = 0;  
 };
 
 struct IWindow
@@ -52,13 +85,8 @@ struct IWindow
 // scene interfaces
 struct ILight
     : public IClonable<ILightPtr>
-    , public ISceneElement 
+    , public ISceneElement
 {
-    // Sets
-    virtual void            SetPosition(vector3f_t pos) = 0;
-    virtual void            SetPosition(float x, float y, float z) = 0;
-    // Gets
-    virtual vector3f_t GetPosition() const             = 0;    
 };
 
 struct CameraSetup
@@ -77,6 +105,24 @@ struct ICamera
 {
     virtual const CameraSetup&  GetCameraSetup() const      = 0;
     virtual void                SetFiledOfViewY(float fovy) = 0;
+};
+
+struct IObject
+    : public ISceneElement
+    , public IClonable<IObjectPtr>
+    , public IScalable
+{
+    virtual IMeshPtr        GetMesh() const                                         = 0;
+    virtual ITexturePtr     GetTexture() const                                      = 0;
+
+    virtual void            AttachBidirectional(IObjectPtr object)                  = 0;
+    virtual void            AttachDirectional(IObjectPtr object)                    = 0;
+    virtual uint32_t        GetNumAttached() const                                  = 0;
+    virtual IObjectPtr      GetAttached(uint32_t index) const                       = 0;
+    virtual void            Detach()                                                = 0;
+    virtual void            Detach(IObjectPtr object)                               = 0;
+
+    static LIB_EXPORT IObjectPtr CALLING_CONVENTION CreateObject(IMeshPtr mesh, ITexturePtr texture);
 };
 
 // Base level of all objects
@@ -100,7 +146,7 @@ struct IEngine
     virtual IWindow*                GetWindow() const                                   = 0;
     virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
 
-    virtual ILightPtr               CreateLight()                                       = 0;
+    virtual ILightPtr               CreateLight(LightType type, vector3f_t position)    = 0;
     virtual ICameraPtr              CreateCamera(const CameraSetup& setup)              = 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 

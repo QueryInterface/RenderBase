@@ -1,8 +1,10 @@
 #pragma once
-#include "Object.h"
+#include "Engine.h"
+#include "Resources.h"
 #include <vector>
 #include "glm/glm.hpp"
 #include "SDL_opengles2.h"
+#include "SceneElementImpl.h"
 
 using std::enable_shared_from_this;
 using std::weak_ptr;
@@ -11,6 +13,7 @@ using std::vector;
 
 class Object 
     : public IObject
+    , protected SceneElementImpl
     , public enable_shared_from_this<Object> 
 {
 public:
@@ -23,8 +26,7 @@ public:
     struct GLDesc
     {
         std::vector<GLMeshDesc> MeshDescGL;
-        glm::mat4               ObjectMatrix;
-        glm::mat4               WorldMatrix;
+        GLMatrixDesc            MatrixDescGL;
     };
 public:
     Object(IMeshPtr mesh, ITexturePtr texture);
@@ -55,7 +57,10 @@ public:
     virtual void            Scale(const vector3f_t& scales) override;
     virtual void            Scale(float angleX, float angleY, float angleZ) override;
 
-    virtual vector3f_t      GetPosition() const override;
+    virtual vector3f_t      GetAngle() const override;  
+    virtual vector3f_t      GetPosition() const override;  
+    virtual vector3f_t      GetCenter() const override;
+    virtual vector3f_t      GetScale() const override;
 
     virtual IMeshPtr        GetMesh() const;
     virtual ITexturePtr     GetTexture() const;
@@ -73,11 +78,6 @@ private:
     ITexturePtr             m_texture;
     uint32_t                m_nestedCall;
     GLDesc                  m_glDesc;
-
-    vector3f_t              m_center;
-    vector3f_t              m_position;
-    vector3f_t              m_angle;
-    vector3f_t              m_scale;
 };
 
 typedef std::shared_ptr<Object> ObjectPtr;

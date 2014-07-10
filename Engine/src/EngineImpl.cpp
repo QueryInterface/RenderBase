@@ -16,9 +16,9 @@ EngineImpl::~EngineImpl()
 {
 }
 
-ILightPtr EngineImpl::CreateLight()
+ILightPtr EngineImpl::CreateLight(LightType type, vector3f_t position)
 {
-    return static_pointer_cast<ILight>(make_shared_handle<Light>());
+    return static_pointer_cast<ILight>(make_shared_handle<Light>(type, position));
 }
 
 ICameraPtr EngineImpl::CreateCamera(const CameraSetup& setup)

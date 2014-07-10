@@ -8,7 +8,7 @@ public:
     EngineImpl();
     ~EngineImpl();
 
-    virtual ILightPtr               CreateLight() override;
+    virtual ILightPtr               CreateLight(LightType type, vector3f_t position) override;
     virtual ICameraPtr              CreateCamera(const CameraSetup&) override;
     virtual IScenePtr               CreateScene() override;
 

@@ -33,8 +33,3 @@ struct IHandle
 {
     virtual void Release() = 0;
 };
-
-struct ISceneElement : public IHandle
-{
-};
-
