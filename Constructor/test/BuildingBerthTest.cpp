@@ -110,7 +110,7 @@ TEST_F(BuildingBerthTest, IterateThroughSolidCube)
     ASSERT_NO_THROW ( m_builder->GetCore().IterrateObject([&](size_t, size_t, size_t, Element&){}));
 }
 
-TEST_F(BuildingBerthTest, ConstructSpongeSystem)
+TEST_F(BuildingBerthTest, DISABLED_ConstructSpongeSystem)
 {
     const size_t cubeScales = 64;
     for (size_t x = 0; x < cubeScales; ++x)
@@ -129,7 +129,7 @@ TEST_F(BuildingBerthTest, ConstructSpongeSystem)
     EXPECT_EQ(vector3i_t(cubeScales, cubeScales, cubeScales), (desc.RBB));
 }
 
-TEST_F(BuildingBerthTest, IterateThroughSpongeSystem)
+TEST_F(BuildingBerthTest, DISABLED_IterateThroughSpongeSystem)
 {
     const size_t cubeScales = 64;
     for (size_t x = 0; x < cubeScales; ++x)

@@ -155,6 +155,18 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
+TEST_F(MeshBuilderTest, WedgeCross)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pZ, true);
+
+    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(3,0,3), Directions::pZ, true);
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\wedges.obj");
+}
+
 TEST_F(MeshBuilderTest, DISABLED_Pyramid)
 {
     m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(3,0,3), Directions::pX, true);
@@ -183,7 +195,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 
-TEST_F(MeshBuilderTest, Generated_OuterWedgeAngle)
+TEST_F(MeshBuilderTest, DISABLED_OuterWedgeAngle)
 {
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pX, true);
@@ -196,7 +208,7 @@ TEST_F(MeshBuilderTest, Generated_OuterWedgeAngle)
     exportMesh(desc, "c:\\tmp\\corner.obj");
 }
 
-TEST_F(MeshBuilderTest, Generated_PiramidTop)
+TEST_F(MeshBuilderTest, DISABLED_PiramidTop)
 {
     size_t size = 3;
     size_t offset = 2;

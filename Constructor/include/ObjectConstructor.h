@@ -27,13 +27,12 @@ namespace ConstructorImpl
     {
         const ConstructionDescription*  construction;
         unsigned int                    direction;
-        unsigned int                    secondaryDirection; //secondary direction required for generated elements
+        unsigned int                    originalDirection; //secondary direction required for generated elements
         unsigned int                    neighbourhood;
     };
 
     typedef Utils::RangeList<Element> Pillar_t;
 
-// on a low level object consists from a set of Cores
     class Core : public IConstructable
     {
     public:
