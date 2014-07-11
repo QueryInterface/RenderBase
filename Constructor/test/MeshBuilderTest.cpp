@@ -198,10 +198,39 @@ TEST_F(MeshBuilderTest, Generated_OuterWedgeAngle)
 
 TEST_F(MeshBuilderTest, Generated_PiramidTop)
 {
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::pX, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pZ, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nZ, true);
+    size_t size = 3;
+    size_t offset = 2;
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,offset+i), Directions::nX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+size-1,0,offset+i), Directions::pX, true);
+    }
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+0), Directions::nZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+size-1), Directions::pZ, true);
+    }
+
+    size = 7;
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::nZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::pZ, true);
+    }
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::nX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::pX, true);
+    }
+
+    offset = 12;
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,0), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::nZ, true);
 
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\PiramidTop.obj");

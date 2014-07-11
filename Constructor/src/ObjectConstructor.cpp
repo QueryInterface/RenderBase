@@ -37,7 +37,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
     // Y is UP direction
-    Element element = {&desc, direction, Directions::NO, 0};
+    Element element = {&desc, direction, direction, 0};
     // if priitive can be morfed, morf it
     if (ElementType::Wedge == element.construction->primitiveUID)
     {
@@ -59,7 +59,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
             {
                 if (x || z)
                 {
-                    Element ref = {&m_reference, direction, Directions::NO, 0};
+                    Element ref = {&m_reference, direction, direction, 0};
                     m_pillars.item(position.x + x, position.z + z).insert(position.y, ref);
                 }
             }
@@ -71,16 +71,6 @@ Element* Core::GetElement(const vector3i_t& position)
 {
     auto pillar = m_pillars.get_item_at(position.x, position.z);
     return pillar ? pillar->get_item_at(position.y) : nullptr;
-}
-
-void Core::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
-{
-    //ACHTUNG: double lambda!!!!
-    m_pillars.for_each([&](size_t x, size_t z, Pillar_t& pillar){
-        pillar.for_each([&](size_t y, Element& e){
-            visitor(x,y,z,e);
-        });
-    });
 }
 
 void Core::UpdateNeighbourhood(const vector3i_t& pos)
@@ -98,85 +88,43 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos)
         if (!item)
             continue;
 
-        const NeighborDesc* itemNeighbour = findRelation(*item, relativeDirection);
+        const NeighborDesc* itemNeighbour = findNeighbor(*item, relativeDirection);
         if (!itemNeighbour)
             continue;
 
-        if (itemNeighbour->relationWeight < neighbor.relationWeight)
-            item->neighbourhood |= itemNeighbour->relationFlag;
-        else if (neighbor.relationWeight == itemNeighbour->relationWeight)
+        if (itemNeighbour->relationWeight <= neighbor.relationWeight)
         {
             item->neighbourhood |= itemNeighbour->relationFlag;
+        }
+
+        if (itemNeighbour->relationWeight >= neighbor.relationWeight)
+        {
             self->neighbourhood |= neighbor.relationFlag;
         }
-        else
-            self->neighbourhood |= neighbor.relationFlag;
     }
 }
 
-void Core::morph(const vector3i_t& position, Element& self)
+void Core::IterrateObject(std::function<void(size_t, size_t, size_t, Element&)> visitor) 
 {
-    // fing neighbor on behind
-    vector3i_t neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nZ_idx].relationPosition, self.direction);
-    Element* item = GetElement(neighborPosition + position);
-
-    // morph self
-    if (item && (item->construction->primitiveUID == Wedge || item->construction->primitiveUID == WedgeOutCorner))
-    {
-        //calculate absolute directions of current object and neighbour
-        vector3i_t sD = rotate(vector3i_t(0, 0, 1), self.direction);
-        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->direction);
-        // morph objects if they are perpendicular
-        if (iD.x * sD.x + iD.z * sD.z == 0 )
-        {
-            self.secondaryDirection = self.direction;
-            self.construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
-            //mirror wedge angle if required
-            if (iD.x * sD.z - iD.z * sD.x > 0)
-            {
-                self.direction |= Directions::LeftToRight;
-            }
-        }
-    }
-    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nX_idx].relationPosition, self.direction);
-    item = GetElement(neighborPosition + position);
-
-    // morph neighbor
-    if (item && item->construction->primitiveUID == Wedge)
-    {
-        //calculate absolute directions of current object and neighbour
-        vector3i_t sD = rotate(vector3i_t(0, 0, 1), self.direction);
-        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->direction);
-        // morph objects if they are perpendicular
-        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x > 0))
-        {
-            item->secondaryDirection = item->direction;
-            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
-            //mirror wedge angle if required
-        }
-    }
-
-    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::pX_idx].relationPosition, self.direction);
-    item = GetElement(neighborPosition + position);
-
-    // morph neighbor
-    if (item && item->construction->primitiveUID == Wedge)
-    {
-        //calculate absolute directions of current object and neighbour
-        vector3i_t sD = rotate(vector3i_t(0, 0, 1), self.direction);
-        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->direction);
-        // morph objects if they are perpendicular
-        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x < 0))
-        {
-            item->secondaryDirection = item->direction;
-            item->direction |= Directions::LeftToRight;
-            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
-            //mirror wedge angle if required
-        }
-    }
+    m_pillars.for_each([&](size_t x, size_t z, Pillar_t& pillar){
+        pillar.for_each([&](size_t y, Element& e){
+            visitor(x,y,z,e);
+        });
+    });
 }
 
-const NeighborDesc* Core::findRelation(const Element& item, vector3i_t& direction)
+bool Core::IsUpdated() 
+{
+    bool state = m_isDirty; 
+    m_isDirty = false; 
+    return state;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+// private section
+///////////////////////////////////////////////////////////////////////////////////
+
+const NeighborDesc* Core::findNeighbor(const Element& item, const vector3i_t& direction) const
 {
     const vector3i_t negative(-direction);
     for (const auto& relations : item.construction->neighbors)
@@ -186,6 +134,62 @@ const NeighborDesc* Core::findRelation(const Element& item, vector3i_t& directio
     }
     return nullptr;
 }
+
+void Core::morph(const vector3i_t& position, Element& self)
+{
+    // fing neighbor on behind
+    vector3i_t neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nZ_idx].relationPosition, self.direction);
+    Element* item = GetElement(neighborPosition + position);
+    vector3i_t sD = rotate(vector3i_t(0, 0, 1), self.secondaryDirection);
+
+    // morph self
+    if (item && (item->construction->primitiveUID == Wedge || item->construction->primitiveUID == WedgeOutCorner))
+    {
+        //calculate absolute directions of current object and neighbour
+        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->secondaryDirection);
+        // morph objects if they are perpendicular
+        if (iD.x * sD.x + iD.z * sD.z == 0 )
+        {
+            self.construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+            //mirror wedge angle if required
+            if (iD.x * sD.z - iD.z * sD.x > 0)
+            {
+                self.direction |= Directions::LeftToRight;
+            }
+        }
+    }
+    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nX_idx].relationPosition, self.secondaryDirection);
+    item = GetElement(neighborPosition + position);
+
+    // morph neighbor
+    if (item && item->construction->primitiveUID == Wedge)
+    {
+        //calculate absolute directions of current object and neighbour
+        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->secondaryDirection);
+        // morph objects if they are perpendicular
+        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x < 0))
+        {
+            item->direction |= Directions::LeftToRight;
+            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+        }
+    }
+
+    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::pX_idx].relationPosition, self.secondaryDirection);
+    item = GetElement(neighborPosition + position);
+
+    // morph neighbor
+    if (item && item->construction->primitiveUID == Wedge)
+    {
+        //calculate absolute directions of current object and neighbour
+        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->secondaryDirection);
+        // morph objects if they are perpendicular
+        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x > 0))
+        {
+            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+        }
+    }
+}
+
 
 vector3i_t Core::rotate(const vector3i_t& vec, unsigned int dst) const
 {
