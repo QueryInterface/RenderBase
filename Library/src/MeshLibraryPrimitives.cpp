@@ -212,7 +212,7 @@ public:
             copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[3], 6);
         }
 
-        const int groups[] = {0,  3,  3,  9, 12, 18};
+        const int groups[] = {9,  3,  3,  0, 12, 18};
         const int sizes[]  = {3,  6,  6,  3,  6,  6};
 
         for (size_t i = 0; i < 6; ++i )
@@ -273,25 +273,25 @@ public:
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
-        uint32_t flags = properties.flags;
+        //uint32_t flags = properties.flags;
 
         // pyramid of outer angle is invisible only if all neighbours are available except nY
-        if (flags & (~Directions::nY))
+        //if (flags & (~Directions::nY))
         {
-            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[6], 6);
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 18);
         }
-        if (flags & Directions::pX)
+        /*if (flags & Directions::pX)
         {
             copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 3);
         }
         /*if (flags & Directions::pX)
         {
             copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 3);
-        }*/
+        }
         if (flags & Directions::nY)
         {
             copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[ 12 ], 6);
-        }
+        }*/
 
         //copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }
