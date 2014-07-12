@@ -10,13 +10,16 @@ public:
     Light(LightType type, vector3f_t position);
     virtual ~Light();
     // IClonable
-    virtual ILightPtr       Clone() const;
+    virtual ILightPtr       Clone() const override;
+    // Unlike 'GetPosition' returns position of light. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
+    virtual vector3f_t GetLightPosition() const;
     // ISceneElement
-    position_update_functions
-    angle_update_functions
-    angle_update_functions_ex
+    scene_elements_functions_impl
+    scene_elements_gets_impl
+
 private:
-    LightType               m_type;
+    LightType  m_type;
+    vector4f_t m_lightPosition;
 };
 
 typedef std::shared_ptr<Light> LightPtr;

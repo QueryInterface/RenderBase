@@ -43,12 +43,12 @@ void Game::Start()
         ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetCenter(1, 1, 1);
-        object0->SetPosition(0, 0, 7);
+        object0->SetCenter(vector3f_t(1, 1, 1));
+        object0->SetPosition(vector3f_t(0, 0, 7));
         m_objects.push_back(object0);
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetCenter(1, 1, 1);
-        object1->SetPosition(0, 0, 6);
+        object1->SetCenter(vector3f_t(1, 1, 1));
+        object1->SetPosition(vector3f_t(0, 0, 6));
         m_objects.push_back(object1);
         // Create light
         ILightPtr light = m_engine->CreateLight(LightType::Spot, vector3f_t(-3, -3, 3));
@@ -88,7 +88,7 @@ void Game::OnSceneUpdate()
     start = end;
     for (IObjectPtr& object : m_objects)
     {
-        object->Rotate(angle, angle, angle);
+        object->RotateAroundCenter(vector3f_t(angle, angle, angle));
     }
 }
 

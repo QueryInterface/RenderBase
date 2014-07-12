@@ -9,44 +9,27 @@ class Camera
     , protected SceneElementImpl
 {
 public:
-    struct GLDesc : public GLMatrixDesc
-    {
-         glm::mat4 ViewMatrix;
-         glm::mat4 ProjMatrix;
-    };
-
     Camera(const CameraSetup& setup);
     virtual ~Camera();
-    virtual const GLDesc& GetGLDesc() const;
-
-    // ICamera
+    // IClonable
     virtual ICameraPtr Clone() const override;
+    // ICamera
     virtual const CameraSetup&  GetCameraSetup() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
-
-    virtual void                SetCenter(const vector3f_t& center) override;
-    virtual void                SetCenter(float x, float y, float z) override;
-    virtual void                ShiftCenter(const vector3f_t& shift) override;
-    virtual void                ShiftCenter(float shiftX, float shiftY, float shiftZ) override;
-
-    virtual void                SetPosition(const vector3f_t& pos) override;
-    virtual void                SetPosition(float x, float y, float z) override;
-    virtual void                Shift(const vector3f_t& shift) override;
-    virtual void                Shift(float shiftX, float shiftY, float shiftZ) override;
-
-    virtual void                SetAngle(const vector3f_t& angles) override;
-    virtual void                SetAngle(float angleX, float angleY, float angleZ) override;
-    virtual void                Rotate(const vector3f_t& angles) override;
-    virtual void                Rotate(float angleX, float angleY, float angleZ) override;
-
-    virtual vector3f_t          GetAngle() const override;  
-    virtual vector3f_t          GetPosition() const override;  
-    virtual vector3f_t          GetCenter() const override; 
+    scene_elements_functions_impl
+    scene_elements_gets_impl
+    // Camera
+    // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
+    virtual const glm::mat4& GetViewMatrix() const {return m_viewMatrix * glm::inverse(m_worldMatrix * m_elementMatrix);}
+    virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
+    virtual vector3f_t GetCameraPosition() const;
 private:
     void initCamera();
     
     CameraSetup     m_setup;
-    GLDesc          m_glDesc;
+    vector4f_t      m_cameraPosition;
+    glm::mat4       m_viewMatrix;
+    glm::mat4       m_projectionMatrix;
 };
 
 typedef std::shared_ptr<Camera> CamerPtr;

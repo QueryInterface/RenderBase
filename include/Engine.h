@@ -37,26 +37,31 @@ struct EventCallback
 
 struct ISceneElement : public IHandle
 {
-    virtual void            SetPosition(const vector3f_t& pos)                          = 0;
-    virtual void            Shift(const vector3f_t& shift)                              = 0;
-
-    virtual void            FixRotationCenter(const vector3f_t& center)                 = 0;
-    virtual void            SetAngle(const vector3f_t& angles)                          = 0;
-    virtual void            Rotate(const vector3f_t& angles)                            = 0;
-
-    virtual void            Rotate(const vector3f_t& center, const vector3f_t& angles)  = 0;
-
-    virtual vector3f_t      GetAngle() const                                            = 0;  
-    virtual vector3f_t      GetPosition() const                                         = 0;  
-    virtual vector3f_t      GetCenter() const                                           = 0;  
+    // Moves center of the object
+    virtual void            SetPosition(const vector3f_t& pos)                                      = 0;
+    virtual void            Shift(const vector3f_t& shift)                                          = 0;
+    // Addignes new center to object. Adjusts object position correspondingly. Coordinations of center are in object coordinates.
+    virtual void            SetCenter(const vector3f_t& center)                                     = 0;
+    // Rotation around center in object space
+    virtual void            RotateAroundCenter(const vector3f_t& angles)                            = 0;
+    virtual void            RotateAroundCenterAxis(const vector3f_t& axis, float angle)= 0;
+    // Rotation in world space
+    virtual void            RotateAroundPoint(const vector3f_t& point, const vector3f_t& angles)    = 0;
+    virtual void            RotateAroundPointAxis(const vector3f_t& point, const vector3f_t& axis, float angle) = 0;
+    // Returns object angle in world space
+    virtual vector3f_t      GetAngle() const                                                        = 0;  
+    // Return object center position in world space
+    virtual vector3f_t      GetPosition() const                                                     = 0;  
+    // Returns object center in object space
+    virtual vector3f_t      GetCenter() const                                                       = 0;  
 };
 
 struct IScalable
 {
-    virtual void            SetScale(const vector3f_t& scales)                          = 0;
-    virtual void            Scale(const vector3f_t& scales)                             = 0;
+    virtual void            SetScale(const vector3f_t& scales)                                      = 0;
+    virtual void            Scale(const vector3f_t& scales)                                         = 0;
 
-    virtual vector3f_t      GetScale() const                                            = 0;  
+    virtual vector3f_t      GetScale() const                                                        = 0;  
 };
 
 struct IWindow

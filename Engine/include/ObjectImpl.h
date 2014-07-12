@@ -22,48 +22,24 @@ public:
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
     };
+    typedef std::vector<GLMeshDesc> GLMeshDescs;
 
-    struct GLDesc
-    {
-        std::vector<GLMeshDesc> MeshDescGL;
-        GLMatrixDesc            MatrixDescGL;
-    };
-public:
     Object(IMeshPtr mesh, ITexturePtr texture);
     virtual ~Object();
-    // Object
-    const GLDesc&           GetGLDesc() const;
-
+    // IClonable
+    IObjectPtr Clone() const override;
     // IObject
-    IObjectPtr              Clone() const override;
+    scene_elements_functions_impl
+    scene_elements_gets_impl
+    scale_functions_impl
+    getscale_impl
+    // Object
+    virtual const GLMeshDescs& GetMeshDescs() const {return m_meshDescs;}
+    virtual const glm::mat4& GetElementMatrix() const {return m_elementMatrix;}
+    virtual const glm::mat4& GetWorldMatrix() const {return m_worldMatrix;}
 
-    virtual void            SetCenter(const vector3f_t& m_center) override;
-    virtual void            SetCenter(float x, float y, float z) override;
-    virtual void            ShiftCenter(const vector3f_t& shift) override;
-    virtual void            ShiftCenter(float shiftX, float shiftY, float shiftZ) override;
-
-    virtual void            SetPosition(const vector3f_t& pos) override;
-    virtual void            SetPosition(float x, float y, float z) override;
-    virtual void            Shift(const vector3f_t& shift) override;
-    virtual void            Shift(float shiftX, float shiftY, float shiftZ) override;
-
-    virtual void            SetAngle(const vector3f_t& angles) override;
-    virtual void            SetAngle(float angleX, float angleY, float angleZ) override;
-    virtual void            Rotate(const vector3f_t& angles) override;
-    virtual void            Rotate(float angleX, float angleY, float angleZ) override;
-
-    virtual void            SetScale(const vector3f_t& scales) override;
-    virtual void            SetScale(float angleX, float angleY, float angleZ) override;
-    virtual void            Scale(const vector3f_t& scales) override;
-    virtual void            Scale(float angleX, float angleY, float angleZ) override;
-
-    virtual vector3f_t      GetAngle() const override;  
-    virtual vector3f_t      GetPosition() const override;  
-    virtual vector3f_t      GetCenter() const override;
-    virtual vector3f_t      GetScale() const override;
-
-    virtual IMeshPtr        GetMesh() const;
-    virtual ITexturePtr     GetTexture() const;
+    virtual IMeshPtr        GetMesh() const {return m_mesh;}
+    virtual ITexturePtr     GetTexture() const {return m_texture;}
 
     virtual void            AttachBidirectional(IObjectPtr object) override;
     virtual void            AttachDirectional(IObjectPtr object) override;
@@ -77,7 +53,7 @@ private:
     IMeshPtr                m_mesh;
     ITexturePtr             m_texture;
     uint32_t                m_nestedCall;
-    GLDesc                  m_glDesc;
+    GLMeshDescs             m_meshDescs;
 };
 
 typedef std::shared_ptr<Object> ObjectPtr;

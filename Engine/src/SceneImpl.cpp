@@ -78,9 +78,8 @@ void Scene::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set pipline states
-    Camera::GLDesc cameraGLDesc = m_camera->GetGLDesc();
-	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(cameraGLDesc.ViewMatrix)));
-    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(cameraGLDesc.ProjMatrix)));
+	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetViewMatrix())));
+    GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjectionMatrix())));
 	// Set texture
 	//GL_CALL(glActiveTexture(GL_TEXTURE0));
 	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
@@ -95,16 +94,16 @@ void Scene::Render()
     for (auto object : m_objects)
     {
         // Get object desc
-        const Object::GLDesc& objectGLDesc = object->GetGLDesc();
+        const Object::GLMeshDescs& objectGLDescs = object->GetMeshDescs();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(objectGLDesc.MatrixDescGL.ObjectMatrix)));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(objectGLDesc.MatrixDescGL.WorldMatrix)));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(object->GetElementMatrix())));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(object->GetWorldMatrix())));
 
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
-        for (uint32_t i = 0; i < objectGLDesc.MeshDescGL.size(); ++i)
+        for (uint32_t i = 0; i < objectGLDescs.size(); ++i)
         {
-            auto& objectDesc = objectGLDesc.MeshDescGL[i];
+            auto& objectDesc = objectGLDescs[i];
             auto& shape = meshDesc.Shapes[i];
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
