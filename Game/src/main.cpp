@@ -44,12 +44,12 @@ void Game::Start()
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
         object0->SetCenter(vector3f_t(1, 1, 1));
-        object0->SetPosition(vector3f_t(0, 0, 7));
+        object0->SetPosition(vector3f_t(-1, -1, 7));
         m_objects.push_back(object0);
-        //IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        //object1->SetCenter(vector3f_t(1, 1, 1));
-        //object1->SetPosition(vector3f_t(0, 0, 6));
-        //m_objects.push_back(object1);
+        IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
+        object1->SetCenter(vector3f_t(1, 1, 1));
+        object1->SetPosition(vector3f_t(1, 1, 7));
+        m_objects.push_back(object1);
         // Create light
         ILightPtr light = m_engine->CreateLight(LightType::Spot, vector3f_t(-3, -3, 3));
         // CreateScene
@@ -65,7 +65,7 @@ void Game::Start()
         ICameraPtr camera = m_engine->CreateCamera(cameraSetup);
         // Attach objects to scene
         scene->AddObject(object0);
-        //scene->AddObject(object1);
+        scene->AddObject(object1);
         scene->SetCamera(camera);
         scene->AddLight(light);
         // Set scene
@@ -88,7 +88,7 @@ void Game::OnSceneUpdate()
     start = end;
     for (IObjectPtr& object : m_objects)
     {
-        object->RotateAroundCenter(vector3f_t(angle, angle, angle));
+        object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
     }
 }
 
