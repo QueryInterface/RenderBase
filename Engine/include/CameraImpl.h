@@ -20,7 +20,7 @@ public:
     scene_elements_gets_impl
     // Camera
     // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
-    virtual const glm::mat4& GetViewMatrix() const {return m_viewMatrix * glm::inverse(m_worldMatrix * m_elementMatrix);}
+    virtual const glm::mat4 GetViewMatrix() const {return m_viewMatrix * glm::inverse(m_worldMatrix * m_elementMatrix);}
     virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
     virtual vector3f_t GetCameraPosition() const;
 private:
