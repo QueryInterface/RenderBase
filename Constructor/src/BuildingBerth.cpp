@@ -23,9 +23,8 @@ bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Dir
 
 IMesh& BuildingBerth::GetHull()
 {
-    if (m_core.IsOutdated())
+    if (m_core.IsUpdated())
     {
-        m_core.ResetCore();
         m_hull.ConstructMesh(m_core);
     }
     return m_hull;

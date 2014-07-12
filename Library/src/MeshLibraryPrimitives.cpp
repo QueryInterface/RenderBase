@@ -2,7 +2,9 @@
 #include <memory>
 #include "HandleImpl.h"
 
+///////////////////////////////////////////////////////////////////////////////////
 // base class for all primitive meshes
+///////////////////////////////////////////////////////////////////////////////////
 class BaseMesh : public ILibraryMesh
 {
 public:
@@ -78,8 +80,9 @@ protected:
     std::vector<float>      m_vertices;
     IMesh::Desc             m_desc;
 };
-
+///////////////////////////////////////////////////////////////////////////////////
 // Space mesh, this mesh will be provided as dummy mesh object
+///////////////////////////////////////////////////////////////////////////////////
 class SpaceMesh : public BaseMesh
 {
 public:
@@ -93,7 +96,9 @@ private:
 };
 std::unique_ptr<IMesh> SpaceMesh::self(new SpaceMesh());
 
+///////////////////////////////////////////////////////////////////////////////////
 // Simple Cube mesh
+///////////////////////////////////////////////////////////////////////////////////
 class CubeMesh : public BaseMesh
 {
 public:
@@ -156,7 +161,9 @@ private:
 };
 std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());
 
+///////////////////////////////////////////////////////////////////////////////////
 // Simple Wedge mesh
+///////////////////////////////////////////////////////////////////////////////////
 class WedgeMesh : public BaseMesh
 {
 public:
@@ -205,8 +212,8 @@ public:
             copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[3], 6);
         }
 
-        const int groups[] = {0, 3, 3, 9, 12, 18};
-        const int sizes[] = {3, 6, 6, 3, 6, 6};
+        const int groups[] = {9,  3,  3,  0, 12, 18};
+        const int sizes[]  = {3,  6,  6,  3,  6,  6};
 
         for (size_t i = 0; i < 6; ++i )
         {
@@ -223,7 +230,9 @@ private:
 };
 std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
 
+///////////////////////////////////////////////////////////////////////////////////
 // Wedge angle mesh
+///////////////////////////////////////////////////////////////////////////////////
 class WedgeAngleMesh : public BaseMesh
 {
 public:
@@ -244,6 +253,7 @@ public:
         {
             4, 2, 1,          // front  +x
             4, 3, 2,          // top    +y
+                              // front  +z
             4, 0, 3,          // back   -x
             4, 1, 0,          // left   -z
             0, 1, 3, 1, 2, 3, // bottom -y
@@ -263,7 +273,27 @@ public:
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
     {
-        copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
+        //uint32_t flags = properties.flags;
+
+        // pyramid of outer angle is invisible only if all neighbours are available except nY
+        //if (flags & (~Directions::nY))
+        {
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 18);
+        }
+        /*if (flags & Directions::pX)
+        {
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 3);
+        }
+        /*if (flags & Directions::pX)
+        {
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], 3);
+        }
+        if (flags & Directions::nY)
+        {
+            copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[ 12 ], 6);
+        }*/
+
+        //copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }
 
 private:
