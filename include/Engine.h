@@ -37,34 +37,26 @@ struct EventCallback
 
 struct ISceneElement : public IHandle
 {
-    virtual void            SetCenter(const vector3f_t& center)                     = 0;
-    virtual void            SetCenter(float x, float y, float z)                    = 0;
-    virtual void            ShiftCenter(const vector3f_t& shift)                    = 0;
-    virtual void            ShiftCenter(float shiftX, float shiftY, float shiftZ)   = 0;
+    virtual void            SetPosition(const vector3f_t& pos)                          = 0;
+    virtual void            Shift(const vector3f_t& shift)                              = 0;
 
-    virtual void            SetPosition(const vector3f_t& pos)                      = 0;
-    virtual void            SetPosition(float x, float y, float z)                  = 0;
-    virtual void            Shift(const vector3f_t& shift)                          = 0;
-    virtual void            Shift(float shiftX, float shiftY, float shiftZ)         = 0;
+    virtual void            FixRotationCenter(const vector3f_t& center)                 = 0;
+    virtual void            SetAngle(const vector3f_t& angles)                          = 0;
+    virtual void            Rotate(const vector3f_t& angles)                            = 0;
 
-    virtual void            SetAngle(const vector3f_t& angles)                      = 0;
-    virtual void            SetAngle(float angleX, float angleY, float angleZ)      = 0;
-    virtual void            Rotate(const vector3f_t& angles)                        = 0;
-    virtual void            Rotate(float angleX, float angleY, float angleZ)        = 0;
+    virtual void            Rotate(const vector3f_t& center, const vector3f_t& angles)  = 0;
 
-    virtual vector3f_t      GetAngle() const                                        = 0;  
-    virtual vector3f_t      GetPosition() const                                     = 0;  
-    virtual vector3f_t      GetCenter() const                                       = 0;  
+    virtual vector3f_t      GetAngle() const                                            = 0;  
+    virtual vector3f_t      GetPosition() const                                         = 0;  
+    virtual vector3f_t      GetCenter() const                                           = 0;  
 };
 
 struct IScalable
 {
-    virtual void            SetScale(const vector3f_t& scales)                      = 0;
-    virtual void            SetScale(float angleX, float angleY, float angleZ)      = 0;
-    virtual void            Scale(const vector3f_t& scales)                         = 0;
-    virtual void            Scale(float angleX, float angleY, float angleZ)         = 0;
+    virtual void            SetScale(const vector3f_t& scales)                          = 0;
+    virtual void            Scale(const vector3f_t& scales)                             = 0;
 
-    virtual vector3f_t      GetScale() const                                        = 0;  
+    virtual vector3f_t      GetScale() const                                            = 0;  
 };
 
 struct IWindow
