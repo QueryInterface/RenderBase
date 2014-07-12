@@ -50,12 +50,11 @@ void SceneElementImpl::RotateAroundCenterAxisImpl(const vector3f_t& axis, float 
 
 void SceneElementImpl::RotateAroundPointImpl(const vector3f_t& point, const vector3f_t& angles)
 {
-    vector3f_t delta = point - m_position;
-    m_worldMatrix = glm::translate(m_worldMatrix, -delta) * 
+    m_worldMatrix = glm::translate(glm::mat4(1.0), point) * 
                     glm::rotate(glm::mat4(1.0), angles.z, glm::vec3(0.0, 0.0, 1.0)) *
                     glm::rotate(glm::mat4(1.0), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
                     glm::rotate(glm::mat4(1.0), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
-                    glm::translate(glm::mat4(1.0), delta) * m_worldMatrix;
+                    glm::translate(glm::mat4(1.0), -point) * m_worldMatrix;
 }
 
 void SceneElementImpl::RotateAroundPointAxisImpl(const vector3f_t& point, const vector3f_t& axis, float angle)

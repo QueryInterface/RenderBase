@@ -15,6 +15,7 @@ private:
     IEngine*                m_engine;
     IWindow*                m_window;
     IResourceOverseer*      m_resourceOverseer;
+    ICameraPtr              m_camera;
     std::vector<IObjectPtr> m_objects;
 };
 
@@ -22,6 +23,7 @@ Game::Game()
     : m_engine(IEngine::Instance())
     , m_window(m_engine->GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
+    , m_camera(nullptr)
 {
 }
 
@@ -62,11 +64,11 @@ void Game::Start()
         cameraSetup.FieldOfViewY = 45.0;
         cameraSetup.NearZ = 0.1f;
         cameraSetup.FarZ = 10.0f;
-        ICameraPtr camera = m_engine->CreateCamera(cameraSetup);
+        m_camera = m_engine->CreateCamera(cameraSetup);
         // Attach objects to scene
         scene->AddObject(object0);
         scene->AddObject(object1);
-        scene->SetCamera(camera);
+        scene->SetCamera(m_camera);
         scene->AddLight(light);
         // Set scene
         m_engine->SetScene(scene);
@@ -90,6 +92,7 @@ void Game::OnSceneUpdate()
     {
         object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
     }
+    m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
 }
 
 
