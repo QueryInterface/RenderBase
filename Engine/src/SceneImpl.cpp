@@ -7,32 +7,43 @@
 #include <chrono>
 
 const std::string g_vertexShaderSource =                \
-"   #version 100                                        \n\
-                                                        \n\
-    attribute vec3 position;                            \n\
-    attribute vec2 textureCoord;                        \n\
-                                                        \n\
-    uniform mat4 modelMatrix;                           \n\
-    uniform mat4 worldMatrix;                           \n\
-    uniform mat4 viewMatrix;                            \n\
-    uniform mat4 projMatrix;                            \n\
-                                                        \n\
-    varying vec2 f_textureCoord;                        \n\
-                                                        \n\
-    void main(void)                                     \n\
-    {                                                   \n\
-        gl_Position = modelMatrix * vec4(position, 1.0);\n\
-        gl_Position = worldMatrix * gl_Position;        \n\
-        gl_Position = viewMatrix * gl_Position;         \n\
-        gl_Position = projMatrix * gl_Position;         \n\
-        f_textureCoord = textureCoord;                  \n\
+"   #version 100                                                                                    \n\
+                                                                                                    \n\
+    attribute vec3 position;                                                                        \n\
+    attribute vec3 normal;                                                                          \n\
+    attribute vec2 textureCoord;                                                                    \n\
+                                                                                                    \n\
+    uniform mat4 modelMatrix;                                                                       \n\
+    uniform mat4 worldMatrix;                                                                       \n\
+    uniform mat4 viewMatrix;                                                                        \n\
+    uniform mat4 projMatrix;                                                                        \n\
+                                                                                                    \n\
+    varying vec2 f_textureCoord;                                                                    \n\
+    varying vec4 f_position;                                                                        \n\
+    varying vec4 f_normal;                                                                          \n\
+                                                                                                    \n\
+    void main(void)                                                                                 \n\
+    {                                                                                               \n\
+        gl_Position = modelMatrix * vec4(position, 1.0);                                            \n\
+        gl_Position = worldMatrix * gl_Position;                                                    \n\
+        gl_Position = viewMatrix * gl_Position;                                                     \n\
+        gl_Position = projMatrix * gl_Position;                                                     \n\
+        f_position = viewMatrix * worldMatrix * modelMatrix * vec4(position, 1.0);                  \n\
+        f_normal = viewMatrix * worldMatrix * modelMatrix * vec4(normal, 1.0);                      \n\
+        f_normal = normalize(f_normal);                                                             \n\
+        f_textureCoord = textureCoord;                                                              \n\
     }";
 
 const std::string g_fragmentShader =                        \
-"   #version 100                                            \n\
-                                                            \n\
-    void main(void) {                                       \n\
-        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);            \n\
+"   #version 100                                                                                    \n\
+                                                                                                    \n\
+    uniform highp vec3 lightPosition;                                                               \n\
+    varying highp vec4 f_position;                                                                  \n\
+    varying highp vec4 f_normal;                                                                    \n\
+                                                                                                    \n\
+    void main(void) {                                                                               \n\
+        highp float color = reflect(f_position - vec4(lightPosition, 1.0), f_normal).z;             \n\
+        gl_FragColor = vec4(color, color, color, 1.0);                                              \n\
     }";
 
 
