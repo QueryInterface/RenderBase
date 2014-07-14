@@ -466,4 +466,15 @@ TEST_F(BuildingBerthTest, Generated_ConeHall_5)
     el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
     ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
 }
+
+TEST_F(BuildingBerthTest, Generated_WedgeSpikes)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(3,0,3), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(3,0,4), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(4,0,4), Directions::nX, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(3,0,4));
+    ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(4,0,4));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
 // eof
