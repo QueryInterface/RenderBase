@@ -477,4 +477,11 @@ TEST_F(BuildingBerthTest, Generated_WedgeSpikes)
     el = m_builder->GetCore().GetElement(vector3i_t(4,0,4));
     ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
 }
+
+TEST_F(BuildingBerthTest, CilindricPillar)
+{
+    m_builder->SetElement(ElementType::Cilinder, vector3i_t(0,0,0), Directions::nX, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::Cilinder, el->construction->primitiveUID);
+}
 // eof

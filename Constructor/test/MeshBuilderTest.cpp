@@ -312,4 +312,15 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeSpikes)
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\WedgeSpikes.obj");
 }
+
+TEST_F(MeshBuilderTest, DISABLED_CilindricPillar)
+{
+    for (size_t i = 0; i < 5; ++i)
+    {
+        m_builder->SetElement(ElementType::Cilinder, vector3i_t(0,i,0), Directions::pZ, true);
+    }
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\CilindricPillar.obj");
+}
 // eof
