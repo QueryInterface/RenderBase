@@ -350,4 +350,87 @@ private:
     static std::unique_ptr<IMesh> self;
 };
 std::unique_ptr<IMesh> WedgeInnerAngleMesh::self(new WedgeInnerAngleMesh());
+
+///////////////////////////////////////////////////////////////////////////////////
+// Common cilinder mesh
+///////////////////////////////////////////////////////////////////////////////////
+class Cilinder : public BaseMesh
+{
+public:
+    Cilinder()
+    {
+        float vertices[] = 
+        {//     vertex         normal    texcoord
+            0.782843f, 0.f, 0.217157f,
+            0.500000f, 0.f, 0.100000f,
+            0.217157f, 0.f, 0.217157f,
+            0.100000f, 0.f, 0.500000f,
+            0.217157f, 0.f, 0.782843f,
+            0.500000f, 0.f, 0.900000f,
+            0.782843f, 0.f, 0.782843f,
+            0.900000f, 0.f, 0.500000f,
+            0.782843f, 1.f, 0.217157f,
+            0.500000f, 1.f, 0.100000f,
+            0.217157f, 1.f, 0.217157f,
+            0.100000f, 1.f, 0.500000f,
+            0.217157f, 1.f, 0.782843f,
+            0.500000f, 1.f, 0.900000f,
+            0.782843f, 1.f, 0.782843f,
+            0.900000f, 1.f, 0.500000f,
+        };
+
+        index_t indexGroups[] = 
+        {
+            1,  0,  8,
+            1,  8,  9,
+            2,  1,  9,
+            2,  9,  10,
+            3,  2,  10,
+            3,  10, 11,
+            4,  3,  11,
+            4,  11, 12,
+            5,  4,  12,
+            5,  12, 13,
+            6,  5,  13,
+            6,  13, 14,
+            7,  6,  14,
+            7,  14, 15,
+            0,  7,  15,
+            0,  15, 8,
+            5,  6,  7,
+            4,  5,  7,
+            3,  4,  7,
+            2,  3,  7,
+            1,  2,  7,
+            0,  1,  7,
+            8,  15, 14,
+            9,  8,  14,
+            10, 9,  14,
+            11, 10, 14,
+            12, 11, 14,
+            13, 12, 14,
+        };
+
+        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
+
+        m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
+
+        ILibrary::library()->RegisterMesh(ElementType::Cilinder, *this);
+    }
+
+    virtual IMeshPtr Clone() const 
+    {
+        CLONE_HANDLE(IMesh, Cilinder);
+    };
+
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
+    {
+        copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], m_indices.size());
+    }
+
+private:
+    std::vector<index_t> m_indices;
+    static std::unique_ptr<IMesh> self;
+};
+std::unique_ptr<IMesh> Cilinder::self(new Cilinder());
 //eof
