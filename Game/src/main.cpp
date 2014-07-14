@@ -2,21 +2,29 @@
 #include "ResourceOverseer.h"
 #include "Utils.h"
 #include <chrono>
+#include "BuildingBerth.h"
+
+using namespace ConstructorImpl;
 
 class Game : public IEngineCallbacks
 {
 public:
     Game();
     ~Game();
+    void InitScene0();
+    void InitScene1();
     void Start();
     // IEngineCallbacks
     void OnSceneUpdate();
 private:
+    void centerObject(IObjectPtr& obj);
+
     IEngine*                m_engine;
     IWindow*                m_window;
     IResourceOverseer*      m_resourceOverseer;
     ICameraPtr              m_camera;
     std::vector<IObjectPtr> m_objects;
+    std::unique_ptr<BuildingBerth> m_builder;
 };
 
 Game::Game()
@@ -25,20 +33,33 @@ Game::Game()
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
 {
+    // Setup window
+    m_window->SetWidth(640);
+    m_window->SetHeight(480);
+    m_window->SetFullscreen(false);
+
+    // Create camera
+    CameraSetup cameraSetup;
+    cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
+    cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
+    cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
+    cameraSetup.FieldOfViewY = 45.0;
+    cameraSetup.NearZ = 0.1f;
+    cameraSetup.FarZ = 20.0f;
+    m_camera = m_engine->CreateCamera(cameraSetup);
+
+    // Attach objects to scene
+    m_builder.reset(new BuildingBerth());
 }
 
 Game::~Game()
 {
 }
 
-void Game::Start()
+void Game::InitScene0()
 {
     try
     {
-        // Setup window
-        m_window->SetWidth(640);
-        m_window->SetHeight(480);
-        m_window->SetFullscreen(false);
         // Load resources
         IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/cube.obj");
         ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
@@ -56,16 +77,7 @@ void Game::Start()
         ILightPtr light = m_engine->CreateLight(LightType::Spot, vector3f_t(-3, -3, 3));
         // CreateScene
         IScenePtr scene = m_engine->CreateScene();
-        // Create camera
-        CameraSetup cameraSetup;
-        cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
-        cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
-        cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
-        cameraSetup.FieldOfViewY = 45.0;
-        cameraSetup.NearZ = 0.1f;
-        cameraSetup.FarZ = 10.0f;
-        m_camera = m_engine->CreateCamera(cameraSetup);
-        // Attach objects to scene
+
         scene->AddObject(object0);
         scene->AddObject(object1);
         scene->SetCamera(m_camera);
@@ -81,6 +93,107 @@ void Game::Start()
     }
 }
 
+void Game::InitScene1()
+{
+    size_t size = 3;
+    size_t offset = 2;
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,offset+i), Directions::nX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+size-1,0,offset+i), Directions::pX, true);
+    }
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+0), Directions::nZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+size-1), Directions::pZ, true);
+    }
+
+    size = 7;
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::nZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::pZ, true);
+    }
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::nX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::pX, true);
+    }
+
+    offset = 12;
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,0), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::nZ, true);
+
+    try
+    {
+        IMeshPtr mesh = nullptr;
+        mesh.reset(&m_builder->GetHull());
+        IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
+        centerObject(object0);
+        object0->SetPosition(vector3f_t(0, 0, 10));
+        object0->Scale(vector3f_t(0.5, 0.5, 0.5));
+        m_objects.push_back(object0);
+
+        IScenePtr scene = m_engine->CreateScene();
+        scene->AddObject(object0);
+        scene->SetCamera(m_camera);
+
+        m_engine->SetScene(scene);
+        m_engine->Run(this);
+    }
+    catch (std::exception& ex) 
+    {
+        ex;
+    }
+}
+
+void Game::Start()
+{
+    try 
+    {
+        m_engine->Run(this);
+    }
+    catch (std::exception& ex) 
+    {
+        ex;
+    }
+}
+
+void Game::centerObject(IObjectPtr& obj)
+{
+    // Center object
+    auto& meshDesc = obj->GetMesh()->GetDesc();
+    float xMin = 10000;
+    float yMin = 10000;
+    float zMin = 10000;
+    float xMax = -10000;
+    float yMax = -10000;
+    float zMax = -10000;
+    for (auto& shape : meshDesc.Shapes)
+    {
+        for (uint32_t i = 0; i < shape.Positions.Data.size(); ++i)
+        {
+            float v = shape.Positions.Data[i];
+            if (0 == i % 3 && v < xMin) xMin = v;
+            if (0 == i % 3 && v > xMax) xMax = v;
+            if (1 == i % 3 && v < yMin) yMin = v;
+            if (1 == i % 3 && v > yMax) yMax = v;
+            if (2 == i % 3 && v < zMin) zMin = v;
+            if (2 == i % 3 && v > zMax) zMax = v;
+        }
+    }
+    float xCenter = (xMax - xMin) / 2;
+    float yCenter = (yMax - yMin) / 2;
+    float zCenter = (zMax - zMin) / 2;
+
+    obj->SetCenter(vector3f_t(xCenter, yCenter, zCenter));
+}
+
 void Game::OnSceneUpdate()
 {
     static auto start = std::chrono::high_resolution_clock::now();
@@ -90,14 +203,17 @@ void Game::OnSceneUpdate()
     start = end;
     for (IObjectPtr& object : m_objects)
     {
-        object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
+        //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
+        object->RotateAroundCenter(vector3f_t(angle, angle, 0));
     }
-    m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
+    //m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
 }
 
 
 int main() 
 {
     Game game;
+    //game.InitScene0();
+    game.InitScene1();
     game.Start();
 }
