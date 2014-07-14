@@ -26,6 +26,7 @@ namespace ConstructorImpl
     struct Element
     {
         const ConstructionDescription*  construction;
+        unsigned int                    type;
         unsigned int                    direction;
         unsigned int                    originalDirection; //secondary direction required for generated elements
         unsigned int                    neighbourhood;

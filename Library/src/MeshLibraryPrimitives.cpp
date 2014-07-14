@@ -131,7 +131,7 @@ public:
 
         for (size_t i = 0; i < groupsCount; ++i)
         {
-            m_indices[i].assign(indexGroups[i], indexGroups[i] + sizeof(indexGroups[i])/sizeof(short));
+            m_indices[i].assign(indexGroups[i], indexGroups[i] + sizeof(indexGroups[i])/sizeof(index_t));
         }
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
@@ -181,7 +181,7 @@ public:
             0.0f, 0.0f, 0.0f,
         };
 
-        short indexGroups[] = 
+        index_t indexGroups[] = 
         {
             0, 5, 4,          // front  +x
             0, 2, 1, 0, 4, 2, // top    +y
@@ -191,7 +191,7 @@ public:
             5, 3, 2, 5, 2, 4, // left   -z
         };
 
-        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(short));
+        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
 
@@ -233,10 +233,10 @@ std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
 ///////////////////////////////////////////////////////////////////////////////////
 // Wedge angle mesh
 ///////////////////////////////////////////////////////////////////////////////////
-class WedgeAngleMesh : public BaseMesh
+class WedgeOuterAngleMesh : public BaseMesh
 {
 public:
-    WedgeAngleMesh()
+    WedgeOuterAngleMesh()
     {
         float vertices[] = 
         {//     vertex         normal    texcoord
@@ -249,17 +249,17 @@ public:
             1.0f, 1.0f, 0.0f,
         };
 
-        short indexGroups[] = 
+        index_t indexGroups[] = 
         {
             4, 2, 1,          // front  +x
-            4, 3, 2,          // top    +y
-                              // front  +z
-            4, 0, 3,          // back   -x
-            4, 1, 0,          // left   -z
+            4, 0, 3, 4, 1, 0, // left   +y
+            4, 3, 2,          // top    +z
+            // -x
             0, 1, 3, 1, 2, 3, // bottom -y
+            // -z
         };
 
-        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(short));
+        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
 
@@ -268,7 +268,7 @@ public:
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, WedgeAngleMesh);
+        CLONE_HANDLE(IMesh, WedgeOuterAngleMesh);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -300,5 +300,54 @@ private:
     std::vector<index_t> m_indices;
     static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> WedgeAngleMesh::self(new WedgeAngleMesh());
+std::unique_ptr<IMesh> WedgeOuterAngleMesh::self(new WedgeOuterAngleMesh());
+
+class WedgeInnerAngleMesh : public BaseMesh
+{
+public:
+    WedgeInnerAngleMesh()
+    {
+        float vertices[] = 
+        {//     vertex         normal    texcoord
+            0.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f,
+            0.0f, 1.0f, 1.0f,
+            0.0f, 1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+        };
+
+        index_t indexGroups[] = 
+        {
+            1, 4, 6,            // +x
+            3, 1, 2, 3, 4, 1,   // +y
+            2, 1, 0,            // +z
+            0, 5, 3, 0, 3, 2,   // -x
+            6, 5, 0, 6, 0, 1,   // -y
+            4, 3, 5, 4, 5, 6,   // -z
+        };
+
+        m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
+
+        m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
+
+        ILibrary::library()->RegisterMesh(ElementType::WedgeInCorner, *this);
+    }
+
+    virtual IMeshPtr Clone() const 
+    {
+        CLONE_HANDLE(IMesh, WedgeInnerAngleMesh);
+    };
+
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
+    {
+        copyTriangles(out_descriptor, properties.offset, properties.orientation, &m_indices[0], m_indices.size());
+    }
+
+private:
+    std::vector<index_t> m_indices;
+    static std::unique_ptr<IMesh> self;
+};
+std::unique_ptr<IMesh> WedgeInnerAngleMesh::self(new WedgeInnerAngleMesh());
 //eof

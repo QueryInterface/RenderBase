@@ -155,13 +155,11 @@ TEST_F(MeshBuilderTest, DISABLED_WedgeCross)
     exportMesh(desc, "c:\\tmp\\wedge_cross.obj");
 }
 
-TEST_F(MeshBuilderTest, WedgeCross)
+TEST_F(MeshBuilderTest, DISABLED_Wedges)
 {
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pZ, true);
-
-    m_builder->SetElement(ElementType::WedgeOutCorner, vector3i_t(3,0,3), Directions::pZ, true);
 
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\wedges.obj");
@@ -195,7 +193,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 
-TEST_F(MeshBuilderTest, DISABLED_OuterWedgeAngle)
+TEST_F(MeshBuilderTest, OuterWedgeAngle)
 {
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pX, true);
@@ -205,10 +203,23 @@ TEST_F(MeshBuilderTest, DISABLED_OuterWedgeAngle)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nZ, true);
 
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
-    exportMesh(desc, "c:\\tmp\\corner.obj");
+    exportMesh(desc, "c:\\tmp\\outCorner.obj");
 }
 
-TEST_F(MeshBuilderTest, DISABLED_PiramidTop)
+TEST_F(MeshBuilderTest, InWedgeAngle)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,2), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,2), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::pZ, true);
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\inCorner.obj");
+}
+
+TEST_F(MeshBuilderTest, Cocentric_in)
 {
     size_t size = 3;
     size_t offset = 2;
@@ -244,7 +255,51 @@ TEST_F(MeshBuilderTest, DISABLED_PiramidTop)
     m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::pZ, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::nZ, true);
 
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(10,0,0), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(10,0,1), Directions::nZ, true);
+
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
-    exportMesh(desc, "c:\\tmp\\PiramidTop.obj");
+    exportMesh(desc, "c:\\tmp\\OuterCenters.obj");
+}
+
+
+TEST_F(MeshBuilderTest, Cocentric_out)
+{
+    size_t size = 3;
+    size_t offset = 2;
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,offset+i), Directions::pX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+size-1,0,offset+i), Directions::nX, true);
+    }
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+0), Directions::pZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+size-1), Directions::nZ, true);
+    }
+
+    size = 7;
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::pZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::nZ, true);
+    }
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::pX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::nX, true);
+    }
+
+    offset = 12;
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,1), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::pZ, true);
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\InnerCenters.obj");
 }
 // eof

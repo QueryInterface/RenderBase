@@ -37,7 +37,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
         max(position.z + desc.RBB.z, m_desc.RBB.z));
 
     // Y is UP direction
-    Element element = {&desc, direction, direction, 0};
+    Element element = {&desc, desc.primitiveUID, direction, direction, 0};
     // if priitive can be morfed, morf it
     if (ElementType::Wedge == element.construction->primitiveUID)
     {
@@ -59,7 +59,7 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
             {
                 if (x || z)
                 {
-                    Element ref = {&m_reference, direction, direction, 0};
+                    Element ref = {&m_reference, desc.primitiveUID, direction, direction, 0};
                     m_pillars.item(position.x + x, position.z + z).insert(position.y, ref);
                 }
             }
@@ -143,7 +143,7 @@ void Core::morph(const vector3i_t& position, Element& self)
     vector3i_t sD = rotate(vector3i_t(0, 0, 1), self.originalDirection);
 
     // morph self
-    if (item && (item->construction->primitiveUID == Wedge || item->construction->primitiveUID == WedgeOutCorner))
+    if (item && (item->type == Wedge))
     {
         //calculate absolute directions of current object and neighbour
         vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->originalDirection);
@@ -158,19 +158,36 @@ void Core::morph(const vector3i_t& position, Element& self)
             }
         }
     }
-    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nX_idx].relationPosition, self.originalDirection);
+    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::pZ_idx].relationPosition, self.originalDirection);
     item = GetElement(neighborPosition + position);
-
-    // morph neighbor
-    if (item && item->construction->primitiveUID == Wedge)
+    if (item && (item->type == Wedge))
     {
         //calculate absolute directions of current object and neighbour
         vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->originalDirection);
         // morph objects if they are perpendicular
-        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x < 0))
+        if (iD.x * sD.x + iD.z * sD.z == 0 )
+        {
+            self.construction = &ILibrary::library()->GetConstruction(WedgeInCorner);
+            //mirror wedge angle if required
+            if (iD.x * sD.z - iD.z * sD.x < 0)
+            {
+                self.direction |= Directions::LeftToRight;
+            }
+        }
+    }
+    neighborPosition = rotate(self.construction->neighbors[DirectionIndices::nX_idx].relationPosition, self.originalDirection);
+    item = GetElement(neighborPosition + position);
+
+    // morph neighbor
+    if (item && item->type == Wedge)
+    {
+        //calculate absolute directions of current object and neighbour
+        vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->originalDirection);
+        // morph objects if they are perpendicular
+        if (iD.x * sD.x + iD.z * sD.z == 0)
         {
             item->direction |= Directions::LeftToRight;
-            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+            item->construction = &ILibrary::library()->GetConstruction( (iD.x * sD.z - iD.z * sD.x < 0) ? WedgeOutCorner : WedgeInCorner);
         }
     }
 
@@ -178,14 +195,14 @@ void Core::morph(const vector3i_t& position, Element& self)
     item = GetElement(neighborPosition + position);
 
     // morph neighbor
-    if (item && item->construction->primitiveUID == Wedge)
+    if (item && item->type == Wedge)
     {
         //calculate absolute directions of current object and neighbour
         vector3i_t iD = rotate(vector3i_t(0, 0, 1), item->originalDirection);
         // morph objects if they are perpendicular
-        if ((iD.x * sD.x + iD.z * sD.z == 0) && (iD.x * sD.z - iD.z * sD.x > 0))
+        if (iD.x * sD.x + iD.z * sD.z == 0)
         {
-            item->construction = &ILibrary::library()->GetConstruction(WedgeOutCorner);
+            item->construction = &ILibrary::library()->GetConstruction( (iD.x * sD.z - iD.z * sD.x > 0) ? WedgeOutCorner : WedgeInCorner);
         }
     }
 }

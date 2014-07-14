@@ -357,4 +357,113 @@ TEST_F(BuildingBerthTest, Generated_PiramidTop_5)
     el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
     ASSERT_EQ(ElementType::WedgeOutCorner, el->construction->primitiveUID);
 }
+
+TEST_F(BuildingBerthTest, Generated_InnerWedgeAngle)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nZ, true);
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
+
+TEST_F(BuildingBerthTest, Generated_ConeHall_1)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::pZ, true);
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
+
+TEST_F(BuildingBerthTest, Generated_ConeHall_2)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nX, true);
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
+
+TEST_F(BuildingBerthTest, Generated_ConeHall_3)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,0), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::nZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,0), Directions::pZ, true);
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(1,0,1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
+
+TEST_F(BuildingBerthTest, Generated_ConeHall_4)
+{
+    const size_t size = 6;
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::pZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::nZ, true);
+    }
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::pX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::nX, true);
+    }
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,size - 1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(size - 1,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(size - 1,0,size - 1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
+
+TEST_F(BuildingBerthTest, Generated_ConeHall_5)
+{
+    const size_t size = 3;
+    for (size_t i = 0; i < size; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::pX, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::nX, true);
+    }
+
+    for (size_t i = 1; i < size - 1; ++i)
+    {
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::pZ, true);
+        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::nZ, true);
+    }
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,0,size - 1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(size - 1,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(size - 1,0,size - 1));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+    el = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    ASSERT_EQ(ElementType::WedgeInCorner, el->construction->primitiveUID);
+}
 // eof
