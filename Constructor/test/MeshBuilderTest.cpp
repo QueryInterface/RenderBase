@@ -193,7 +193,7 @@ TEST_F(MeshBuilderTest, DISABLED_Pyramid)
     exportMesh(desc, "c:\\tmp\\piramid.obj");
 }
 
-TEST_F(MeshBuilderTest, OuterWedgeAngle)
+TEST_F(MeshBuilderTest, DISABLED_OuterWedgeAngle)
 {
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::nX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::pX, true);
@@ -206,7 +206,7 @@ TEST_F(MeshBuilderTest, OuterWedgeAngle)
     exportMesh(desc, "c:\\tmp\\outCorner.obj");
 }
 
-TEST_F(MeshBuilderTest, InWedgeAngle)
+TEST_F(MeshBuilderTest, DISABLED_InWedgeAngle)
 {
     m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,1), Directions::pX, true);
     m_builder->SetElement(ElementType::Wedge, vector3i_t(1,0,1), Directions::nX, true);
@@ -219,7 +219,7 @@ TEST_F(MeshBuilderTest, InWedgeAngle)
     exportMesh(desc, "c:\\tmp\\inCorner.obj");
 }
 
-TEST_F(MeshBuilderTest, Cocentric_in)
+TEST_F(MeshBuilderTest, DISABLED_Cocentric_in)
 {
     size_t size = 3;
     size_t offset = 2;
@@ -263,7 +263,7 @@ TEST_F(MeshBuilderTest, Cocentric_in)
 }
 
 
-TEST_F(MeshBuilderTest, Cocentric_out)
+TEST_F(MeshBuilderTest, DISABLED_Cocentric_out)
 {
     size_t size = 3;
     size_t offset = 2;
@@ -301,5 +301,15 @@ TEST_F(MeshBuilderTest, Cocentric_out)
 
     const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
     exportMesh(desc, "c:\\tmp\\InnerCenters.obj");
+}
+
+TEST_F(MeshBuilderTest, DISABLED_WedgeSpikes)
+{
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(3,0,3), Directions::nX, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(3,0,4), Directions::pZ, true);
+    m_builder->SetElement(ElementType::Wedge, vector3i_t(4,0,4), Directions::nX, true);
+
+    const IMesh::Desc& desc = m_builder->GetHull().GetDesc();
+    exportMesh(desc, "c:\\tmp\\WedgeSpikes.obj");
 }
 // eof
