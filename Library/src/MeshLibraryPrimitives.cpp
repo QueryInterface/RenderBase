@@ -107,12 +107,12 @@ public:
         const size_t groupsCount = 6;
         index_t indexGroups[groupsCount][groupsCount] = 
         {
-            {2, 3, 4, 2, 4, 5,}, // front  +x
-            {1, 6, 4, 1, 4, 3,}, // top    +y
-            {0, 1, 2, 2, 1, 3,}, // right  +z
-            {1, 0, 7, 1, 7, 6,}, // back   -x
-            {0, 2, 7, 2, 5, 7,}, // bottom -y
-            {7, 5, 4, 7, 4, 6,}, // left   -z
+            {3, 2, 4, 4, 2, 5,}, // front  +x
+            {6, 1, 4, 4, 1, 3,}, // top    +y
+            {1, 0, 2, 1, 2, 3,}, // right  +z
+            {0, 1, 7, 7, 1, 6,}, // back   -x
+            {2, 0, 7, 5, 2, 7,}, // bottom -y
+            {5, 7, 4, 4, 7, 6,}, // left   -z
         };
 
         float vertices[] = 
@@ -183,12 +183,12 @@ public:
 
         index_t indexGroups[] = 
         {
-            0, 5, 4,          // front  +x
-            0, 2, 1, 0, 4, 2, // top    +y
+            5, 0, 4,          // front  +x
+            2, 0, 1, 4, 0, 2, // top    +y
                               //        +z
-            1, 2, 3,          // back   -x
-            0, 1, 5, 1, 3, 5, // bottom -y
-            5, 3, 2, 5, 2, 4, // left   -z
+            2, 1, 3,          // back   -x
+            1, 0, 5, 3, 1, 5, // bottom -y
+            3, 5, 2, 2, 5, 4, // left   -z
         };
 
         m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
@@ -251,12 +251,12 @@ public:
 
         index_t indexGroups[] = 
         {
-            4, 2, 1,          // front  +x
-            4, 0, 3, 4, 1, 0, // left   +y
-            4, 3, 2,          // top    +z
-            // -x
-            0, 1, 3, 1, 2, 3, // bottom -y
-            // -z
+            2, 4, 1,          // front  +x
+            0, 4, 3, 1, 4, 0, // left   +y
+            3, 4, 2,          // top    +z
+               //               -x
+            1, 0, 3, 2, 1, 3, // bottom -y
+            //                  -z
         };
 
         m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
@@ -320,12 +320,12 @@ public:
 
         index_t indexGroups[] = 
         {
-            1, 4, 6,            // +x
-            3, 1, 2, 3, 4, 1,   // +y
-            2, 1, 0,            // +z
-            0, 5, 3, 0, 3, 2,   // -x
-            6, 5, 0, 6, 0, 1,   // -y
-            4, 3, 5, 4, 5, 6,   // -z
+            4, 1, 6,            // +x
+            1, 3, 2, 4, 3, 1,   // +y
+            1, 2, 0,            // +z
+            5, 0, 3, 3, 0, 2,   // -x
+            5, 6, 0, 0, 6, 1,   // -y
+            3, 4, 5, 5, 4, 6,   // -z
         };
 
         m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
@@ -381,34 +381,34 @@ public:
 
         index_t indexGroups[] = 
         {
-            1,  0,  8,
-            1,  8,  9,
-            2,  1,  9,
-            2,  9,  10,
-            3,  2,  10,
-            3,  10, 11,
-            4,  3,  11,
-            4,  11, 12,
-            5,  4,  12,
-            5,  12, 13,
-            6,  5,  13,
-            6,  13, 14,
-            7,  6,  14,
-            7,  14, 15,
-            0,  7,  15,
-            0,  15, 8,
-            5,  6,  7,
-            4,  5,  7,
-            3,  4,  7,
-            2,  3,  7,
-            1,  2,  7,
-            0,  1,  7,
-            8,  15, 14,
-            9,  8,  14,
-            10, 9,  14,
-            11, 10, 14,
-            12, 11, 14,
-            13, 12, 14,
+            0,  1,  8,
+            8,  1,  9,
+            1,  2,  9,
+            9,  2,  10,
+            2,  3,  10,
+            10, 3,  11,
+            3,  4,  11,
+            11, 4,  12,
+            4,  5,  12,
+            12, 5,  13,
+            5,  6,  13,
+            13, 6,  14,
+            6,  7,  14,
+            14, 7,  15,
+            7,  0,  15,
+            15, 0,  8,
+            6,  5,  7,
+            5,  4,  7,
+            4,  3,  7,
+            3,  2,  7,
+            2,  1,  7,
+            1,  0,  7,
+            15, 8,  14,
+            8,  9,  14,
+            9,  10, 14,
+            10, 11, 14,
+            11, 12, 14,
+            12, 13, 14,
         };
 
         m_indices.assign(indexGroups, indexGroups + sizeof(indexGroups)/sizeof(index_t));
