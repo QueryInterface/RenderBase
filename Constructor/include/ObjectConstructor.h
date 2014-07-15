@@ -65,6 +65,10 @@ namespace ConstructorImpl
         // Indicates that geometry was updated since last request
         bool IsUpdated();
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Clear berth
+        void Reset();
+
     private:
         ///////////////////////////////////////////////////////////////////////////////////
         // looks for relative element of item. Item will be searched in direction
