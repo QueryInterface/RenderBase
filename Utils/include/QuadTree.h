@@ -119,6 +119,14 @@ namespace Utils
         {
             _foreach(&m_root, 0, 0, m_squareSide, visitor);
         }
+
+        void clear()
+        {
+            for (size_t i =0; i < 4; ++i)
+            {
+                m_root.quadNodes[i].reset();
+            }
+        }
     private:
 
         struct Node

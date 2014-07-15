@@ -35,7 +35,7 @@ namespace ConstructorImpl
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Reset content of all constructor elements
-        virtual void        NewConstruction() {};
+        virtual void        NewConstruction() { m_core.Reset(); };
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Attaches element to construction

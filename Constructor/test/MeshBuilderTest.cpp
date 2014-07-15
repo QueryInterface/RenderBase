@@ -17,6 +17,10 @@ class MeshBuilderTest : public ::testing::Test
 public:
     MeshBuilderTest() : m_builder(Constructor::GetConstructor()) {};
 
+    void SetUp()
+    {
+        m_builder.NewConstruction();
+    }
 protected:
 
     void checkMesh(size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
