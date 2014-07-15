@@ -29,18 +29,22 @@ private:
         ProgramDesc() 
             : Program(0)
             , AttribPosition(0)
+            , AttribNormal(0)
             , UniformModelMatrix(0)
             , UniformWorldMatrix(0)
             , UniformViewMatrix(0)
             , UniformProjMatrix(0)
+            , UniformLightPosition(0)
             , Valid(false) {}
 
         GLuint      Program;
         GLint       AttribPosition;
+        GLint       AttribNormal;
         GLint       UniformModelMatrix;
         GLint       UniformWorldMatrix;
         GLint       UniformViewMatrix;
         GLint       UniformProjMatrix;
+        GLint       UniformLightPosition;
         bool        Valid;
     };
 

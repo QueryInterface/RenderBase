@@ -61,16 +61,16 @@ void Game::InitScene0()
     try
     {
         // Load resources
-        IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/cube.obj");
+        IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
         ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
         ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetCenter(vector3f_t(1, 1, 1));
+        //object0->SetCenter(vector3f_t(1, 1, 1));
         object0->SetPosition(vector3f_t(-1, -1, 7));
         m_objects.push_back(object0);
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetCenter(vector3f_t(1, 1, 1));
+        //object1->SetCenter(vector3f_t(1, 1, 1));
         object1->SetPosition(vector3f_t(1, 1, 7));
         m_objects.push_back(object1);
         // Create light
@@ -215,7 +215,7 @@ void Game::OnSceneUpdate()
 int main() 
 {
     Game game;
-    //game.InitScene0();
-    game.InitScene1();
+    game.InitScene0();
+    //game.InitScene1();
     game.Start();
 }

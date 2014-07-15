@@ -45,7 +45,7 @@ void Mesh::parseObj(const std::wstring& path)
     std::string err = tinyobj::LoadObj(shapes, path.c_str());
     if (!err.empty())
     {
-        VE_ERROR(L"%s", err.c_str());
+        VE_ERROR(L"%S", err.c_str());
     }
     m_desc.Shapes.resize(shapes.size());
     for (uint32_t i = 0; i < shapes.size(); ++i)

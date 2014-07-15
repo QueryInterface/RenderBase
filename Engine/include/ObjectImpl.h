@@ -19,8 +19,36 @@ class Object
 public:
     struct GLMeshDesc
     {
+        GLuint      NormalBuffer;
         GLuint      VertexBuffer;
         GLuint      IndexBuffer;
+
+        GLMeshDesc() 
+            : NormalBuffer(0)
+            , VertexBuffer(0)
+            , IndexBuffer(0) {}
+        ~GLMeshDesc() 
+        {
+            Clear();
+        }
+        void Clear()
+        {
+            if (VertexBuffer)
+            {
+                glDeleteBuffers(1, &VertexBuffer);
+                VertexBuffer = 0;
+            }
+            if (IndexBuffer)
+            {
+                glDeleteBuffers(1, &IndexBuffer);
+                IndexBuffer = 0;
+            }
+            if (NormalBuffer)
+            {
+                glDeleteBuffers(1, &NormalBuffer);
+                NormalBuffer = 0;
+            }
+        }
     };
     typedef std::vector<GLMeshDesc> GLMeshDescs;
 

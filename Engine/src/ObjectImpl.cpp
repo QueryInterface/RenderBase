@@ -20,19 +20,6 @@ Object::Object(IMeshPtr mesh, ITexturePtr texture)
 
 Object::~Object()
 {
-    for (auto& desc : m_meshDescs)
-    {
-        if (desc.VertexBuffer)
-        {
-            glDeleteBuffers(1, &desc.VertexBuffer);
-            desc.VertexBuffer = 0;
-        }
-        if (desc.IndexBuffer)
-        {
-            glDeleteBuffers(1, &desc.IndexBuffer);
-            desc.IndexBuffer = 0;
-        }
-    }
 }
 
 IObjectPtr Object::Clone() const
@@ -109,6 +96,14 @@ void Object::processMesh()
             GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_meshDescs[s].IndexBuffer));
             GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indDataSize, shape.Indices.Data.data(), GL_STATIC_DRAW));
             GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        }
+        if (shape.Normals.Data.size())
+        {
+            uint32_t normalDataSize = shape.Normals.Data.size() * sizeof(shape.Normals.Data[0]);
+            GL_CALL(glGenBuffers(1, &m_meshDescs[s].NormalBuffer));
+            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_meshDescs[s].NormalBuffer));
+            GL_CALL(glBufferData(GL_ARRAY_BUFFER, normalDataSize, shape.Normals.Data.data(), GL_STATIC_DRAW));
+            GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
         }
     }
     //// Bind vertex tex coodinates

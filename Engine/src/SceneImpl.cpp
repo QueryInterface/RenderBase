@@ -91,6 +91,11 @@ void Scene::Render()
 	// Set pipline states
 	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetViewMatrix())));
     GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjectionMatrix())));
+    if (!m_lights.empty())
+    {
+        ILightPtr light = *m_lights.begin();
+        GL_CALL(glUniform3fv(m_program.UniformLightPosition, 1, glm::value_ptr(light->GetPosition())));
+    }
 	// Set texture
 	//GL_CALL(glActiveTexture(GL_TEXTURE0));
 	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
@@ -98,7 +103,7 @@ void Scene::Render()
 	//GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
 
     GL_CALL(glUseProgram(m_program.Program));
-	GL_CALL(glEnableVertexAttribArray(m_program.AttribPosition));
+    GL_CALL(glEnableVertexAttribArray(m_program.AttribPosition));
 	// GL_CALL(glEnableVertexAttribArray(g_AtribTexCoord));
 
 	// Draw
@@ -119,6 +124,12 @@ void Scene::Render()
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
 
+            if (objectDesc.NormalBuffer)
+            {
+                GL_CALL(glEnableVertexAttribArray(m_program.AttribNormal));
+                GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.NormalBuffer));
+                GL_CALL(glVertexAttribPointer(m_program.AttribNormal, 3, GL_FLOAT, GL_FALSE, 0, 0));
+            }
             if (objectDesc.IndexBuffer)
             {
                 uint32_t numVertices = shape.Indices.Data.size() / shape.Indices.ElementSize;
@@ -181,6 +192,9 @@ void Scene::initShaders()
     m_program.AttribPosition = GL_CALL(glGetAttribLocation(m_program.Program, "position"));
     VE_ERROR_IF(m_program.AttribPosition == -1, L"Failed to get location of attribute \"position\"");
 
+    m_program.AttribNormal = GL_CALL(glGetAttribLocation(m_program.Program, "normal"));
+    VE_ERROR_IF(m_program.AttribNormal == -1, L"Failed to get location of attribute \"normal\"");
+
     m_program.UniformModelMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "modelMatrix"));
     VE_ERROR_IF(m_program.UniformModelMatrix == -1, L"Failed to get location of attribute \"modelMatrix\"");
 
@@ -192,7 +206,9 @@ void Scene::initShaders()
 
     m_program.UniformProjMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "projMatrix"));
     VE_ERROR_IF(m_program.UniformProjMatrix == -1, L"Failed to get location of attribute \"projMatrix\"");
-
+    
+    m_program.UniformLightPosition = GL_CALL(glGetUniformLocation(m_program.Program, "lightPosition"));
+    VE_ERROR_IF(m_program.UniformLightPosition == -1, L"Failed to get location of attribute \"lightPosition\"");
     //g_AtribTexCoord = GL_CALL(glGetAttribLocation(g_Program, "textureCoord"));
     //if (g_AtribTexCoord == -1) LOG_ERROR("main", "Init", "Failed to get location of attribute \"textureCoord\"");
 
