@@ -2,9 +2,7 @@
 #include "ResourceOverseer.h"
 #include "Utils.h"
 #include <chrono>
-#include "BuildingBerth.h"
-
-using namespace ConstructorImpl;
+#include <Constructor.h>
 
 class Game : public IEngineCallbacks
 {
@@ -19,12 +17,16 @@ public:
 private:
     void centerObject(IObjectPtr& obj);
 
+    PREVENT_COPY(Game);
+
     IEngine*                m_engine;
     IWindow*                m_window;
     IResourceOverseer*      m_resourceOverseer;
     ICameraPtr              m_camera;
     std::vector<IObjectPtr> m_objects;
-    std::unique_ptr<BuildingBerth> m_builder;
+
+    // singletone iternal life. no need to have ptr
+    Constructor&            m_builder;
 };
 
 Game::Game()
@@ -32,6 +34,7 @@ Game::Game()
     , m_window(m_engine->GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
+    , m_builder(Constructor::GetConstructor())
 {
     // Setup window
     m_window->SetWidth(640);
@@ -47,9 +50,6 @@ Game::Game()
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 20.0f;
     m_camera = m_engine->CreateCamera(cameraSetup);
-
-    // Attach objects to scene
-    m_builder.reset(new BuildingBerth());
 }
 
 Game::~Game()
@@ -99,42 +99,44 @@ void Game::InitScene1()
     size_t offset = 2;
     for (size_t i = 0; i < size; ++i)
     {
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,offset+i), Directions::nX, true);
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+size-1,0,offset+i), Directions::pX, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(offset,0,offset+i), Directions::nX, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(offset+size-1,0,offset+i), Directions::pX, true);
     }
 
     for (size_t i = 1; i < size - 1; ++i)
     {
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+0), Directions::nZ, true);
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+size-1), Directions::pZ, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+0), Directions::nZ, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(offset+i,0,offset+size-1), Directions::pZ, true);
     }
 
     size = 7;
 
     for (size_t i = 1; i < size - 1; ++i)
     {
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::nZ, true);
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::pZ, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(i,0,0), Directions::nZ, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(i,0,size-1), Directions::pZ, true);
     }
 
     for (size_t i = 0; i < size; ++i)
     {
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::nX, true);
-        m_builder->SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::pX, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(0,0,i), Directions::nX, true);
+        m_builder.SetElement(ElementType::Wedge, vector3i_t(size-1,0,i), Directions::pX, true);
     }
 
     offset = 12;
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,1), Directions::nX, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,0), Directions::pX, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::pZ, true);
-    m_builder->SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::nZ, true);
+    m_builder.SetElement(ElementType::Wedge, vector3i_t(offset,0,1), Directions::nX, true);
+    m_builder.SetElement(ElementType::Wedge, vector3i_t(offset+1,0,0), Directions::pX, true);
+    m_builder.SetElement(ElementType::Wedge, vector3i_t(offset+1,0,1), Directions::pZ, true);
+    m_builder.SetElement(ElementType::Wedge, vector3i_t(offset,0,0), Directions::nZ, true);
 
     try
     {
         IMeshPtr mesh = nullptr;
-        mesh.reset(&m_builder->GetHull());
+        mesh.reset(&m_builder.GetMesh());
         IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
-        centerObject(object0);
+        BBox bbox = m_builder.GetBoundingBox();
+        vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
+        object0->SetCenter(vector3f_t(center.x, center.y, center.z));
         object0->SetPosition(vector3f_t(0, 0, 10));
         object0->Scale(vector3f_t(0.5, 0.5, 0.5));
         m_objects.push_back(object0);

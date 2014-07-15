@@ -4,6 +4,12 @@
 
 using namespace ConstructorImpl;
 
+Constructor& Constructor::GetConstructor()
+{
+    static unique_ptr<Constructor> constructor(new BuildingBerth);
+    return *(constructor.get());
+}
+
 Core& BuildingBerth::GetCore()
 {
     //assert(index < m_cores.size());
@@ -21,12 +27,17 @@ bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Dir
     return true;
 }
 
-IMesh& BuildingBerth::GetHull()
+IMesh& BuildingBerth::GetMesh()
 {
     if (m_core.IsUpdated())
     {
         m_hull.ConstructMesh(m_core);
     }
     return m_hull;
+}
+
+BBox BuildingBerth::GetBoundingBox() const
+{
+    return m_core.ConstructionDesc().boundingBox;
 }
 // eof

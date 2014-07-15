@@ -24,18 +24,35 @@ namespace ConstructorImpl
 // primary building berth.
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
-    class BuildingBerth
+    class BuildingBerth : public Constructor
     {
     public:
         BuildingBerth() {};
         ~BuildingBerth() {};
 
-        // Attaches element to Complartment. if new Core was created function returns true;
-        bool SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false);
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Constructor interface
 
-//        size_t GetCoresCount() const {return m_Cores.size();}
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Reset content of all constructor elements
+        virtual void        NewConstruction() {};
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Attaches element to construction
+        virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false);
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Attaches element to construction
+        virtual IMesh&      GetMesh();
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Return bounding box of constructed object
+        virtual BBox        GetBoundingBox() const;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Return reference to logic constructor object
         Core&  GetCore();
-        IMesh& GetHull();
+
 
     private:
         Core        m_core;
