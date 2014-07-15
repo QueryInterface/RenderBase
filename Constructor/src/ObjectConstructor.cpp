@@ -16,8 +16,7 @@ Core::Core()
     : m_pillars(256)
     , m_isDirty(false)
 {
-    m_desc.LFT = vector3i_t(INT32_MAX, INT32_MAX, INT32_MAX);
-    m_desc.RBB = vector3i_t(0,0,0);
+    m_desc.boundingBox = BBox(vector3i_t(INT32_MAX, INT32_MAX, INT32_MAX), vector3i_t(0,0,0));
 }
 
 void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& position, Directions direction, bool updateNeighbours)
@@ -27,14 +26,14 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
     m_desc.direction = direction;
     m_desc.primitiveUID = desc.primitiveUID;
 
-    m_desc.LFT = vector3i_t(
-        min(position.x + desc.LFT.x, m_desc.LFT.x),
-        min(position.y + desc.LFT.y, m_desc.LFT.y),
-        min(position.z + desc.LFT.z, m_desc.LFT.z));
-    m_desc.RBB = vector3i_t(
-        max(position.x + desc.RBB.x, m_desc.RBB.x),
-        max(position.y + desc.RBB.y, m_desc.RBB.y),
-        max(position.z + desc.RBB.z, m_desc.RBB.z));
+    m_desc.boundingBox.LFT = vector3f_t(
+        min(position.x + desc.boundingBox.LFT.x, m_desc.boundingBox.LFT.x),
+        min(position.y + desc.boundingBox.LFT.y, m_desc.boundingBox.LFT.y),
+        min(position.z + desc.boundingBox.LFT.z, m_desc.boundingBox.LFT.z));
+    m_desc.boundingBox.RBB = vector3f_t(
+        max(position.x + desc.boundingBox.RBB.x, m_desc.boundingBox.RBB.x),
+        max(position.y + desc.boundingBox.RBB.y, m_desc.boundingBox.RBB.y),
+        max(position.z + desc.boundingBox.RBB.z, m_desc.boundingBox.RBB.z));
 
     // Y is UP direction
     Element element = {&desc, desc.primitiveUID, direction, direction, 0};
@@ -51,11 +50,11 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
         UpdateNeighbourhood(position);
     }
 
-    if (vector3i_t(1,1,1) != (desc.RBB - desc.LFT))
+    if (vector3i_t(1,1,1) != (desc.boundingBox.RBB - desc.boundingBox.LFT))
     {
-        for (int x = desc.LFT.x; x < desc.RBB.x; ++x)
+        for (int x = desc.boundingBox.LFT.x; x < desc.boundingBox.RBB.x; ++x)
         {
-            for (int z = desc.LFT.z; z < desc.RBB.z; ++z)
+            for (int z = desc.boundingBox.LFT.z; z < desc.boundingBox.RBB.z; ++z)
             {
                 if (x || z)
                 {

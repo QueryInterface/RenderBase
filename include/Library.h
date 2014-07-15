@@ -5,9 +5,28 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "Constructor.h"
+#include "Construction.h"
 #include <vector>
 #include "Resources.h"
+
+/////////////////////////////////////////////////////////////////////
+///
+/// Library implementation of Mesh object
+///
+/////////////////////////////////////////////////////////////////////
+
+struct MeshProperties
+{
+    uint32_t    flags;
+    vector3f_t  offset;
+    uint32_t    orientation;
+};
+
+struct ILibraryMesh : public IMesh
+{
+    virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const = 0;
+    virtual ~ILibraryMesh() {};
+};
 
 /////////////////////////////////////////////////////////////////////
 ///
