@@ -17,11 +17,12 @@ const std::string g_vertexShaderSource =                \
     uniform mat4 worldMatrix;                                                                       \n\
     uniform mat4 viewMatrix;                                                                        \n\
     uniform mat4 projMatrix;                                                                        \n\
+    uniform vec3 lightPosition;                                                                     \n\
                                                                                                     \n\
     varying vec2 f_textureCoord;                                                                    \n\
     varying vec4 f_position;                                                                        \n\
     varying vec4 f_normal;                                                                          \n\
-    varying vec4 f_eyeDirection;                                                                    \n\
+    varying vec4 f_lightPosition;                                                                   \n\
                                                                                                     \n\
     void main(void)                                                                                 \n\
     {                                                                                               \n\
@@ -32,20 +33,22 @@ const std::string g_vertexShaderSource =                \
         f_position = viewMatrix * worldMatrix * modelMatrix * vec4(position, 1.0);                  \n\
         f_normal = viewMatrix * worldMatrix * modelMatrix * vec4(normal, 0.0);                      \n\
         f_normal = normalize(f_normal);                                                             \n\
+        f_lightPosition = viewMatrix * vec4(lightPosition, 1.0);                                    \n\
         f_textureCoord = textureCoord;                                                              \n\
     }";
 
 const std::string g_fragmentShader =                        \
 "   #version 100                                                                                    \n\
                                                                                                     \n\
-    uniform highp vec3 lightPosition;                                                               \n\
     varying highp vec4 f_position;                                                                  \n\
     varying highp vec4 f_normal;                                                                    \n\
+    varying highp vec4 f_lightPosition;                                                             \n\
                                                                                                     \n\
     void main(void) {                                                                               \n\
-        highp vec4 reflectedLight = reflect(f_position - vec4(lightPosition, 1.0), f_normal);       \n\
+        highp vec4 reflectedLight = reflect(f_position - f_lightPosition, f_normal);                \n\
         reflectedLight = normalize(reflectedLight);                                                 \n\
-        gl_FragColor = vec4(reflectedLight.z, reflectedLight.z, reflectedLight.z, 1.0);             \n\
+        highp float color = dot(reflectedLight, normalize(vec4(0.0,0.0,0.0,1.0) - f_position));     \n\
+        gl_FragColor = vec4(color, color, color, 1.0);                                              \n\
     }";
 
 

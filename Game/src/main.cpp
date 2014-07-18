@@ -75,7 +75,7 @@ void Game::InitScene0()
         object1->SetPosition(vector3f_t(1, 1, 7));
         m_objects.push_back(object1);
         // Create light
-        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(0, 0, 0));
+        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(10, 10, 7));
         // CreateScene
         IScenePtr scene = m_engine->CreateScene();
 
@@ -141,10 +141,12 @@ void Game::InitScene1()
         object0->SetPosition(vector3f_t(0, 0, 10));
         object0->Scale(vector3f_t(0.5, 0.5, 0.5));
         m_objects.push_back(object0);
-
+        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(1000, 0, -80));
+        
         IScenePtr scene = m_engine->CreateScene();
         scene->AddObject(object0);
         scene->SetCamera(m_camera);
+        scene->AddLight(m_light);
 
         m_engine->SetScene(scene);
         m_engine->Run(this);
@@ -209,7 +211,7 @@ void Game::OnSceneUpdate()
         //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
         object->RotateAroundCenter(vector3f_t(angle, angle, 0));
     }
-    m_light->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0, 0, angle));
+    //m_light->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0, 0, angle));
     //m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
 }
 
