@@ -27,3 +27,5 @@ source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
 source_group ("Tests"               FILES ${TEST_FILES})
+
+set_property (TARGET Game             PROPERTY FOLDER "Executables")

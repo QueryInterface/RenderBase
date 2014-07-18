@@ -23,6 +23,7 @@ private:
     IWindow*                m_window;
     IResourceOverseer*      m_resourceOverseer;
     ICameraPtr              m_camera;
+    ILightPtr               m_light;
     std::vector<IObjectPtr> m_objects;
 
     // singletone iternal life. no need to have ptr
@@ -74,14 +75,14 @@ void Game::InitScene0()
         object1->SetPosition(vector3f_t(1, 1, 7));
         m_objects.push_back(object1);
         // Create light
-        ILightPtr light = m_engine->CreateLight(LightType::Spot, vector3f_t(-3, -3, 3));
+        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(0, 0, 0));
         // CreateScene
         IScenePtr scene = m_engine->CreateScene();
 
         scene->AddObject(object0);
         scene->AddObject(object1);
         scene->SetCamera(m_camera);
-        scene->AddLight(light);
+        scene->AddLight(m_light);
         // Set scene
         m_engine->SetScene(scene);
         // Run
@@ -208,6 +209,7 @@ void Game::OnSceneUpdate()
         //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
         object->RotateAroundCenter(vector3f_t(angle, angle, 0));
     }
+    m_light->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0, 0, angle));
     //m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
 }
 

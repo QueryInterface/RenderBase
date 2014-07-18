@@ -21,6 +21,7 @@ const std::string g_vertexShaderSource =                \
     varying vec2 f_textureCoord;                                                                    \n\
     varying vec4 f_position;                                                                        \n\
     varying vec4 f_normal;                                                                          \n\
+    varying vec4 f_eyeDirection;                                                                    \n\
                                                                                                     \n\
     void main(void)                                                                                 \n\
     {                                                                                               \n\
@@ -29,7 +30,7 @@ const std::string g_vertexShaderSource =                \
         gl_Position = viewMatrix * gl_Position;                                                     \n\
         gl_Position = projMatrix * gl_Position;                                                     \n\
         f_position = viewMatrix * worldMatrix * modelMatrix * vec4(position, 1.0);                  \n\
-        f_normal = viewMatrix * worldMatrix * modelMatrix * vec4(normal, 1.0);                      \n\
+        f_normal = viewMatrix * worldMatrix * modelMatrix * vec4(normal, 0.0);                      \n\
         f_normal = normalize(f_normal);                                                             \n\
         f_textureCoord = textureCoord;                                                              \n\
     }";
@@ -42,8 +43,9 @@ const std::string g_fragmentShader =                        \
     varying highp vec4 f_normal;                                                                    \n\
                                                                                                     \n\
     void main(void) {                                                                               \n\
-        highp float color = reflect(f_position - vec4(lightPosition, 1.0), f_normal).z;             \n\
-        gl_FragColor = vec4(color, color, color, 1.0);                                              \n\
+        highp vec4 reflectedLight = reflect(f_position - vec4(lightPosition, 1.0), f_normal);       \n\
+        reflectedLight = normalize(reflectedLight);                                                 \n\
+        gl_FragColor = vec4(reflectedLight.z, reflectedLight.z, reflectedLight.z, 1.0);             \n\
     }";
 
 

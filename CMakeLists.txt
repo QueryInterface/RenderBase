@@ -66,10 +66,6 @@ add_subdirectory(Constructor)
 add_subdirectory(Utils)
 add_subdirectory(ResourceOverseer)
 
-# Organize projects in folders
-set_property (TARGET Game             PROPERTY FOLDER "Executables")
-set_property (TARGET Engine           PROPERTY FOLDER "Libraries")
-
 # Set additional targets' flags
 set_target_properties(gtest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
 
