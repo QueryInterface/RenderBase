@@ -32,8 +32,9 @@ void SceneElementImpl::ShiftImpl(const vector3f_t& shift)
 
 void SceneElementImpl::SetCenterImpl(const vector3f_t& center)
 {
+    vector3f_t delta = m_center - center;
     m_center = center;
-    m_elementMatrix = glm::translate(glm::mat4(1.0), -m_center) * m_elementMatrix;
+    m_elementMatrix = glm::translate(glm::mat4(1.0), delta) * m_elementMatrix;
 }
 
 void SceneElementImpl::RotateAroundCenterImpl(const vector3f_t& angles)
