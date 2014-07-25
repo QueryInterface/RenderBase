@@ -49,13 +49,13 @@ Game::Game()
     CameraSetup cameraSetup;
     cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
     cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
-    cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
+    cameraSetup.Up = vector3f_t(0.0, -1.0, 0.0);
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 20.0f;
     m_scene = m_engine->CreateScene();
     m_camera = m_engine->CreateCamera(cameraSetup);
-    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(10, 10, 7));
+    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-10, -10, 7));
 
     m_engine->SetScene(m_scene);
 
@@ -171,14 +171,12 @@ void Game::OnSceneUpdate()
     {
         //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
         object->Shift(CoordType::World, vector3f_t(0, 0, -7));
-        quat q = quat(angle, vector3f_t(1, -1, 0));
-        q = glm::normalize(q);
-        object->Rotate(CoordType::World, q);
+        glm::quat objectQ = glm::quat(angle, vector3f_t(1, -1, 0));
+        objectQ = glm::normalize(objectQ);
+        object->Rotate(CoordType::World, objectQ);
         object->Shift(CoordType::World, vector3f_t(0, 0, 7));
-
     }
-    //m_light->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0, 0, angle));
-    //m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
+    m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
 }
 
 
