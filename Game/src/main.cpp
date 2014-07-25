@@ -22,6 +22,7 @@ private:
     IEngine*                m_engine;
     IWindow*                m_window;
     IResourceOverseer*      m_resourceOverseer;
+    IScenePtr               m_scene;
     ICameraPtr              m_camera;
     ILightPtr               m_light;
     std::vector<IObjectPtr> m_objects;
@@ -35,6 +36,8 @@ Game::Game()
     , m_window(m_engine->GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
+    , m_scene(nullptr)
+    , m_light(nullptr)
     , m_builder(Constructor::GetConstructor())
 {
     // Setup window
@@ -50,7 +53,14 @@ Game::Game()
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 20.0f;
+    m_scene = m_engine->CreateScene();
     m_camera = m_engine->CreateCamera(cameraSetup);
+    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(10, 10, 7));
+
+    m_engine->SetScene(m_scene);
+
+    m_scene->SetCamera(m_camera);
+    m_scene->AddLight(m_light);
 }
 
 Game::~Game()
@@ -67,26 +77,11 @@ void Game::InitScene0()
         ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        //object0->SetCenter(vector3f_t(1, 1, 1));
-        object0->SetPosition(vector3f_t(-1, -1, 7));
-        m_objects.push_back(object0);
+        object0->SetPosition(CoordType::World, vector3f_t(-1, -1, 7));
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        //object1->SetCenter(vector3f_t(1, 1, 1));
-        object1->SetPosition(vector3f_t(1, 1, 7));
+        object1->SetPosition(CoordType::World, vector3f_t(1, 1, 7));
+        m_objects.push_back(object0);
         m_objects.push_back(object1);
-        // Create light
-        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(10, 10, 7));
-        // CreateScene
-        IScenePtr scene = m_engine->CreateScene();
-
-        scene->AddObject(object0);
-        scene->AddObject(object1);
-        scene->SetCamera(m_camera);
-        scene->AddLight(m_light);
-        // Set scene
-        m_engine->SetScene(scene);
-        // Run
-        m_engine->Run(this);
     }
     catch (std::exception& ex) 
     {
@@ -137,19 +132,10 @@ void Game::InitScene1()
         IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
         BBox bbox = m_builder.GetBoundingBox();
         vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
-        object0->SetCenter(vector3f_t(center.x, center.y, center.z));
-        object0->SetPosition(vector3f_t(0, 0, 10));
-        object0->Scale(vector3f_t(0.5, 0.5, 0.5));
+        object0->SetPosition(CoordType::Local, vector3f_t(center.x, center.y, center.z));
+        object0->SetPosition(CoordType::World, vector3f_t(0, 0, 10));
+        object0->SetScale(CoordType::Local, vector3f_t(0.5, 0.5, 0.5));
         m_objects.push_back(object0);
-        m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(1000, 0, -80));
-        
-        IScenePtr scene = m_engine->CreateScene();
-        scene->AddObject(object0);
-        scene->SetCamera(m_camera);
-        scene->AddLight(m_light);
-
-        m_engine->SetScene(scene);
-        m_engine->Run(this);
     }
     catch (std::exception& ex) 
     {
@@ -161,6 +147,10 @@ void Game::Start()
 {
     try 
     {
+        for (IObjectPtr& object : m_objects)
+        {
+            m_scene->AddObject(object);
+        }
         m_engine->Run(this);
     }
     catch (std::exception& ex) 
@@ -169,47 +159,23 @@ void Game::Start()
     }
 }
 
-void Game::centerObject(IObjectPtr& obj)
-{
-    // Center object
-    auto& meshDesc = obj->GetMesh()->GetDesc();
-    float xMin = 10000;
-    float yMin = 10000;
-    float zMin = 10000;
-    float xMax = -10000;
-    float yMax = -10000;
-    float zMax = -10000;
-    for (auto& shape : meshDesc.Shapes)
-    {
-        for (uint32_t i = 0; i < shape.Positions.Data.size(); ++i)
-        {
-            float v = shape.Positions.Data[i];
-            if (0 == i % 3 && v < xMin) xMin = v;
-            if (0 == i % 3 && v > xMax) xMax = v;
-            if (1 == i % 3 && v < yMin) yMin = v;
-            if (1 == i % 3 && v > yMax) yMax = v;
-            if (2 == i % 3 && v < zMin) zMin = v;
-            if (2 == i % 3 && v > zMax) zMax = v;
-        }
-    }
-    float xCenter = (xMax - xMin) / 2;
-    float yCenter = (yMax - yMin) / 2;
-    float zCenter = (zMax - zMin) / 2;
-
-    obj->SetCenter(vector3f_t(xCenter, yCenter, zCenter));
-}
-
 void Game::OnSceneUpdate()
 {
     static auto start = std::chrono::high_resolution_clock::now();
     auto end = std::chrono::high_resolution_clock::now();
     float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	float angle = elapsedTime / 1000.0f * 45;
+	float angle = elapsedTime / 30000.0f * 45;
     start = end;
+    angle;
     for (IObjectPtr& object : m_objects)
     {
         //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
-        object->RotateAroundCenter(vector3f_t(angle, angle, 0));
+        object->Shift(CoordType::World, vector3f_t(0, 0, -7));
+        quat q = quat(angle, vector3f_t(1, -1, 0));
+        q = glm::normalize(q);
+        object->Rotate(CoordType::World, q);
+        object->Shift(CoordType::World, vector3f_t(0, 0, 7));
+
     }
     //m_light->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0, 0, angle));
     //m_camera->RotateAroundPoint(vector3f_t(0, 0, 7), vector3f_t(0.2, 0, 0));
