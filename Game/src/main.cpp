@@ -55,7 +55,7 @@ Game::Game()
     cameraSetup.FarZ = 20.0f;
     m_scene = m_engine->CreateScene();
     m_camera = m_engine->CreateCamera(cameraSetup);
-    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-10, -10, 7));
+    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-100, -100, 7));
 
     m_engine->SetScene(m_scene);
 
@@ -132,8 +132,8 @@ void Game::InitScene1()
         IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
         BBox bbox = m_builder.GetBoundingBox();
         vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
-        object0->SetPosition(CoordType::Local, vector3f_t(center.x, center.y, center.z));
-        object0->SetPosition(CoordType::World, vector3f_t(0, 0, 10));
+        object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
+        object0->SetPosition(CoordType::World, vector3f_t(0, 0, 7));
         object0->SetScale(CoordType::Local, vector3f_t(0.5, 0.5, 0.5));
         m_objects.push_back(object0);
     }
@@ -164,17 +164,18 @@ void Game::OnSceneUpdate()
     static auto start = std::chrono::high_resolution_clock::now();
     auto end = std::chrono::high_resolution_clock::now();
     float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	float angle = elapsedTime / 30000.0f * 45;
+	float angle = elapsedTime / 50000.0f * 45;
     start = end;
-    angle;
+    vector3f_t pos;
     for (IObjectPtr& object : m_objects)
     {
-        //object->RotateAroundCenter(vector3f_t(angle, angle/2, angle));
+        pos = object->GetPosition(CoordType::World);
         object->Shift(CoordType::World, vector3f_t(0, 0, -7));
-        glm::quat objectQ = glm::quat(angle, vector3f_t(1, -1, 0));
+        glm::quat objectQ = glm::angleAxis(angle, vector3f_t(-1, 0, -1));        
         objectQ = glm::normalize(objectQ);
         object->Rotate(CoordType::World, objectQ);
         object->Shift(CoordType::World, vector3f_t(0, 0, 7));
+        pos = object->GetPosition(CoordType::World);
     }
     m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
 }
@@ -183,7 +184,7 @@ void Game::OnSceneUpdate()
 int main() 
 {
     Game game;
-    game.InitScene0();
-    //game.InitScene1();
+    //game.InitScene0();
+    game.InitScene1();
     game.Start();
 }
