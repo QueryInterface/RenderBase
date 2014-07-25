@@ -30,6 +30,12 @@ enum class LightType
     Spot
 };
 
+enum class CoordType
+{
+    Local,
+    World
+};
+
 struct EventCallback 
 {
     virtual void OnKeyPress(uint32_t keyCode, bool isPress) {keyCode; isPress;}
@@ -37,31 +43,16 @@ struct EventCallback
 
 struct ISceneElement : public IHandle
 {
-    // Moves center of the object
-    virtual void            SetPosition(const vector3f_t& pos)                                      = 0;
-    virtual void            Shift(const vector3f_t& shift)                                          = 0;
-    // Addignes new center to object. Adjusts object position correspondingly. Coordinations of center are in object coordinates.
-    virtual void            SetCenter(const vector3f_t& center)                                     = 0;
-    // Rotation around center in object space
-    virtual void            RotateAroundCenter(const vector3f_t& angles)                            = 0;
-    virtual void            RotateAroundCenterAxis(const vector3f_t& axis, float angle)= 0;
-    // Rotation in world space
-    virtual void            RotateAroundPoint(const vector3f_t& point, const vector3f_t& angles)    = 0;
-    virtual void            RotateAroundPointAxis(const vector3f_t& point, const vector3f_t& axis, float angle) = 0;
-    // Returns object angle in world space
-    virtual vector3f_t      GetAngle() const                                                        = 0;  
-    // Return object center position in world space
-    virtual vector3f_t      GetPosition() const                                                     = 0;  
-    // Returns object center in object space
-    virtual vector3f_t      GetCenter() const                                                       = 0;  
-};
+    virtual void        SetPosition(CoordType type, const vector3f_t& pos)                  = 0;
+    virtual void        SetScale(CoordType type, const vector3f_t& scale)                   = 0;
+    virtual void        Shift(CoordType type, const vector3f_t& shift)                      = 0;
+    virtual void        Rotate(CoordType type, const vector3f_t& angles)                    = 0;
+    virtual void        Rotate(CoordType type, const quat& q)                               = 0;
 
-struct IScalable
-{
-    virtual void            SetScale(const vector3f_t& scales)                                      = 0;
-    virtual void            Scale(const vector3f_t& scales)                                         = 0;
-
-    virtual vector3f_t      GetScale() const                                                        = 0;  
+    virtual vector3f_t  GetPosition()                                                       = 0;
+    virtual vector3f_t  GetPosition(CoordType type)                                         = 0;
+    virtual vector3f_t  GetDirection(CoordType type, const vector3f_t& initDirection)       = 0;
+    virtual vector3f_t  GetScale(CoordType type)                                            = 0;
 };
 
 struct IWindow
@@ -107,7 +98,6 @@ struct ICamera
 struct IObject
     : public ISceneElement
     , public IClonable<IObjectPtr>
-    , public IScalable
 {
     virtual IMeshPtr        GetMesh() const                                         = 0;
     virtual ITexturePtr     GetTexture() const                                      = 0;

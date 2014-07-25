@@ -7,8 +7,6 @@ using std::unique_ptr;
 using std::make_shared;
 using std::static_pointer_cast;
 
-#define GLM_FORCE_RADIANS
-
 #ifdef _WIN32
 	#include "Windows.h"
     #ifdef DEFINE_EXPORT

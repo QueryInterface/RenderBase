@@ -16,18 +16,14 @@ public:
     // ICamera
     virtual const CameraSetup&  GetCameraSetup() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
-    scene_elements_functions_impl
-    scene_elements_gets_impl
-    // Camera
+    scene_elements_impl;
     // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
-    virtual const glm::mat4 GetViewMatrix() const {return m_viewMatrix * glm::inverse(m_worldMatrix * m_elementMatrix);}
+    virtual const glm::mat4 GetViewMatrix() {return m_viewMatrix * glm::inverse(GetMatrix(CoordType::World) * GetMatrix(CoordType::Local));}
     virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
-    virtual vector3f_t GetCameraPosition() const;
 private:
     void initCamera();
     
     CameraSetup     m_setup;
-    vector4f_t      m_cameraPosition;
     glm::mat4       m_viewMatrix;
     glm::mat4       m_projectionMatrix;
 };

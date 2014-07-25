@@ -1,14 +1,16 @@
 #include "SceneElementImpl.h"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include "ErrorHandler.h"
+
 
 SceneElementImpl::SceneElementImpl()
-    : m_center(0, 0, 0)
-    , m_position(0, 0, 0)
-    , m_scale(1, 1, 1)
-    , m_elementMatrix(glm::mat4(1.0))
+    : m_localPosition(0, 0, 0)
+    , m_worldPosition(0, 0, 0)
+    , m_localScale(1, 1, 1)
+    , m_worldScale(1, 1, 1)
+    , m_localMatrix(glm::mat4(1.0))
     , m_worldMatrix(glm::mat4(1.0))
+    , m_localQ(1, 0, 0, 0)
+    , m_worldQ(1, 0, 0, 0)
 {
 }
 
@@ -17,84 +19,129 @@ SceneElementImpl::~SceneElementImpl()
 
 }
 
-void SceneElementImpl::SetPositionImpl(const vector3f_t& pos)
+void SceneElementImpl::SetPositionImpl(CoordType type, const vector3f_t& pos)
 {
-    vector3f_t delta = pos - m_position;
-    m_position = pos;
-    m_worldMatrix = glm::translate(glm::mat4(1.0), delta) * m_worldMatrix;
+    glm::mat4& m = getMatrix(type);
+
+    vector3f_t delta = pos - GetPositionImpl(type);
+    m = glm::translate(glm::mat4(1.0), delta) * m;
 }
 
-void SceneElementImpl::ShiftImpl(const vector3f_t& shift)
+void SceneElementImpl::SetScaleImpl(CoordType type, const vector3f_t& scale)
 {
-    m_position += shift;
-    m_worldMatrix = glm::translate(glm::mat4(1.0), shift) * m_worldMatrix;
+    glm::mat4& m = getMatrix(type);
+
+    vector3f_t delta = scale / GetScaleImpl(type);
+    m = glm::scale(glm::mat4(1.0), delta) * m;
+    switch (type)
+    {
+    case CoordType::Local:
+        m_localScale = scale;
+        break;
+    case CoordType::World:
+        m_worldScale = scale;
+        break;
+    default:
+        VE_ERROR(L"Invalid coord type");
+    }
 }
 
-void SceneElementImpl::SetCenterImpl(const vector3f_t& center)
+void SceneElementImpl::ShiftImpl(CoordType type, const vector3f_t& shift)
 {
-    vector3f_t delta = m_center - center;
-    m_center = center;
-    m_elementMatrix = glm::translate(glm::mat4(1.0), delta) * m_elementMatrix;
+    glm::mat4& m = getMatrix(type);
+
+    m = glm::translate(glm::mat4(1.0), shift) * m;
 }
 
-void SceneElementImpl::RotateAroundCenterImpl(const vector3f_t& angles)
+void SceneElementImpl::RotateImpl(CoordType type, const vector3f_t& angles)
 {
-    m_elementMatrix =   glm::rotate(glm::mat4(1.0), angles.z, glm::vec3(0.0, 0.0, 1.0)) *
-                        glm::rotate(glm::mat4(1.0), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
-                        glm::rotate(glm::mat4(1.0), angles.x, glm::vec3(1.0, 0.0, 0.0)) * m_elementMatrix;
+    glm::quat& q = getQuaternion(type);
+    q = glm::quat(angles) * q;
 }
 
-void SceneElementImpl::RotateAroundCenterAxisImpl(const vector3f_t& axis, float angle)
+void SceneElementImpl::RotateImpl(CoordType type, const quat& qt)
 {
-    m_elementMatrix = glm::rotate(glm::mat4(1.0), angle, axis) * m_elementMatrix;
+    glm::quat& q = getQuaternion(type);
+    q = qt * q;
 }
 
-void SceneElementImpl::RotateAroundPointImpl(const vector3f_t& point, const vector3f_t& angles)
+vector3f_t SceneElementImpl::GetPositionImpl()
 {
-    m_worldMatrix = glm::translate(glm::mat4(1.0), point) * 
-                    glm::rotate(glm::mat4(1.0), angles.z, glm::vec3(0.0, 0.0, 1.0)) *
-                    glm::rotate(glm::mat4(1.0), angles.y, glm::vec3(0.0, 1.0, 0.0)) *
-                    glm::rotate(glm::mat4(1.0), angles.x, glm::vec3(1.0, 0.0, 0.0)) *
-                    glm::translate(glm::mat4(1.0), -point) * m_worldMatrix;
+    vector4f_t p(0,0,0,1);
+    p = getMatrix(CoordType::World) * getMatrix(CoordType::Local) * p;
+    return vector3f_t(p.x, p.y, p.z);
 }
 
-void SceneElementImpl::RotateAroundPointAxisImpl(const vector3f_t& point, const vector3f_t& axis, float angle)
+
+vector3f_t SceneElementImpl::GetPositionImpl(CoordType type)
 {
-    vector3f_t delta = point - m_position;
-    m_worldMatrix = glm::translate(glm::mat4(1.0), -delta) * 
-                    glm::rotate(glm::mat4(1.0), angle, axis) *
-                    glm::translate(glm::mat4(1.0), delta) * m_worldMatrix;
+    vector4f_t p(0,0,0,1);
+    p = getMatrix(type) * p;
+    return vector3f_t(p.x, p.y, p.z);
 }
 
-void SceneElementImpl::SetScaleImpl(const vector3f_t& scales)
+vector3f_t SceneElementImpl::GetDirectionImpl(CoordType type, const vector3f_t& initDirection)
 {
-    vector3f_t delta = scales / m_scale ;
-    m_scale = scales;
-    m_elementMatrix = glm::scale(glm::mat4(1.0), delta) * m_elementMatrix;
+    vector4f_t direction = getMatrix(type) * vector4f_t(initDirection, 0);
+    return vector3f_t(direction.x, direction.y, direction.z);
 }
 
-void SceneElementImpl::ScaleImpl(const vector3f_t& scales)
+vector3f_t SceneElementImpl::GetScaleImpl(CoordType type)
 {
-    m_scale *= scales;
-    m_elementMatrix = glm::scale(glm::mat4(1.0), scales) * m_elementMatrix;
+    switch (type)
+    {
+    case CoordType::Local:
+        return m_localScale;
+        break;
+    case CoordType::World:
+        return m_worldScale;
+        break;
+    default:
+        VE_ERROR(L"Invalid coord type");
+    }
+    return vector3f_t(1,1,1);
 }
 
-vector3f_t SceneElementImpl::GetCenterImpl() const
+glm::mat4& SceneElementImpl::getMatrix(CoordType type)
 {
-    return m_center;
+    switch (type)
+    {
+    case CoordType::Local:
+        {
+            glm::quat& q = getQuaternion(type);
+
+            m_localMatrix = glm::toMat4(q) * m_localMatrix;
+            q = glm::quat(1, 0, 0, 0);
+            return m_localMatrix;
+        }
+        break;
+    case CoordType::World:
+        {
+            glm::quat& q = getQuaternion(type);
+
+            m_worldMatrix = glm::toMat4(q) * m_worldMatrix;
+            q = glm::quat(1, 0, 0, 0);
+            return m_worldMatrix;
+        }
+        break;
+    default:
+        VE_ERROR(L"Invalid coord type");
+    }
+    return m_localMatrix;
 }
 
-vector3f_t SceneElementImpl::GetPositionImpl() const
+glm::quat& SceneElementImpl::getQuaternion(CoordType type)
 {
-    return m_position;
-}
-
-vector3f_t SceneElementImpl::GetAngleImpl() const
-{
-    return glm::eulerAngles(glm::quat(m_worldMatrix * m_elementMatrix));
-}
-
-vector3f_t SceneElementImpl::GetScaleImpl() const
-{
-    return m_scale;
+    switch (type)
+    {
+    case CoordType::Local:
+        return m_localQ;
+        break;
+    case CoordType::World:
+        return m_worldQ;
+        break;
+    default:
+        VE_ERROR(L"Invalid coord type");
+    }
+    return m_localQ;
 }

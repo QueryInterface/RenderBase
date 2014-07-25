@@ -117,8 +117,8 @@ void Scene::Render()
         // Get object desc
         const Object::GLMeshDescs& objectGLDescs = object->GetMeshDescs();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(object->GetElementMatrix())));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(object->GetWorldMatrix())));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(object->GetMatrix(CoordType::Local))));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(object->GetMatrix(CoordType::World))));
 
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));

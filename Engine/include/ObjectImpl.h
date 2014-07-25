@@ -2,7 +2,6 @@
 #include "Engine.h"
 #include "Resources.h"
 #include <vector>
-#include "glm/glm.hpp"
 #include "SDL_opengles2.h"
 #include "SceneElementImpl.h"
 
@@ -13,7 +12,7 @@ using std::vector;
 
 class Object 
     : public IObject
-    , protected SceneElementImpl
+    , public SceneElementImpl
     , public enable_shared_from_this<Object> 
 {
 public:
@@ -57,14 +56,9 @@ public:
     // IClonable
     IObjectPtr Clone() const override;
     // IObject
-    scene_elements_functions_impl
-    scene_elements_gets_impl
-    scale_functions_impl
-    getscale_impl
+    scene_elements_impl;
     // Object
     virtual const GLMeshDescs& GetMeshDescs() const {return m_meshDescs;}
-    virtual const glm::mat4& GetElementMatrix() const {return m_elementMatrix;}
-    virtual const glm::mat4& GetWorldMatrix() const {return m_worldMatrix;}
 
     virtual IMeshPtr        GetMesh() const {return m_mesh;}
     virtual ITexturePtr     GetTexture() const {return m_texture;}

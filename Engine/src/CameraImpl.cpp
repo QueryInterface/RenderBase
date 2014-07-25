@@ -3,7 +3,6 @@
 
 Camera::Camera(const CameraSetup& setup)
     : m_setup(setup)
-    , m_cameraPosition(0, 0, 0, 1)
 {
     initCamera();
 }
@@ -27,12 +26,6 @@ void Camera::SetFiledOfViewY(float fovy)
     m_setup.FieldOfViewY = fovy;
     initCamera();
 }
-
-vector3f_t Camera::GetCameraPosition() const
-{
-    return vector3f_t(m_worldMatrix * m_elementMatrix * m_cameraPosition);
-}
-
 
 void Camera::initCamera()
 {
