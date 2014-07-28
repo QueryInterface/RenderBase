@@ -82,15 +82,14 @@ namespace ConstructorImpl
         // fast rotate operation on multiple by Pi/2 angles
         vector3i_t rotate(const vector3i_t& vec, unsigned int dst) const;
 
-    private:
         ConstructionDescription      m_desc;
         Utils::QuadTree< Pillar_t >  m_pillars;
 
         bool                         m_isDirty;
 
         ConstructionDescription      m_reference;
-        Core(const Core& arg);
-        const Core& operator=(const Core& arg);
+
+        PREVENT_COPY(Core);
     };
 
 }//end  of namespace constructor

@@ -57,6 +57,8 @@ namespace ConstructorImpl
     private:
         Core        m_core;
         Hull        m_hull;
+
+        PREVENT_COPY(BuildingBerth);
     };
 
 }//end  of namespace constructor

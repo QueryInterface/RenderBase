@@ -9,6 +9,7 @@ class Game : public IEngineCallbacks
 public:
     Game();
     ~Game();
+    void InitHelpers();
     void InitScene0();
     void InitScene1();
     void Start();
@@ -25,6 +26,7 @@ private:
     IScenePtr               m_scene;
     ICameraPtr              m_camera;
     ILightPtr               m_light;
+    IObjectPtr              m_lightShape;
     std::vector<IObjectPtr> m_objects;
 
     // singletone iternal life. no need to have ptr
@@ -47,15 +49,15 @@ Game::Game()
 
     // Create camera
     CameraSetup cameraSetup;
-    cameraSetup.Eye = vector3f_t(0.0, 0.0, 0.0);
-    cameraSetup.At = vector3f_t(0.0, 0.0, 1.0);
-    cameraSetup.Up = vector3f_t(0.0, -1.0, 0.0);
+    cameraSetup.Eye = vector3f_t(15.0, 5.0, 2.0);
+    cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
+    cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
-    cameraSetup.FarZ = 20.0f;
+    cameraSetup.FarZ = 100.0f;
     m_scene = m_engine->CreateScene();
     m_camera = m_engine->CreateCamera(cameraSetup);
-    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-100, -100, 7));
+    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-5, -5, 7));
 
     m_engine->SetScene(m_scene);
 
@@ -65,6 +67,17 @@ Game::Game()
 
 Game::~Game()
 {
+}
+
+void Game::InitHelpers()
+{
+    IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
+    ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+    // // Create objects
+    m_lightShape = IObject::CreateObject(mesh, texture0);
+    m_lightShape->SetPosition(CoordType::World, vector3f_t(-5, -5, 7));
+    m_lightShape->SetScale(CoordType::Local, vector3f_t(0.2f, 0.2f, 0.2f));
+    m_scene->AddObject(m_lightShape);
 }
 
 void Game::InitScene0()
@@ -77,9 +90,9 @@ void Game::InitScene0()
         ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetPosition(CoordType::World, vector3f_t(-1, -1, 7));
+        object0->SetPosition(CoordType::World, vector3f_t(-3, -3, 7));
         IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetPosition(CoordType::World, vector3f_t(1, 1, 7));
+        object1->SetPosition(CoordType::World, vector3f_t(3, 3, 7));
         m_objects.push_back(object0);
         m_objects.push_back(object1);
     }
@@ -91,7 +104,12 @@ void Game::InitScene0()
 
 void Game::InitScene1()
 {
-    m_builder.SetElement(ElementType::Cilinder, vector3i_t(0,0,0), Directions::nX, true);
+    const size_t cubeScales = 6;
+    for (size_t i = 0; i < cubeScales; ++i)
+    {
+
+        m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(0,i,0), Directions::pZ, true);
+    }
 
     try
     {
@@ -135,7 +153,7 @@ void Game::OnSceneUpdate()
 	float angle = elapsedTime / 50000.0f * 45;
     start = end;
     vector3f_t pos;
-    for (IObjectPtr& object : m_objects)
+/*    for (IObjectPtr& object : m_objects)
     {
         pos = object->GetPosition(CoordType::World);
         object->Shift(CoordType::World, vector3f_t(0, 0, -7));
@@ -144,7 +162,8 @@ void Game::OnSceneUpdate()
         object->Rotate(CoordType::World, objectQ);
         object->Shift(CoordType::World, vector3f_t(0, 0, 7));
         pos = object->GetPosition(CoordType::World);
-    }
+    }*/
+    m_lightShape->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
     m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
 }
 
@@ -152,7 +171,8 @@ void Game::OnSceneUpdate()
 int main() 
 {
     Game game;
-    //game.InitScene0();
+    game.InitHelpers();
+    game.InitScene0();
     game.InitScene1();
     game.Start();
 }

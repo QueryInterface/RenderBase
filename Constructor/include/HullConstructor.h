@@ -41,8 +41,7 @@ namespace ConstructorImpl
     private:
         IMesh::Desc m_hullDescription;
 
-        Hull(const Hull& arg);
-        const Hull& operator=(const Hull& arg);
+        PREVENT_COPY(Hull);
     };
 
 }//end  of namespace constructor
