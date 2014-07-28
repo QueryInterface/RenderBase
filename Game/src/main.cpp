@@ -49,7 +49,7 @@ Game::Game()
 
     // Create camera
     CameraSetup cameraSetup;
-    cameraSetup.Eye = vector3f_t(15.0, 5.0, 2.0);
+    cameraSetup.Eye = vector3f_t(8.0, 5.0, -8.0);
     cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
     cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
     cameraSetup.FieldOfViewY = 45.0;
@@ -104,10 +104,9 @@ void Game::InitScene0()
 
 void Game::InitScene1()
 {
-    const size_t cubeScales = 6;
+    const size_t cubeScales = 7;
     for (size_t i = 0; i < cubeScales; ++i)
     {
-
         m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(0,i,0), Directions::pZ, true);
     }
 

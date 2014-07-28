@@ -24,6 +24,7 @@ Hull::Hull()
 void Hull::ConstructMesh(Core& objectCore)
 {
     m_hullDescription.Shapes[0].Positions.Data.clear();
+    m_hullDescription.Shapes[0].Normals.Data.clear();
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {
         MeshProperties prop = {~e.neighbourhood, vector3f_t(x,y,z), e.direction};
