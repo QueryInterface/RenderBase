@@ -78,9 +78,9 @@ protected:
             vertices.insert(vertices.end(), outVertex, outVertex + 9);
 
             float outNormals[9] = {};
-            rotate(&m_normals[ normalIndices[i + indexOrder[0]] * 3], orientation, vector3f_t(0,0,0), outVertex);
-            rotate(&m_normals[ normalIndices[i + indexOrder[1]] * 3], orientation, vector3f_t(0,0,0), outVertex + 3);
-            rotate(&m_normals[ normalIndices[i + indexOrder[2]] * 3], orientation, vector3f_t(0,0,0), outVertex + 6);
+            rotate(&m_normals[ normalIndices[i + indexOrder[0]] * 3], orientation, vector3f_t(0,0,0), outNormals);
+            rotate(&m_normals[ normalIndices[i + indexOrder[1]] * 3], orientation, vector3f_t(0,0,0), outNormals + 3);
+            rotate(&m_normals[ normalIndices[i + indexOrder[2]] * 3], orientation, vector3f_t(0,0,0), outNormals + 6);
             normals.insert(normals.end(), outNormals, outNormals + 9);
         }
     }
