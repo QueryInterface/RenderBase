@@ -53,6 +53,10 @@ namespace ConstructorImpl
         // Return reference to logic constructor object
         Core&  GetCore();
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Object
+        // virtual IMeshPtr        GetMesh() const {return m_mesh;}
+        // virtual const GLMeshDescs& GetMeshDescs() const override;
 
     private:
         Core        m_core;

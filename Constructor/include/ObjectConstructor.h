@@ -32,6 +32,13 @@ namespace ConstructorImpl
         unsigned int                    neighbourhood;
     };
 
+    enum ConstructorElements : size_t
+    {
+        BaseIndex = 0,
+        MeshIndex,
+        ComponentsCount,
+    };
+
     typedef Utils::RangeList<Element> Pillar_t;
 
     class Core : public IConstructable

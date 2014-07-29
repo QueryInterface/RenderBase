@@ -107,7 +107,7 @@ void Game::InitScene1()
     const size_t cubeScales = 7;
     for (size_t i = 0; i < cubeScales; ++i)
     {
-        m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(0,i,0), Directions::pZ, true);
+        m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(16,i,16), Directions::pZ, true);
     }
 
     try

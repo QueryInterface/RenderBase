@@ -15,20 +15,32 @@ using namespace ConstructorImpl;
 
 Hull::Hull() 
 {
-    m_hullDescription.Shapes.resize(1);
-    m_hullDescription.Shapes[0].Indices.ElementSize = 1;
-    m_hullDescription.Shapes[0].Positions.ElementSize = 3;
-    m_hullDescription.Shapes[0].LayoutType = IMesh::LayoutType::Triangle;
+    m_hullDescription.Shapes.resize(ConstructorElements::ComponentsCount);
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].Indices.ElementSize     = 1;
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].Positions.ElementSize   = 3;
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].Normals.ElementSize     = 3;
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].LayoutType = IMesh::LayoutType::Fan;
+
+    const float normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
+    const float vertices[] = {0, 0, 0, 0, 0, 32, 32, 0, 32, 32, 0, 0};
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].Positions.Data.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
+    m_hullDescription.Shapes[ConstructorElements::BaseIndex].Normals.Data.assign(normals, normals + sizeof(normals)/sizeof(float));
+
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].Indices.ElementSize     = 1;
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].Positions.ElementSize   = 3;
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].Normals.ElementSize     = 3;
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].LayoutType = IMesh::LayoutType::Triangle;
 }
 
 void Hull::ConstructMesh(Core& objectCore)
 {
-    m_hullDescription.Shapes[0].Positions.Data.clear();
-    m_hullDescription.Shapes[0].Normals.Data.clear();
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].Positions.Data.clear();
+    m_hullDescription.Shapes[ConstructorElements::MeshIndex].Normals.Data.clear();
+
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {
         MeshProperties prop = {~e.neighbourhood, vector3f_t(x,y,z), e.direction};
-        ILibrary::library()->GetMesh(e.construction->primitiveUID).ConstructGeometry(prop, m_hullDescription.Shapes[0]);
+        ILibrary::library()->GetMesh(e.construction->primitiveUID).ConstructGeometry(prop, m_hullDescription.Shapes[ConstructorElements::MeshIndex]);
     });
 }
 

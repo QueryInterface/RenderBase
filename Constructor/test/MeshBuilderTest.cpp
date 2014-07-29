@@ -27,7 +27,7 @@ protected:
     {
         const IMesh::Desc& desc = m_builder.GetMesh().GetDesc();
 
-        auto& positions = desc.Shapes[0].Positions;
+        auto& positions = desc.Shapes[ConstructorElements::MeshIndex].Positions;
         size_t verticesTotal = positions.Data.size();
 
         vector3f_t maximum(0,0,0);
@@ -80,23 +80,39 @@ protected:
         vector3i_t wlh = m_builder.GetBoundingBox().RBB - m_builder.GetBoundingBox().LFT;
         vector3i_t lft = m_builder.GetBoundingBox().LFT;
         // save vertices
-        auto& positions = desc.Shapes[0].Positions;
+        auto& positions = desc.Shapes[ConstructorElements::MeshIndex].Positions;
         for (size_t j = 0; j < positions.Data.size(); j += 3)
         {
             vector3f_t current(positions.Data[j], positions.Data[j + 1], positions.Data[j + 2]);
             fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
         }
-        auto& normals = desc.Shapes[0].Normals.Data;
+        auto& normals = desc.Shapes[ConstructorElements::MeshIndex].Normals.Data;
         for (size_t j = 0; j < normals.size(); j += 3)
         {
             fprintf(f, "vn %.3f %.3f %.3f\n", normals[j], normals[j + 1], normals[j + 2]);
         }
 
         //save indices
-        for (size_t j = 0; j < (positions.Data.size() / desc.Shapes[0].Positions.ElementSize); j += 3)
+        for (size_t j = 0; j < (positions.Data.size() / desc.Shapes[ConstructorElements::MeshIndex].Positions.ElementSize); j += 3)
         {
             fprintf(f, "f %u/%u %u/%u %u/%u\n", j + 1, j + 1, j + 2, j + 2, j + 3, j + 3);
         }
+
+        fprintf(f, "o surface\n");
+        auto& positions1 = desc.Shapes[ConstructorElements::BaseIndex].Positions;
+        for (size_t j = 0; j < positions1.Data.size(); j += 3)
+        {
+            vector3f_t current(positions1.Data[j], positions1.Data[j + 1], positions1.Data[j + 2]);
+            fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
+        }
+        auto& normals1 = desc.Shapes[ConstructorElements::BaseIndex].Normals.Data;
+        for (size_t j = 0; j < normals1.size(); j += 3)
+        {
+            fprintf(f, "vn %.3f %.3f %.3f\n", normals1[j], normals1[j + 1], normals1[j + 2]);
+        }
+
+        fprintf(f, "f -4/-4 -3/-3 -2/-2 -1/-1\n");
+
         fclose(f);
     }
 

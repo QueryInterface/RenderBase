@@ -7,6 +7,7 @@
 #pragma once
 #include <Resources.h>
 #include <Construction.h>
+//#include <../Engine/include/ObjectImpl.h>
 #include "MathBasics.h"
 #include <vector>
 #include <cstdint>
@@ -16,8 +17,7 @@
 /// Constructor public interface
 ///
 /////////////////////////////////////////////////////////////////////
-
-struct Constructor //: public ISceneObject
+struct Constructor// : public Object
 {
     virtual void        NewConstruction() = 0;
     virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false) = 0;
