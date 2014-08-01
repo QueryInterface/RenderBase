@@ -84,7 +84,7 @@ protected:
         for (size_t j = 0; j < positions.Data.size(); j += 3)
         {
             vector3f_t current(positions.Data[j], positions.Data[j + 1], positions.Data[j + 2]);
-            fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
+            fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y, current.z - lft.z - wlh.z/2.0);
         }
         auto& normals = desc.Shapes[ConstructorElements::MeshIndex].Normals.Data;
         for (size_t j = 0; j < normals.size(); j += 3)
@@ -103,7 +103,7 @@ protected:
         for (size_t j = 0; j < positions1.Data.size(); j += 3)
         {
             vector3f_t current(positions1.Data[j], positions1.Data[j + 1], positions1.Data[j + 2]);
-            fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y - lft.y - wlh.y/2.0, current.z - lft.z - wlh.z/2.0);
+            fprintf(f, "v %.3f %.3f %.3f\n", current.x - lft.x - wlh.x/2.0, current.y, current.z - lft.z - wlh.z/2.0);
         }
         auto& normals1 = desc.Shapes[ConstructorElements::BaseIndex].Normals.Data;
         for (size_t j = 0; j < normals1.size(); j += 3)
