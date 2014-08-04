@@ -36,9 +36,17 @@ enum class CoordType
     World
 };
 
-struct EventCallback 
+struct InputCallback 
 {
-    virtual void OnKeyPress(uint32_t keyCode, bool isPress) {keyCode; isPress;}
+    virtual void OnKeyDown(uint32_t keyCode) {keyCode;}
+    virtual void OnKeyUp() {}
+    virtual void OnMouseDown() {}
+    virtual void OnMouseUp() {}
+    virtual void OnMouseMove() {}
+    virtual void OnFingerDown() {}
+    virtual void OnFingerUp() {}
+    virtual void OnFingerMove() {}
+    virtual void OnMultiGesture() {}
 };
 
 struct ISceneElement : public IHandle
@@ -67,7 +75,7 @@ struct IWindow
     virtual std::string GetTitle() const                    = 0;
     virtual bool        IsFullscreen() const                = 0;
 
-    virtual IHandle*    RegisterEventCallback(const std::shared_ptr<EventCallback>& callback) = 0;
+    virtual IHandle*    RegisterEventCallback(const std::shared_ptr<InputCallback>& callback) = 0;
 };
 
 // scene interfaces
