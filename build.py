@@ -51,9 +51,12 @@ class Builder:
             os.makedirs(self.__outPath)
         oldWorkDir = os.getcwd()
         os.chdir(self.__outPath)
-        call(['cmake', '-G', self.__curGenType, '../../'])
+        result = call(['cmake', '-G', self.__curGenType, '../../'])
         os.chdir(oldWorkDir)
-        print "Generating project " + self.__curGenType + "...DONE"
+        if (result == 0):
+            print "Generating project " + self.__curGenType + "...DONE"
+        else:
+            print "Generating project " + self.__curGenType + "...FAIL"
 
     def Build(self):
         print "INFO: Build is not implemented yet!"

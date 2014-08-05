@@ -1,18 +1,20 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 # list all header files from src and include folders automatically 
-file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
-file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
-
+file(GLOB HEADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
+file(GLOB PRIVATE_HEADER_FILES  ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
+file(GLOB SOURCE_FILES          ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+file(GLOB SHADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/src/*.shader)
+file(GLOB TEST_FILES            ${CMAKE_CURRENT_LIST_DIR}/test/*.*)
 # list all source files from src and test folders automatically 
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/test/ TEST_FILES)
 list(APPEND TEST_FILES ${CMAKE_CURRENT_LIST_DIR}/src/SceneElementImpl.cpp)
+
 # Form binaries
 add_library(Engine SHARED
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
     ${SOURCE_FILES}
+    ${SHADER_FILES}
 )
 
 add_executable(EngineTest
@@ -70,9 +72,21 @@ set_target_properties(EngineTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR
 
 target_link_libraries(EngineTest gtest Utils)
 
+# Generate headers from shader files
+foreach(file ${SHADER_FILES})
+    add_custom_command(
+        TARGET Engine
+        COMMAND ${BIN2CPP} "${file}" "${file}.h"
+        DEPENDS "${file}"
+    )
+    # bin2cpp("${file}", "${file}.h")
+    message(STATUS "Processing: ${file}")
+endforeach()
+
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})
+source_group ("Shaders"             FILES ${SHADER_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
 source_group ("Tests"               FILES ${TEST_FILES}) 
 
