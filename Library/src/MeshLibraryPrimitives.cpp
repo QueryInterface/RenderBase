@@ -62,7 +62,7 @@ protected:
         std::vector<float>& vertices = out_descriptor.Positions.Data;
         std::vector<float>& normals = out_descriptor.Normals.Data;
         vertices.reserve(vertices.size() + size * 3);
-        normals.reserve(vertices.size() + size * 3);
+        normals.reserve(normals.size() + size * 3);
 
         const int directIndexOrder[3] = {0, 1, 2};
         const int morrorIndexOrder[3] = {1, 0, 2};

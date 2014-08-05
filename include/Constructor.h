@@ -20,7 +20,7 @@
 struct Constructor// : public Object
 {
     virtual void        NewConstruction() = 0;
-    virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false) = 0;
+    virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions orientation, Directions copySettingsFrom = Directions::nY) = 0;
     virtual IMesh&      GetMesh() = 0;
     virtual BBox        GetBoundingBox() const = 0;
 

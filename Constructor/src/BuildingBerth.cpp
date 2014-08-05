@@ -16,14 +16,14 @@ Core& BuildingBerth::GetCore()
     return m_core;
 }
 
-bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours)
+bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom)
 {
     if (type == ElementType::Space) 
     {
         return false;
     }
 
-    m_core.SetElement(ILibrary::library()->GetConstruction(type), position, direction, updateNeighbours);
+    m_core.SetElement(ILibrary::library()->GetConstruction(type), position, direction, copySettingsFrom);
     return true;
 }
 
