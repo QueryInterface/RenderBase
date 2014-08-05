@@ -83,3 +83,11 @@ macro(check_apple_platform)
     " OS_IPHONE)
   endif()
 endmacro()
+
+function(bin2cpp in_file out_file)
+    add_custom_command(
+        OUTPUT ${out_file}
+        COMMAND ${BIN2CPP} ${in_file} ${out_file}
+        DEPENDS ${in_file}
+    )
+endfunction()
