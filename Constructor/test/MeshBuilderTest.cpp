@@ -45,7 +45,10 @@ protected:
             minimum.z = (min(minimum.z, current.z));
         }
 
-        EXPECT_EQ(refCount, verticesTotal/3);
+        if (refCount)
+        {
+            EXPECT_EQ(refCount, verticesTotal/3);
+        }
 
         ASSERT_FLOAT_EQ(refmax.x, maximum.x);
         ASSERT_FLOAT_EQ(refmax.y, maximum.y);
@@ -154,6 +157,26 @@ TEST_F(MeshBuilderTest, DISABLED_CubeMesh)
             }
     const float BBox = (float)cubeScales;
     ASSERT_NO_FATAL_FAILURE(checkMesh(cubeScales*cubeScales*6*6, vector3f_t(0,0,0), vector3f_t(BBox, BBox, BBox), "c:\\tmp\\HugeCube.obj"));
+}
+
+TEST_F(MeshBuilderTest, DISABLED_CubeWithPillarMesh)
+{
+    const size_t cubeScales = 9;
+    for (size_t x = 0; x < cubeScales; ++x)
+        for (size_t y = 0; y < cubeScales; ++y)
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                if (x != cubeScales/2 || z != cubeScales/2)
+                    m_builder.SetElement(ElementType::Cube, vector3i_t(x,y,z), Directions::pZ);
+            }
+
+    for (size_t y = 1; y < cubeScales-1; ++y)
+    {
+        m_builder.SetElement(ElementType::Cube, vector3i_t(cubeScales/2, y, cubeScales/2), Directions::pZ);
+    }
+
+    const float BBox = (float)cubeScales;
+    ASSERT_NO_FATAL_FAILURE(checkMesh(0, vector3f_t(0,0,0), vector3f_t(BBox, BBox, BBox), "c:\\tmp\\PillaredCube.obj"));
 }
 
 TEST_F(MeshBuilderTest, DISABLED_SpongeMesh)
