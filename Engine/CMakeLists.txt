@@ -4,10 +4,33 @@ cmake_minimum_required (VERSION 2.8.11)
 file(GLOB HEADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
 file(GLOB PRIVATE_HEADER_FILES  ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
 file(GLOB SOURCE_FILES          ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
-file(GLOB SHADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/src/*.shader)
+file(GLOB SHADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/shaders/*.shader)
 file(GLOB TEST_FILES            ${CMAKE_CURRENT_LIST_DIR}/test/*.*)
-# list all source files from src and test folders automatically 
-list(APPEND TEST_FILES ${CMAKE_CURRENT_LIST_DIR}/src/SceneElementImpl.cpp)
+
+set(TEST_DEP_FILES 
+    ${CMAKE_CURRENT_LIST_DIR}/src/SceneElementImpl.cpp)
+
+# Generate headers from shader files
+foreach(file ${SHADER_FILES})
+    add_custom_command(
+        OUTPUT "${file}.h"
+        COMMAND ${BIN2CPP} "${file}" "${file}.h"
+        DEPENDS "${file}"
+    )
+    # bin2cpp("${file}", "${file}.h")
+    message(STATUS "Processing: ${file}")
+endforeach()
+# Add generated files
+foreach(file ${SHADER_FILES})
+    list(APPEND SHADER_FILES "${file}.h")
+endforeach()
+
+message(STATUS "GGG: ${SHADER_FILES}")
+
+add_executable(EngineTest
+    ${TEST_FILES}
+    ${TEST_DEP_FILES}
+)
 
 # Form binaries
 add_library(Engine SHARED
@@ -17,9 +40,6 @@ add_library(Engine SHARED
     ${SHADER_FILES}
 )
 
-add_executable(EngineTest
-    ${TEST_FILES}
-)
 # Add libraries
 if (WIN32)
     set(DX_DIR $ENV{DXSDK_DIR})
@@ -56,9 +76,11 @@ if (WIN32)
 	add_dependencies(Engine copy_angle_libraries
 							copy_media_folder)
 endif()
+# add_dependencies(Engine ${SHADER_FILES})
 
 # Include directories for Engine and tests
 include_directories(include)
+include_directories(shaders)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
 include_directories(${SDL_DIR}/include)
@@ -72,23 +94,12 @@ set_target_properties(EngineTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR
 
 target_link_libraries(EngineTest gtest Utils)
 
-# Generate headers from shader files
-foreach(file ${SHADER_FILES})
-    add_custom_command(
-        TARGET Engine
-        COMMAND ${BIN2CPP} "${file}" "${file}.h"
-        DEPENDS "${file}"
-    )
-    # bin2cpp("${file}", "${file}.h")
-    message(STATUS "Processing: ${file}")
-endforeach()
-
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
 source_group ("Sources"             FILES ${SOURCE_FILES})
 source_group ("Shaders"             FILES ${SHADER_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
-source_group ("Tests"               FILES ${TEST_FILES}) 
+source_group ("Tests"               FILES ${TEST_FILES})
 
 # Place porject in correct filter folder
 set_property (TARGET Engine         PROPERTY FOLDER "Libraries")  
