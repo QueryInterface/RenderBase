@@ -75,7 +75,7 @@ struct IWindow
     virtual std::string GetTitle() const                    = 0;
     virtual bool        IsFullscreen() const                = 0;
 
-    virtual IHandle*    RegisterEventCallback(const std::shared_ptr<InputCallback>& callback) = 0;
+    virtual IHandle*    RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) = 0;
 };
 
 // scene interfaces

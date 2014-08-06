@@ -4,12 +4,21 @@
 #include "ObjectImpl.h"
 #include "CameraImpl.h"
 #include "LightImpl.h"
-#include <chrono>
+
+static const unsigned char g_vertexShaderSource[] = {
+    #include "vshader.shader.h"
+    0x00,
+};
+
+static const unsigned char g_fragmentShader[] = {
+    #include "fshader.shader.h"
+    0x00,
+};
 
 Scene::Scene()
     : m_camera(nullptr)
-    , m_vertexShaderSource(g_vertexShaderSource)
-    , m_fragmentShaderSource(g_fragmentShader)
+    , m_vertexShaderSource((char*)g_vertexShaderSource)
+    , m_fragmentShaderSource((char*)g_fragmentShader)
 {
     initShaders();
 	GL_CALL(glEnable(GL_DEPTH_TEST));
