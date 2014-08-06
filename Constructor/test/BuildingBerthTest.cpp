@@ -524,4 +524,14 @@ TEST_F(BuildingBerthTest, ElementInDifferentGroups)
 
     ASSERT_NE(el1->group, el2->group);
 }
+
+TEST_F(BuildingBerthTest, NotNaighborsIfFromDifferentGroups)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,2,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(2,2,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,2,0), Directions::pZ, Directions::pX);
+
+    Element *el = m_builder->GetCore().GetElement(vector3i_t(0,2,0));
+    ASSERT_EQ(0, el->neighbourhood);
+}
 // eof

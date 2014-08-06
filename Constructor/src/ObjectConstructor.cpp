@@ -45,9 +45,9 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
         morph(position, element);
     }
 
+    CopySettingsFrom(position, element, copySettingsFrom);
     // notify neighbours about new element
     UpdateNeighbourhood(position, element);
-    CopySettingsFrom(position, element, copySettingsFrom);
 
     m_pillars.item(position.x, position.z).insert(position.y, element);
 
@@ -80,7 +80,7 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos, Element& self)
         vector3i_t relativeDirection = rotate(neighbor.relationPosition, self.direction);
 
         Element* item = GetElement(relativeDirection + pos);
-        if (!item)
+        if (!item || item->group != self.group )
             continue;
 
         const NeighborDesc* itemNeighbour = findNeighbor(*item, relativeDirection);
