@@ -22,7 +22,7 @@ foreach(file ${SHADER_FILES})
 endforeach()
 # Add generated files
 foreach(file ${SHADER_FILES})
-    list(APPEND SHADER_FILES "${file}.h")
+     list(APPEND SHADER_FILES "${file}.h")
 endforeach()
 
 message(STATUS "GGG: ${SHADER_FILES}")
