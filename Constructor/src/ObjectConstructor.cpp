@@ -15,12 +15,14 @@ using namespace ConstructorImpl;
 Core::Core() 
     : m_pillars(256)
     , m_isDirty(false)
+    , m_lastGroupIndex(0)
 {
     m_desc.boundingBox = BBox(vector3i_t(INT32_MAX, INT32_MAX, INT32_MAX), vector3i_t(0,0,0));
 }
 
-void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& position, Directions direction, bool updateNeighbours)
+void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& position, Directions direction, Directions copySettingsFrom)
 {
+    copySettingsFrom;
     m_isDirty = true;
 
     m_desc.direction = direction;
@@ -42,13 +44,12 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
     {
         morph(position, element);
     }
-    m_pillars.item(position.x, position.z).insert(position.y, element);
 
-    // notify neighbours aboutnew element
-    if (updateNeighbours)
-    {
-        UpdateNeighbourhood(position);
-    }
+    CopySettingsFrom(position, element, copySettingsFrom);
+    // notify neighbours about new element
+    UpdateNeighbourhood(position, element);
+
+    m_pillars.item(position.x, position.z).insert(position.y, element);
 
     if (vector3i_t(1,1,1) != (desc.boundingBox.RBB - desc.boundingBox.LFT))
     {
@@ -72,19 +73,14 @@ Element* Core::GetElement(const vector3i_t& position)
     return pillar ? pillar->get_item_at(position.y) : nullptr;
 }
 
-void Core::UpdateNeighbourhood(const vector3i_t& pos)
+void Core::UpdateNeighbourhood(const vector3i_t& pos, Element& self)
 {
-    auto pillar = m_pillars.get_item_at(pos.x, pos.z);
-    assert(nullptr != pillar);
-
-    Element* self = pillar->get_item_at(pos.y);
-
-    for (auto neighbor : self->construction->neighbors)
+    for (auto neighbor : self.construction->neighbors)
     {
-        vector3i_t relativeDirection = rotate(neighbor.relationPosition, self->direction);
+        vector3i_t relativeDirection = rotate(neighbor.relationPosition, self.direction);
 
         Element* item = GetElement(relativeDirection + pos);
-        if (!item)
+        if (!item || item->group != self.group )
             continue;
 
         const NeighborDesc* itemNeighbour = findNeighbor(*item, relativeDirection);
@@ -98,8 +94,31 @@ void Core::UpdateNeighbourhood(const vector3i_t& pos)
 
         if (itemNeighbour->relationWeight >= neighbor.relationWeight)
         {
-            self->neighbourhood |= neighbor.relationFlag;
+            self.neighbourhood |= neighbor.relationFlag;
         }
+    }
+}
+
+void Core::CopySettingsFrom(const vector3i_t& pos, Element& self, Directions copySettingsFrom)
+{
+    copySettingsFrom;
+    pos;
+    self;
+    if (Directions::nY == copySettingsFrom && 0 == pos.y)
+    {
+        self.group = 0;
+        return;
+    }
+
+    vector3i_t neighbour = rotate(vector3i_t(0,0,1), copySettingsFrom);
+    Element* item = GetElement(neighbour + pos);
+    if (item)
+    {
+        self.group = item->group;
+    }
+    else
+    {
+        self.group = ++m_lastGroupIndex;
     }
 }
 
@@ -230,6 +249,7 @@ vector3i_t Core::rotate(const vector3i_t& vec, unsigned int dst) const
     case Directions::nX : return vector3i_t(-out.z, out.y,  out.x);
     case Directions::pX : return vector3i_t( out.z, out.y, -out.x);
     case Directions::nZ : return vector3i_t(-out.x, vec.y, -out.z);
+    case Directions::nY : return vector3i_t( out.x, -out.z, out.y); // GHM GUANO
     }
 
     return out;

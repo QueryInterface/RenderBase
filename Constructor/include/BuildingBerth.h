@@ -39,7 +39,7 @@ namespace ConstructorImpl
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Attaches element to construction
-        virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, bool updateNeighbours = false);
+        virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom = Directions::nY);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Attaches element to construction

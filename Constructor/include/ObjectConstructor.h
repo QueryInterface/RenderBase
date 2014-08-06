@@ -30,6 +30,7 @@ namespace ConstructorImpl
         unsigned int                    direction;
         unsigned int                    originalDirection; //secondary direction required for generated elements
         unsigned int                    neighbourhood;
+        unsigned int                    group;
     };
 
     enum ConstructorElements : size_t
@@ -53,7 +54,7 @@ namespace ConstructorImpl
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Adds element to specified position
-        void SetElement(const ConstructionDescription& element, const vector3i_t& position, Directions direction, bool updateNeighbours);
+        void SetElement(const ConstructionDescription& element, const vector3i_t& position, Directions direction, Directions copySettingsFrom);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Returns element desc on requested position
@@ -62,7 +63,11 @@ namespace ConstructorImpl
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Updates neighborhood of component in pos
-        void UpdateNeighbourhood(const vector3i_t& pos);
+        void UpdateNeighbourhood(const vector3i_t& pos, Element& self);
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Copies element settings from neighbor at copySettingsFrom direction
+        void CopySettingsFrom(const vector3i_t& pos, Element& self, Directions copySettingsFrom);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Allows to iterrate through Core components
@@ -95,6 +100,8 @@ namespace ConstructorImpl
         bool                         m_isDirty;
 
         ConstructionDescription      m_reference;
+
+        unsigned int                m_lastGroupIndex;
 
         PREVENT_COPY(Core);
     };
