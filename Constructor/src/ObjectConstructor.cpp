@@ -250,6 +250,7 @@ vector3i_t Core::rotate(const vector3i_t& vec, unsigned int dst) const
     case Directions::pX : return vector3i_t( out.z, out.y, -out.x);
     case Directions::nZ : return vector3i_t(-out.x, vec.y, -out.z);
     case Directions::nY : return vector3i_t( out.x, -out.z, out.y); // GHM GUANO
+    case Directions::pY : return vector3i_t( out.x,  out.z, out.y); // GHM GUANO
     }
 
     return out;
