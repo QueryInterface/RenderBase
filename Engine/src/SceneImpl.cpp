@@ -79,9 +79,8 @@ void Scene::Render()
         // Get object desc
         const Object::GLMeshDescs& objectGLDescs = object->GetMeshDescs();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        GL_CALL(glUniformMatrix4fv(m_program.UniformModelMatrix, 1, GL_FALSE, glm::value_ptr(object->GetMatrix(CoordType::Local))));
-        GL_CALL(glUniformMatrix4fv(m_program.UniformWorldMatrix, 1, GL_FALSE, glm::value_ptr(object->GetMatrix(CoordType::World))));
-
+        glm::mat4 worldViewMatrix = object->GetMatrix(CoordType::World) * object->GetMatrix(CoordType::Local);
+        GL_CALL(glUniformMatrix4fv(m_program.UniformModelWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldViewMatrix)));
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
         for (uint32_t i = 0; i < objectGLDescs.size(); ++i)
@@ -162,11 +161,8 @@ void Scene::initShaders()
     m_program.AttribNormal = GL_CALL(glGetAttribLocation(m_program.Program, "normal"));
     VE_ERROR_IF(m_program.AttribNormal == -1, L"Failed to get location of attribute \"normal\"");
 
-    m_program.UniformModelMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "modelMatrix"));
-    VE_ERROR_IF(m_program.UniformModelMatrix == -1, L"Failed to get location of attribute \"modelMatrix\"");
-
-    m_program.UniformWorldMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "worldMatrix"));
-    VE_ERROR_IF(m_program.UniformWorldMatrix == -1, L"Failed to get location of attribute \"worldMatrix\"");
+    m_program.UniformModelWorldMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "model_worldMatrix"));
+    VE_ERROR_IF(m_program.UniformModelWorldMatrix == -1, L"Failed to get location of attribute \"model_worldMatrix\"");
 
     m_program.UniformViewMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "viewMatrix"));
     VE_ERROR_IF(m_program.UniformViewMatrix == -1, L"Failed to get location of attribute \"viewMatrix\"");

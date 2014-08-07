@@ -30,8 +30,7 @@ private:
             : Program(0)
             , AttribPosition(0)
             , AttribNormal(0)
-            , UniformModelMatrix(0)
-            , UniformWorldMatrix(0)
+            , UniformModelWorldMatrix(0)
             , UniformViewMatrix(0)
             , UniformProjMatrix(0)
             , UniformLightPosition(0)
@@ -40,8 +39,7 @@ private:
         GLuint      Program;
         GLint       AttribPosition;
         GLint       AttribNormal;
-        GLint       UniformModelMatrix;
-        GLint       UniformWorldMatrix;
+        GLint       UniformModelWorldMatrix;
         GLint       UniformViewMatrix;
         GLint       UniformProjMatrix;
         GLint       UniformLightPosition;

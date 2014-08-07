@@ -48,7 +48,7 @@ public:
     WindowBase();
     virtual ~WindowBase() = 0;
     // IWindow
-    virtual IHandle*        RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) override;
+    virtual IHandle&        RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) override;
     // WindowBase
     virtual WINDOW_MSG      ProcessMessage() = 0;
     virtual void            Present() = 0;
@@ -63,7 +63,7 @@ private:
 
 struct IRenderContext : public IHandle
 {
-	virtual WindowBase* GetWindow() = 0;
+	virtual WindowBase& GetWindow() = 0;
 	virtual void        Present()   = 0;
 };
 
@@ -119,7 +119,7 @@ public:
 	virtual ~RenderContextGLES2();
     // IHandle
 	virtual void        Release();
-	virtual WindowBase* GetWindow() override;
+	virtual WindowBase& GetWindow() override;
 	virtual void        Present() override;
 private:
     unique_ptr<WindowBase> _window;

@@ -496,6 +496,15 @@ TEST_F(BuildingBerthTest, ElementGroups)
     ASSERT_EQ(0, el->group);
 }
 
+TEST_F(BuildingBerthTest, ElementGroupFromUpperObject)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,10,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,9,0), Directions::pZ, Directions::pY);
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,10,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0, 9,0));
+    ASSERT_EQ(el1->group, el2->group);
+}
 
 TEST_F(BuildingBerthTest, BasementGroups)
 {
@@ -523,6 +532,19 @@ TEST_F(BuildingBerthTest, ElementInDifferentGroups)
     Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0,10,0));
 
     ASSERT_NE(el1->group, el2->group);
+}
+
+TEST_F(BuildingBerthTest, ElementInDifferentGroups1)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,10,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,9,0), Directions::pZ);
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,10,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0, 9,0));
+
+    ASSERT_NE(el1->group, el2->group);
+    ASSERT_EQ(0, el1->neighbourhood);
+    ASSERT_EQ(0, el2->neighbourhood);
 }
 
 TEST_F(BuildingBerthTest, NotNaighborsIfFromDifferentGroups)

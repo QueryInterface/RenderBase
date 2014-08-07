@@ -13,7 +13,7 @@ public:
     virtual IScenePtr               CreateScene() override;
 
     virtual void                    SetScene(IScenePtr scene) override;
-    virtual IWindow*                GetWindow() const override;
+    virtual IWindow&                GetWindow() const override;
     virtual void                    Run(IEngineCallbacks* callbacks) override;
 private:
     IRenderContextPtr m_renderContext;

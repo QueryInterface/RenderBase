@@ -20,22 +20,21 @@ private:
 
     PREVENT_COPY(Game);
 
-    IEngine*                m_engine;
-    IWindow*                m_window;
-    IResourceOverseer*      m_resourceOverseer;
+    IEngine&                m_engine;
+    IWindow&                m_window;
+    IResourceOverseer&      m_resourceOverseer;
     IScenePtr               m_scene;
     ICameraPtr              m_camera;
     ILightPtr               m_light;
     IObjectPtr              m_lightShape;
     std::vector<IObjectPtr> m_objects;
 
-    // singletone iternal life. no need to have ptr
     Constructor&            m_builder;
 };
 
 Game::Game()
     : m_engine(IEngine::Instance())
-    , m_window(m_engine->GetWindow())
+    , m_window(m_engine.GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
     , m_scene(nullptr)
@@ -43,9 +42,9 @@ Game::Game()
     , m_builder(Constructor::GetConstructor())
 {
     // Setup window
-    m_window->SetWidth(640);
-    m_window->SetHeight(480);
-    m_window->SetFullscreen(false);
+    m_window.SetWidth(640);
+    m_window.SetHeight(480);
+    m_window.SetFullscreen(false);
 
     // Create camera
     CameraSetup cameraSetup;
@@ -55,11 +54,11 @@ Game::Game()
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 100.0f;
-    m_scene = m_engine->CreateScene();
-    m_camera = m_engine->CreateCamera(cameraSetup);
-    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-5, -5, 7));
+    m_scene = m_engine.CreateScene();
+    m_camera = m_engine.CreateCamera(cameraSetup);
+    m_light = m_engine.CreateLight(LightType::Spot, vector3f_t(-5, -5, 7));
 
-    m_engine->SetScene(m_scene);
+    m_engine.SetScene(m_scene);
 
     m_scene->SetCamera(m_camera);
     m_scene->AddLight(m_light);
@@ -71,8 +70,8 @@ Game::~Game()
 
 void Game::InitHelpers()
 {
-    IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
-    ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+    IMeshPtr mesh = m_resourceOverseer.LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
+    ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
     m_lightShape = IObject::CreateObject(mesh, texture0);
     m_lightShape->SetPosition(CoordType::World, vector3f_t(-5, -5, 7));
@@ -82,24 +81,17 @@ void Game::InitHelpers()
 
 void Game::InitScene0()
 {
-    try
-    {
-        // Load resources
-        IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
-        ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
-        ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
-        // // Create objects
-        IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-        object0->SetPosition(CoordType::World, vector3f_t(-3, -3, 7));
-        IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-        object1->SetPosition(CoordType::World, vector3f_t(3, 3, 7));
-        m_objects.push_back(object0);
-        m_objects.push_back(object1);
-    }
-    catch (std::exception& ex) 
-    {
-        ex;
-    }
+    // Load resources
+    IMeshPtr mesh = m_resourceOverseer.LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
+    ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+    ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
+    // // Create objects
+    IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
+    object0->SetPosition(CoordType::World, vector3f_t(-3, -3, 7));
+    IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
+    object1->SetPosition(CoordType::World, vector3f_t(3, 3, 7));
+    m_objects.push_back(object0);
+    m_objects.push_back(object1);
 }
 
 void Game::InitScene1()
@@ -110,38 +102,25 @@ void Game::InitScene1()
         m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(16,i,16), Directions::pZ);
     }
 
-    try
-    {
-        IMeshPtr mesh = nullptr;
-        mesh.reset(&m_builder.GetMesh());
-        IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
-        BBox bbox = m_builder.GetBoundingBox();
-        vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
-        object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
-        object0->SetPosition(CoordType::World, vector3f_t(0, 0, 7));
-        object0->SetScale(CoordType::Local, vector3f_t(0.5, 0.5, 0.5));
-        m_objects.push_back(object0);
-    }
-    catch (std::exception& ex) 
-    {
-        ex;
-    }
+    IMeshPtr mesh = nullptr;
+    mesh.reset(&m_builder.GetMesh());
+    IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
+    BBox bbox = m_builder.GetBoundingBox();
+    vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
+    object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
+    object0->SetPosition(CoordType::World, vector3f_t(0, 0, 7));
+    object0->SetScale(CoordType::Local, vector3f_t(0.5, 0.5, 0.5));
+    m_objects.push_back(object0);
 }
 
 void Game::Start()
 {
-    try 
+
+    for (IObjectPtr& object : m_objects)
     {
-        for (IObjectPtr& object : m_objects)
-        {
-            m_scene->AddObject(object);
-        }
-        m_engine->Run(this);
+        m_scene->AddObject(object);
     }
-    catch (std::exception& ex) 
-    {
-        ex;
-    }
+    m_engine.Run(this);
 }
 
 void Game::OnSceneUpdate()
@@ -169,9 +148,16 @@ void Game::OnSceneUpdate()
 
 int main() 
 {
-    Game game;
-    game.InitHelpers();
-    game.InitScene0();
-    game.InitScene1();
-    game.Start();
+    try 
+    {
+        Game game;
+        game.InitHelpers();
+        game.InitScene0();
+        game.InitScene1();
+        game.Start();
+    }
+    catch (std::exception& ex) 
+    {
+        ex;
+    }
 }

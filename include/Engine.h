@@ -75,7 +75,7 @@ struct IWindow
     virtual std::string GetTitle() const                    = 0;
     virtual bool        IsFullscreen() const                = 0;
 
-    virtual IHandle*    RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) = 0;
+    virtual IHandle&    RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) = 0;
 };
 
 // scene interfaces
@@ -138,12 +138,12 @@ struct IEngineCallbacks
 struct IEngine
 {
     virtual void                    SetScene(IScenePtr scene)                           = 0;
-    virtual IWindow*                GetWindow() const                                   = 0;
+    virtual IWindow&                GetWindow() const                                   = 0;
     virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
 
     virtual ILightPtr               CreateLight(LightType type, vector3f_t position)    = 0;
     virtual ICameraPtr              CreateCamera(const CameraSetup& setup)              = 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 
-    static LIB_EXPORT IEngine*  CALLING_CONVENTION Instance();
+    static LIB_EXPORT IEngine&  CALLING_CONVENTION Instance();
 };

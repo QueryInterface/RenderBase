@@ -80,10 +80,10 @@ WindowBase::WindowBase() {
 WindowBase::~WindowBase() {
 }
 
-IHandle* WindowBase::RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) {
+IHandle& WindowBase::RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) {
     std::lock_guard<std::mutex> lock(_callbackMutex);
     _InputCallbacks.push_back(callback);
-    return make_handle<WindowCallbackHandle>(this, --_InputCallbacks.end());
+    return *make_handle<WindowCallbackHandle>(this, --_InputCallbacks.end());
 }
 
 inline void WindowBase::_eraseCallback(list< shared_ptr<InputCallback> >::iterator& iter) {
@@ -183,8 +183,8 @@ void RenderContextGLES2::Release() {
     delete this;
 }
 
-WindowBase* RenderContextGLES2::GetWindow() {
-    return _window.get();
+WindowBase& RenderContextGLES2::GetWindow() {
+    return *_window.get();
 }
 
 void RenderContextGLES2::Present() {
