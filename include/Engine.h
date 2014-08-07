@@ -38,10 +38,10 @@ enum class CoordType
     World
 };
 
-struct InputCallback 
+struct IWindowCallbacks 
 {
     virtual void OnKeyDown(KeyboardKey key) {key;}
-    virtual void OnKeyUp() {}
+    virtual void OnKeyUp(KeyboardKey key) {key;}
     virtual void OnMouseDown() {}
     virtual void OnMouseUp() {}
     virtual void OnMouseMove() {}
@@ -77,7 +77,8 @@ struct IWindow
     virtual std::string GetTitle() const                    = 0;
     virtual bool        IsFullscreen() const                = 0;
 
-    virtual IHandle&    RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) = 0;
+    virtual void        RegisterInputCallbacks(IWindowCallbacks* callbacks) = 0;
+    virtual void        UnregisterInputCallbacks(IWindowCallbacks* callbacks) = 0;
 };
 
 // scene interfaces

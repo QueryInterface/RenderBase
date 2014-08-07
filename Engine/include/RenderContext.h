@@ -29,18 +29,6 @@ enum class WINDOW_MSG
     QUIT
 };
 
-class WindowCallbackHandle : public IHandle 
-{
-public:
-    WindowCallbackHandle(WindowBase* windowContext, list< shared_ptr<InputCallback> >::iterator& iter);
-    virtual ~WindowCallbackHandle();
-private:
-    WindowBase*                                 m_window;
-    list< shared_ptr<InputCallback> >::iterator m_iter;
-
-    PREVENT_COPY(WindowCallbackHandle);
-};
-
 class WindowBase : public IWindow 
 {
     friend class WindowCallbackHandle;
@@ -48,15 +36,15 @@ public:
     WindowBase();
     virtual ~WindowBase() = 0;
     // IWindow
-    virtual IHandle&        RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) override;
+    virtual void        RegisterInputCallbacks(IWindowCallbacks* callbacks) override;
+    virtual void        UnregisterInputCallbacks(IWindowCallbacks* callbacks) override;
     // WindowBase
-    virtual WINDOW_MSG      ProcessMessage() = 0;
-    virtual void            Present() = 0;
+    virtual WINDOW_MSG  ProcessMessage() = 0;
+    virtual void        Present() = 0;
+protected:
+    mutex                m_callbackMutex;
 private:
-    mutex                               m_callbackMutex;
-    list< shared_ptr<InputCallback> >   m_inputCallbacks;
-
-    void _eraseCallback(list< shared_ptr<InputCallback> >::iterator& iter);
+    set<IWindowCallbacks*> m_inputCallbacks;
 
     PREVENT_COPY(WindowBase);
 };
