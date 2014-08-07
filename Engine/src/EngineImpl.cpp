@@ -36,7 +36,7 @@ void EngineImpl::SetScene(IScenePtr scene)
     m_scene = scene;
 }
 
-IWindow* EngineImpl::GetWindow() const
+IWindow& EngineImpl::GetWindow() const
 {
     return m_renderContext->GetWindow();
 }
@@ -44,7 +44,7 @@ IWindow* EngineImpl::GetWindow() const
 void EngineImpl::Run(IEngineCallbacks* callbacks)
 {
     WINDOW_MSG msg = WINDOW_MSG::FOREGROUND;
-    while((msg = m_renderContext->GetWindow()->ProcessMessage()) != WINDOW_MSG::QUIT) 
+    while((msg = m_renderContext->GetWindow().ProcessMessage()) != WINDOW_MSG::QUIT) 
     {
         if (msg == WINDOW_MSG::FOREGROUND)
         {
@@ -58,10 +58,10 @@ void EngineImpl::Run(IEngineCallbacks* callbacks)
     }
 }
 
-IEngine* IEngine::Instance()
+IEngine& IEngine::Instance()
 {
     static std::unique_ptr<IEngine> s_engine;
     if (!s_engine)
         s_engine.reset(new EngineImpl());
-    return s_engine.get();   
+    return *s_engine.get();   
 }

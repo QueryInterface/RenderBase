@@ -20,8 +20,8 @@ private:
 
     PREVENT_COPY(Game);
 
-    IEngine*                m_engine;
-    IWindow*                m_window;
+    IEngine&                m_engine;
+    IWindow&                m_window;
     IResourceOverseer*      m_resourceOverseer;
     IScenePtr               m_scene;
     ICameraPtr              m_camera;
@@ -35,7 +35,7 @@ private:
 
 Game::Game()
     : m_engine(IEngine::Instance())
-    , m_window(m_engine->GetWindow())
+    , m_window(m_engine.GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
     , m_scene(nullptr)
@@ -43,9 +43,9 @@ Game::Game()
     , m_builder(Constructor::GetConstructor())
 {
     // Setup window
-    m_window->SetWidth(640);
-    m_window->SetHeight(480);
-    m_window->SetFullscreen(false);
+    m_window.SetWidth(640);
+    m_window.SetHeight(480);
+    m_window.SetFullscreen(false);
 
     // Create camera
     CameraSetup cameraSetup;
@@ -55,11 +55,11 @@ Game::Game()
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 100.0f;
-    m_scene = m_engine->CreateScene();
-    m_camera = m_engine->CreateCamera(cameraSetup);
-    m_light = m_engine->CreateLight(LightType::Spot, vector3f_t(-5, -5, 7));
+    m_scene = m_engine.CreateScene();
+    m_camera = m_engine.CreateCamera(cameraSetup);
+    m_light = m_engine.CreateLight(LightType::Spot, vector3f_t(-5, -5, 7));
 
-    m_engine->SetScene(m_scene);
+    m_engine.SetScene(m_scene);
 
     m_scene->SetCamera(m_camera);
     m_scene->AddLight(m_light);
@@ -136,7 +136,7 @@ void Game::Start()
         {
             m_scene->AddObject(object);
         }
-        m_engine->Run(this);
+        m_engine.Run(this);
     }
     catch (std::exception& ex) 
     {

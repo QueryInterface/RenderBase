@@ -76,7 +76,7 @@ if (WIN32)
 	add_dependencies(Engine copy_angle_libraries
 							copy_media_folder)
 endif()
-# add_dependencies(Engine ${SHADER_FILES})
+add_dependencies(Engine ${SHADER_FILES})
 
 # Include directories for Engine and tests
 include_directories(include)
