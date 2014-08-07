@@ -22,14 +22,13 @@ private:
 
     IEngine&                m_engine;
     IWindow&                m_window;
-    IResourceOverseer*      m_resourceOverseer;
+    IResourceOverseer&      m_resourceOverseer;
     IScenePtr               m_scene;
     ICameraPtr              m_camera;
     ILightPtr               m_light;
     IObjectPtr              m_lightShape;
     std::vector<IObjectPtr> m_objects;
 
-    // singletone iternal life. no need to have ptr
     Constructor&            m_builder;
 };
 
@@ -71,8 +70,8 @@ Game::~Game()
 
 void Game::InitHelpers()
 {
-    IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
-    ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+    IMeshPtr mesh = m_resourceOverseer.LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
+    ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
     m_lightShape = IObject::CreateObject(mesh, texture0);
     m_lightShape->SetPosition(CoordType::World, vector3f_t(-5, -5, 7));
@@ -85,9 +84,9 @@ void Game::InitScene0()
     try
     {
         // Load resources
-        IMeshPtr mesh = m_resourceOverseer->LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
-        ITexturePtr texture0 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
-        ITexturePtr texture1 = m_resourceOverseer->LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
+        IMeshPtr mesh = m_resourceOverseer.LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
+        ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
+        ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
         // // Create objects
         IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
         object0->SetPosition(CoordType::World, vector3f_t(-3, -3, 7));

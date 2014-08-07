@@ -9,6 +9,6 @@ struct IResourceOverseer
     virtual ITexturePtr         LoadTexture(const std::wstring& path)              = 0;
     virtual IScriptPtr          LoadScript(const std::wstring& path)               = 0;
 
-    static LIB_EXPORT IResourceOverseer* CALLING_CONVENTION Instance();
+    static LIB_EXPORT IResourceOverseer& CALLING_CONVENTION Instance();
 };
 

@@ -108,10 +108,10 @@ void ResourceOverseerImpl::SaveScript(IMeshPtr mesh, const std::wstring& path) c
     mesh;path;
 }
 
-IResourceOverseer* IResourceOverseer::Instance()
+IResourceOverseer& IResourceOverseer::Instance()
 {
     static std::unique_ptr<IResourceOverseer> s_resourceOverseer;
     if (!s_resourceOverseer)
         s_resourceOverseer.reset(new ResourceOverseerImpl());
-    return s_resourceOverseer.get();    
+    return *s_resourceOverseer.get();    
 }
