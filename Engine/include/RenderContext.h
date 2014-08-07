@@ -35,8 +35,8 @@ public:
     WindowCallbackHandle(WindowBase* windowContext, list< shared_ptr<InputCallback> >::iterator& iter);
     virtual ~WindowCallbackHandle();
 private:
-    WindowBase*                                 _window;
-    list< shared_ptr<InputCallback> >::iterator _iter;
+    WindowBase*                                 m_window;
+    list< shared_ptr<InputCallback> >::iterator m_iter;
 
     PREVENT_COPY(WindowCallbackHandle);
 };
@@ -53,8 +53,8 @@ public:
     virtual WINDOW_MSG      ProcessMessage() = 0;
     virtual void            Present() = 0;
 private:
-    mutex                               _callbackMutex;
-    list< shared_ptr<InputCallback> >   _InputCallbacks;
+    mutex                               m_callbackMutex;
+    list< shared_ptr<InputCallback> >   m_inputCallbacks;
 
     void _eraseCallback(list< shared_ptr<InputCallback> >::iterator& iter);
 
@@ -92,7 +92,8 @@ private:
     bool            m_fullscreen;
 };
 
-class WindowSDL final : public WindowBase {
+class WindowSDL final : public WindowBase 
+{
 public:
     WindowSDL(const RenderContextBuilder* builder);
     virtual ~WindowSDL();
@@ -109,11 +110,12 @@ public:
     virtual WINDOW_MSG  ProcessMessage();
     virtual void        Present();
 private:
-    SDL_Window*    _window;
-    SDL_GLContext  _glcontext;
+    SDL_Window*    m_window;
+    SDL_GLContext  m_glcontext;
 };
 
-class RenderContextGLES2 final : public IRenderContext {
+class RenderContextGLES2 final : public IRenderContext 
+{
 public:
 	RenderContextGLES2(const RenderContextBuilder* builder);
 	virtual ~RenderContextGLES2();
@@ -122,7 +124,7 @@ public:
 	virtual WindowBase& GetWindow() override;
 	virtual void        Present() override;
 private:
-    unique_ptr<WindowBase> _window;
+    unique_ptr<WindowBase> m_window;
 
     PREVENT_COPY(RenderContextGLES2);
 };

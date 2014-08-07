@@ -3,6 +3,7 @@
 #include "common.h"
 #include "MathBasics.h"
 #include "Resources.h"
+#include "EngineInput.h"
 #include <string>
 #include <memory>
 #include <vector>
@@ -27,7 +28,8 @@ typedef shared_ptr<IObject>             IObjectPtr;
 
 enum class LightType
 {
-    Spot
+    Spot,
+    Direct
 };
 
 enum class CoordType
@@ -38,7 +40,7 @@ enum class CoordType
 
 struct InputCallback 
 {
-    virtual void OnKeyDown(uint32_t keyCode) {keyCode;}
+    virtual void OnKeyDown(KeyboardKey key) {key;}
     virtual void OnKeyUp() {}
     virtual void OnMouseDown() {}
     virtual void OnMouseUp() {}

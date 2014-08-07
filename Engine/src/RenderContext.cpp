@@ -7,13 +7,16 @@
 /// InputCallbackHandle ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 WindowCallbackHandle::WindowCallbackHandle(WindowBase* windowContext, list< shared_ptr<InputCallback> >::iterator& iter)
-    : _window(windowContext)
-    , _iter(iter) {
+    : m_window(windowContext)
+    , m_iter(iter) 
+{
 }
 
-WindowCallbackHandle::~WindowCallbackHandle() {
-    if (_window) {
-        _window->_eraseCallback(_iter);
+WindowCallbackHandle::~WindowCallbackHandle() 
+{
+    if (m_window) 
+    {
+        m_window->_eraseCallback(m_iter);
     }
 }
 
@@ -24,136 +27,164 @@ RenderContextBuilder::RenderContextBuilder()
     : m_width(640)
     , m_height(480)
     , m_fullscreen(false)
-    , m_title("Window") {
+    , m_title("Window") 
+    {
 }
 
-RenderContextBuilder::~RenderContextBuilder() {
+RenderContextBuilder::~RenderContextBuilder() 
+{
 
 }
 
-inline void RenderContextBuilder::SetWidth(uint32_t width) {
+inline void RenderContextBuilder::SetWidth(uint32_t width) 
+{
     m_width = width;
 }
 
-inline void RenderContextBuilder::SetHeight(uint32_t height) {
+inline void RenderContextBuilder::SetHeight(uint32_t height) 
+{
     m_height = height;
 }
 
-inline void RenderContextBuilder::SetTitle(const std::string& name) {
+inline void RenderContextBuilder::SetTitle(const std::string& name) 
+{
     m_title = name;
 }
 
-inline void RenderContextBuilder::SetFullscreen(bool fullscreen) {
+inline void RenderContextBuilder::SetFullscreen(bool fullscreen) 
+{
     m_fullscreen = fullscreen;
 }
 
-inline uint32_t RenderContextBuilder::GetWidth() const {
+inline uint32_t RenderContextBuilder::GetWidth() const 
+{
     return m_width;
 }
 
-inline uint32_t RenderContextBuilder::GetHeight() const {
+inline uint32_t RenderContextBuilder::GetHeight() const 
+{
     return m_height;
 }
 
-inline std::string RenderContextBuilder::GetTitle() const {
+inline std::string RenderContextBuilder::GetTitle() const 
+{
     return m_title;
 }
 
-inline bool RenderContextBuilder::IsFullscreen() const {
+inline bool RenderContextBuilder::IsFullscreen() const 
+{
     return m_fullscreen;
 }
 
-IRenderContextPtr RenderContextBuilder::GetResult() {
+IRenderContextPtr RenderContextBuilder::GetResult() 
+{
     return make_shared<RenderContextGLES2>(this);
 }
 
-RenderContextBuilderPtr RenderContextBuilder::Create() {
+RenderContextBuilderPtr RenderContextBuilder::Create() 
+{
     return make_shared<RenderContextBuilder>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// WindowBase /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WindowBase::WindowBase() {
+WindowBase::WindowBase() 
+{
 }
 
-WindowBase::~WindowBase() {
+WindowBase::~WindowBase() 
+{
 }
 
-IHandle& WindowBase::RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) {
-    std::lock_guard<std::mutex> lock(_callbackMutex);
-    _InputCallbacks.push_back(callback);
-    return *make_handle<WindowCallbackHandle>(this, --_InputCallbacks.end());
+IHandle& WindowBase::RegisterInputCallback(const std::shared_ptr<InputCallback>& callback) 
+{
+    std::lock_guard<std::mutex> lock(m_callbackMutex);
+    m_inputCallbacks.push_back(callback);
+    return *make_handle<WindowCallbackHandle>(this, --m_inputCallbacks.end());
 }
 
-inline void WindowBase::_eraseCallback(list< shared_ptr<InputCallback> >::iterator& iter) {
-    _InputCallbacks.erase(iter);
+inline void WindowBase::_eraseCallback(list< shared_ptr<InputCallback> >::iterator& iter) 
+{
+    m_inputCallbacks.erase(iter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// WindowSDL //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WindowSDL::WindowSDL(const RenderContextBuilder* builder) {
+WindowSDL::WindowSDL(const RenderContextBuilder* builder) 
+{
     SDL_Init(SDL_INIT_VIDEO);
 #ifdef WIN32
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #endif //WIN32
-    _window = SDL_CreateWindow(builder->GetTitle().c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+    m_window = SDL_CreateWindow(builder->GetTitle().c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
                                builder->GetWidth(), builder->GetHeight(), SDL_WINDOW_OPENGL);
-    VE_ERROR_IF(!_window, L"Window creation failed: %S", SDL_GetError());
-    _glcontext = SDL_GL_CreateContext(_window);
-    VE_ERROR_IF(!_glcontext, L"GL context creation failed: %S", SDL_GetError());
+    VE_ERROR_IF(!m_window, L"Window creation failed: %S", SDL_GetError());
+    m_glcontext = SDL_GL_CreateContext(m_window);
+    VE_ERROR_IF(!m_glcontext, L"GL context creation failed: %S", SDL_GetError());
 
     SetFullscreen(builder->IsFullscreen());
 }
 
-WindowSDL::~WindowSDL() {
-    SDL_GL_DeleteContext(_glcontext);
-    SDL_DestroyWindow(_window);
+WindowSDL::~WindowSDL() 
+{
+    SDL_GL_DeleteContext(m_glcontext);
+    SDL_DestroyWindow(m_window);
     SDL_Quit();
 }
 
-void WindowSDL::SetWidth(uint32_t width) {
-    SDL_SetWindowSize(_window, width, GetHeight());
+void WindowSDL::SetWidth(uint32_t width) 
+{
+    SDL_SetWindowSize(m_window, width, GetHeight());
 }    
      
-void WindowSDL::SetHeight(uint32_t height) {
-    SDL_SetWindowSize(_window, GetWidth(), height);
+void WindowSDL::SetHeight(uint32_t height) 
+{
+    SDL_SetWindowSize(m_window, GetWidth(), height);
 }
 
-void WindowSDL::SetTitle(const std::string& name) {
-    SDL_SetWindowTitle(_window, name.c_str());
+void WindowSDL::SetTitle(const std::string& name) 
+{
+    SDL_SetWindowTitle(m_window, name.c_str());
 }
 
-void WindowSDL::SetFullscreen(bool fullscreen) {
-    SDL_SetWindowFullscreen(_window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+void WindowSDL::SetFullscreen(bool fullscreen) 
+{
+    SDL_SetWindowFullscreen(m_window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 }
 
-uint32_t WindowSDL::GetWidth() const {
+uint32_t WindowSDL::GetWidth() const 
+{
     int32_t width;
-    SDL_GetWindowSize(_window, &width, nullptr);
+    SDL_GetWindowSize(m_window, &width, nullptr);
     return (uint32_t)width;
 }
 
-uint32_t WindowSDL::GetHeight() const {
+uint32_t WindowSDL::GetHeight() const 
+{
     int32_t height;
-    SDL_GetWindowSize(_window, nullptr, &height);
+    SDL_GetWindowSize(m_window, nullptr, &height);
     return (uint32_t)height;
 }
 
-std::string WindowSDL::GetTitle() const {
-    return std::string(SDL_GetWindowTitle(_window));
+std::string WindowSDL::GetTitle() const 
+{
+    return std::string(SDL_GetWindowTitle(m_window));
 }
 
-bool WindowSDL::IsFullscreen() const {
-    return (SDL_WINDOW_FULLSCREEN == SDL_GetWindowFlags(_window));
+bool WindowSDL::IsFullscreen() const 
+{
+    return (SDL_WINDOW_FULLSCREEN == SDL_GetWindowFlags(m_window));
 }
 
-WINDOW_MSG WindowSDL::ProcessMessage() {
+WINDOW_MSG WindowSDL::ProcessMessage() 
+{
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        switch(event.type) {
+        switch(event.type) 
+        {
         case SDL_KEYDOWN:
             break;
         case SDL_QUIT:
@@ -164,8 +195,9 @@ WINDOW_MSG WindowSDL::ProcessMessage() {
     return WINDOW_MSG::FOREGROUND;
 }
 
-void WindowSDL::Present() {
-    SDL_GL_SwapWindow(_window);
+void WindowSDL::Present() 
+{
+    SDL_GL_SwapWindow(m_window);
 }
 
 
@@ -173,20 +205,25 @@ void WindowSDL::Present() {
 /// RenderContextGLES2 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RenderContextGLES2::RenderContextGLES2(const RenderContextBuilder* builder)
-    : _window(new WindowSDL(builder)) {
+    : m_window(new WindowSDL(builder)) 
+{
 }
 
-RenderContextGLES2::~RenderContextGLES2() {
+RenderContextGLES2::~RenderContextGLES2() 
+{
 }
 
-void RenderContextGLES2::Release() {
+void RenderContextGLES2::Release() 
+{
     delete this;
 }
 
-WindowBase& RenderContextGLES2::GetWindow() {
-    return *_window.get();
+WindowBase& RenderContextGLES2::GetWindow() 
+{
+    return *m_window.get();
 }
 
-void RenderContextGLES2::Present() {
-    _window->Present();
+void RenderContextGLES2::Present() 
+{
+    m_window->Present();
 }
