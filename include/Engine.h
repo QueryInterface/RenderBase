@@ -40,8 +40,8 @@ enum class CoordType
 
 struct IWindowCallbacks 
 {
-    virtual void OnKeyDown(KeyboardKey key) {key;}
-    virtual void OnKeyUp(KeyboardKey key) {key;}
+    virtual void OnKeyDown(EKey key) {key;}
+    virtual void OnKeyUp(EKey key) {key;}
     virtual void OnMouseDown() {}
     virtual void OnMouseUp() {}
     virtual void OnMouseMove() {}

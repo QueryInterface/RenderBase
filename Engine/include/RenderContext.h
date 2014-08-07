@@ -98,8 +98,12 @@ public:
     virtual WINDOW_MSG  ProcessMessage();
     virtual void        Present();
 private:
+    EKey                convert(uint16_t sdlKey);
+
     SDL_Window*    m_window;
     SDL_GLContext  m_glcontext;
+
+    PREVENT_COPY(WindowSDL);
 };
 
 class RenderContextGLES2 final : public IRenderContext 

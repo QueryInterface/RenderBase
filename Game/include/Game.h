@@ -17,8 +17,8 @@ public:
     // IEngineCallbacks
     void OnSceneUpdate() override;
     // IWindowCallbacks
-    void OnKeyDown(KeyboardKey key) override;
-    void OnKeyUp(KeyboardKey key) override;
+    void OnKeyDown(EKey key) override;
+    void OnKeyUp(EKey key) override;
 private:
     void centerObject(IObjectPtr& obj);
 

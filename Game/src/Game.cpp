@@ -117,12 +117,12 @@ void Game::OnSceneUpdate()
     m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
 }
 
-void Game::OnKeyDown(KeyboardKey key) 
+void Game::OnKeyDown(EKey key) 
 {
     key;
 }
 
-void Game::OnKeyUp(KeyboardKey key)
+void Game::OnKeyUp(EKey key)
 {
     key;
 }
