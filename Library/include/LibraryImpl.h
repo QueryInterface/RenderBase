@@ -8,6 +8,7 @@
 #include "Library.h"
 #include "ConstructionLibraryImpl.h"
 #include "MeshLibraryImpl.h"
+#include "ObjectLibraryImpl.h"
 
 namespace LibraryImpl
 {
@@ -28,6 +29,15 @@ public:
     virtual const ILibraryMesh& GetMesh(unsigned int id);
     virtual void  RegisterMesh(unsigned int id, const ILibraryMesh& mesh);
 
+    // object library primitives
+    // object contains information about 
+    // - mesh
+    // - construction
+    // - material
+    //virtual const ILibraryObject& GetObjectByID(uint32_t id);
+    virtual const ILibraryObject* GetObjectByName(const char* name);
+    virtual void RegisterObject(const char* name, const ILibraryObject& prototype);
+
     virtual ~Library() {};
 
 private:
@@ -37,6 +47,7 @@ private:
 
     ConstructionLibrary m_constructionLibrary;
     MeshLibrary         m_meshLibrary;
+    ObjectLibrary       m_objectLibrary;
 };
 
 };
