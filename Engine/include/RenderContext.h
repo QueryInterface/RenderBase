@@ -42,9 +42,8 @@ public:
     virtual WINDOW_MSG  ProcessMessage() = 0;
     virtual void        Present() = 0;
 protected:
-    mutex                m_callbackMutex;
-private:
-    set<IWindowCallbacks*> m_inputCallbacks;
+    mutex                   m_callbackMutex;
+    set<IWindowCallbacks*>  m_inputCallbacks;
 
     PREVENT_COPY(WindowBase);
 };
@@ -98,7 +97,7 @@ public:
     virtual WINDOW_MSG  ProcessMessage();
     virtual void        Present();
 private:
-    EKey                convert(uint16_t sdlKey);
+    EKey                convert(uint32_t sdlKey);
 
     SDL_Window*    m_window;
     SDL_GLContext  m_glcontext;

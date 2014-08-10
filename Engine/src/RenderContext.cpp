@@ -169,6 +169,10 @@ WINDOW_MSG WindowSDL::ProcessMessage()
         switch(event.type) 
         {
         case SDL_KEYDOWN:
+            for (auto& cb : m_inputCallbacks) cb->OnKeyDown(convert(event.key.keysym.sym));
+            break;
+        case SDL_KEYUP:
+            for (auto& cb : m_inputCallbacks) cb->OnKeyUp(convert(event.key.keysym.sym));
             break;
         case SDL_QUIT:
             return WINDOW_MSG::QUIT;
@@ -183,7 +187,7 @@ void WindowSDL::Present()
     SDL_GL_SwapWindow(m_window);
 }
 
-EKey WindowSDL::convert(uint16_t sdlKey)
+EKey WindowSDL::convert(uint32_t sdlKey)
 {
     switch (sdlKey)
     {
@@ -423,6 +427,11 @@ EKey WindowSDL::convert(uint16_t sdlKey)
         case SDLK_KBDILLUMUP:           return EKey::EK_KBDILLUMUP; break;
         case SDLK_EJECT:                return EKey::EK_EJECT; break;
         case SDLK_SLEEP:                return EKey::EK_SLEEP; break;
+        default:
+            {
+                VE_ERROR(L"Invalid SDL key");
+                return EKey::EK_UNKNOWN;
+            }
     }
 } 
 

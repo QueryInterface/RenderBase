@@ -100,18 +100,18 @@ void Game::OnSceneUpdate()
     static auto start = std::chrono::high_resolution_clock::now();
     auto end = std::chrono::high_resolution_clock::now();
     float elapsedTime = (float)std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-	float angle = elapsedTime / 50000.0f * 45;
+    float angle = elapsedTime / 50000.0f * 45;
     start = end;
     vector3f_t pos;
-/*    for (IObjectPtr& object : m_objects)
+    /*    for (IObjectPtr& object : m_objects)
     {
-        pos = object->GetPosition(CoordType::World);
-        object->Shift(CoordType::World, vector3f_t(0, 0, -7));
-        glm::quat objectQ = glm::angleAxis(angle, vector3f_t(-1, 0, -1));        
-        objectQ = glm::normalize(objectQ);
-        object->Rotate(CoordType::World, objectQ);
-        object->Shift(CoordType::World, vector3f_t(0, 0, 7));
-        pos = object->GetPosition(CoordType::World);
+    pos = object->GetPosition(CoordType::World);
+    object->Shift(CoordType::World, vector3f_t(0, 0, -7));
+    glm::quat objectQ = glm::angleAxis(angle, vector3f_t(-1, 0, -1));        
+    objectQ = glm::normalize(objectQ);
+    object->Rotate(CoordType::World, objectQ);
+    object->Shift(CoordType::World, vector3f_t(0, 0, 7));
+    pos = object->GetPosition(CoordType::World);
     }*/
     m_lightShape->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
     m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
@@ -119,7 +119,13 @@ void Game::OnSceneUpdate()
 
 void Game::OnKeyDown(EKey key) 
 {
-    key;
+    switch (key)
+    {
+    case EKey::EK_W:
+        {
+            //m_camera->Shift(
+        } break;
+    }
 }
 
 void Game::OnKeyUp(EKey key)
