@@ -21,15 +21,15 @@ namespace LibraryImpl
     public:
         //const ObjectDescription& GetObjectDescription(uint32_t id) const;
 
-        const ILibraryObject* GetObject(std::string name);
-        bool RegisterObject(std::string name, const ILibraryObject& primitive);
+        const IGameObject* GetObject(std::string name);
+        bool RegisterObject(std::string name, const IGameObject& primitive);
 
 
         ObjectLibrary();
         virtual ~ObjectLibrary() {};
 
     private: // arguments
-        std::map<std::string, const ILibraryObject*>  m_primitives;
+        std::map<std::string, const IGameObject*>  m_primitives;
     };
 }
 //end  of namespace

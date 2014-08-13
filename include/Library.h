@@ -34,7 +34,7 @@ struct ObjectDescription
     uint32_t Properties;
 };
 
-struct ILibraryObject
+struct IGameObject
 {
 
 };
@@ -55,8 +55,8 @@ struct ILibrary
     virtual const ILibraryMesh& GetMesh(uint32_t id) = 0;
     virtual void RegisterMesh(uint32_t id, const ILibraryMesh& mesh) = 0;
 
-    //virtual const ILibraryObject& GetObjectByID(uint32_t id) = 0;
-    virtual const ILibraryObject* GetObjectByName(const char* name) = 0;
-    virtual void RegisterObject(const char* name, const ILibraryObject& prototype) = 0;
+    //virtual const IGameObject& GetObjectByID(uint32_t id) = 0;
+    virtual const IGameObject* GetObjectByName(const char* name) = 0;
+    virtual void RegisterObject(const char* name, const IGameObject& prototype) = 0;
 };
 // eof

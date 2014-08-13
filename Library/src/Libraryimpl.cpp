@@ -37,12 +37,12 @@ void Library::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
     m_meshLibrary.RegisterMesh(id, mesh);
 }
 
-const ILibraryObject* Library::GetObjectByName(const char* name)
+const IGameObject* Library::GetObjectByName(const char* name)
 {
     return m_objectLibrary.GetObject(name);
 }
 
-void Library::RegisterObject(const char* name, const ILibraryObject& prototype)
+void Library::RegisterObject(const char* name, const IGameObject& prototype)
 {
     m_objectLibrary.RegisterObject(name, prototype);
 }

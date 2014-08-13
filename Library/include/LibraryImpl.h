@@ -34,9 +34,9 @@ public:
     // - mesh
     // - construction
     // - material
-    //virtual const ILibraryObject& GetObjectByID(uint32_t id);
-    virtual const ILibraryObject* GetObjectByName(const char* name);
-    virtual void RegisterObject(const char* name, const ILibraryObject& prototype);
+    //virtual const IGameObject& GetObjectByID(uint32_t id);
+    virtual const IGameObject* GetObjectByName(const char* name);
+    virtual void RegisterObject(const char* name, const IGameObject& prototype);
 
     virtual ~Library() {};
 

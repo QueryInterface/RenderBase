@@ -6,7 +6,7 @@ using namespace LibraryImpl;
 ObjectLibrary::ObjectLibrary() 
 {
 }
-const ILibraryObject* ObjectLibrary::GetObject(std::string name)
+const IGameObject* ObjectLibrary::GetObject(std::string name)
 {
     auto object = m_primitives.find(name);
     if (object != m_primitives.end())
@@ -17,7 +17,7 @@ const ILibraryObject* ObjectLibrary::GetObject(std::string name)
     return nullptr;
 }
 
-bool ObjectLibrary::RegisterObject(std::string name, const ILibraryObject& primitive)
+bool ObjectLibrary::RegisterObject(std::string name, const IGameObject& primitive)
 {
     auto object = m_primitives.find(name);
     if (object != m_primitives.end())
