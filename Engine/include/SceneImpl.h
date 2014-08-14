@@ -20,9 +20,10 @@ public:
 
     virtual void AddObject(IObjectPtr& object) override;
     virtual void AddLight(ILightPtr& light) override;
+    virtual void SetAmbientLight(const vector3f_t& light) override;
     virtual void SetCamera(ICameraPtr& camera) override;
 
-    virtual void Render() override;
+    virtual void Render();
 private:
     struct ProgramDesc
     {
@@ -43,11 +44,13 @@ private:
         GLint       UniformViewMatrix;
         GLint       UniformProjMatrix;
         GLint       UniformLightPosition;
+        GLint       UniformAmbientLight;
         bool        Valid;
     };
 
     std::set<ObjectPtr>                     m_objects;
     std::set<LightPtr>                      m_lights;
+    vector3f_t                              m_ambientLight;
     CameraPtr                               m_camera;
 
     ProgramDesc                             m_program;

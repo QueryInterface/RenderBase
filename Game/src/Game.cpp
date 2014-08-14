@@ -22,6 +22,11 @@ Game::Game()
     cameraSetup.Eye = vector3f_t(8.0, 5.0, -8.0);
     cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
     cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
+
+    //cameraSetup.Eye = vector3f_t(0.0, 0.0, -10.0);
+    //cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
+    //cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
+
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 100.0f;
@@ -33,6 +38,7 @@ Game::Game()
 
     m_scene->SetCamera(m_camera);
     m_scene->AddLight(m_light);
+    m_scene->SetAmbientLight(vector3f_t(0.1, 0.1, 0.1));
 }
 
 Game::~Game()

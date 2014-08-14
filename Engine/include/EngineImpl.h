@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "RenderContext.h"
+#include "SceneImpl.h"
 
 class EngineImpl final : public IEngine
 {
@@ -17,5 +18,5 @@ public:
     virtual void                    Run(IEngineCallbacks* callbacks) override;
 private:
     IRenderContextPtr m_renderContext;
-    IScenePtr         m_scene;
+    shared_ptr<Scene> m_scene;
 };

@@ -19,11 +19,12 @@ Scene::Scene()
     : m_camera(nullptr)
     , m_vertexShaderSource((char*)g_vertexShaderSource)
     , m_fragmentShaderSource((char*)g_fragmentShader)
+    , m_ambientLight(0, 0, 0)
 {
     initShaders();
 	GL_CALL(glEnable(GL_DEPTH_TEST));
 	GL_CALL(glUseProgram(m_program.Program));
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearDepthf(1.0f);
 }
 
@@ -46,6 +47,11 @@ void Scene::AddLight(ILightPtr& light)
     m_lights.insert(static_pointer_cast<Light>(light));
 }
 
+void Scene::SetAmbientLight(const vector3f_t& light)
+{
+    m_ambientLight = light;
+}
+
 void Scene::SetCamera(ICameraPtr& camera)
 {
     m_camera = static_pointer_cast<Camera>(camera);
@@ -63,6 +69,8 @@ void Scene::Render()
         ILightPtr light = *m_lights.begin();
         GL_CALL(glUniform3fv(m_program.UniformLightPosition, 1, glm::value_ptr(light->GetPosition(CoordType::Global))));
     }
+    GL_CALL(glUniform3fv(m_program.UniformAmbientLight, 1, glm::value_ptr(m_ambientLight)));
+
 	// Set texture
 	//GL_CALL(glActiveTexture(GL_TEXTURE0));
 	//GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
@@ -175,23 +183,26 @@ void Scene::initShaders()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    m_program.AttribPosition = GL_CALL(glGetAttribLocation(m_program.Program, "position"));
-    VE_ERROR_IF(m_program.AttribPosition == -1, L"Failed to get location of attribute \"position\"");
+    m_program.AttribPosition = GL_CALL(glGetAttribLocation(m_program.Program, "aPosition"));
+    VE_ERROR_IF(m_program.AttribPosition == -1, L"Failed to get location of attribute \"aPosition\"");
 
-    m_program.AttribNormal = GL_CALL(glGetAttribLocation(m_program.Program, "normal"));
-    VE_ERROR_IF(m_program.AttribNormal == -1, L"Failed to get location of attribute \"normal\"");
+    m_program.AttribNormal = GL_CALL(glGetAttribLocation(m_program.Program, "aNormal"));
+    VE_ERROR_IF(m_program.AttribNormal == -1, L"Failed to get location of attribute \"aNormal\"");
 
-    m_program.UniformModelWorldMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "model_worldMatrix"));
-    VE_ERROR_IF(m_program.UniformModelWorldMatrix == -1, L"Failed to get location of attribute \"model_worldMatrix\"");
+    m_program.UniformModelWorldMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uWorldModelMatrix"));
+    VE_ERROR_IF(m_program.UniformModelWorldMatrix == -1, L"Failed to get location of uniform \"uWorldModelMatrix\"");
 
-    m_program.UniformViewMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "viewMatrix"));
-    VE_ERROR_IF(m_program.UniformViewMatrix == -1, L"Failed to get location of attribute \"viewMatrix\"");
+    m_program.UniformViewMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uViewMatrix"));
+    VE_ERROR_IF(m_program.UniformViewMatrix == -1, L"Failed to get location of uniform \"uViewMatrix\"");
 
-    m_program.UniformProjMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "projMatrix"));
-    VE_ERROR_IF(m_program.UniformProjMatrix == -1, L"Failed to get location of attribute \"projMatrix\"");
+    m_program.UniformProjMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uProjMatrix"));
+    VE_ERROR_IF(m_program.UniformProjMatrix == -1, L"Failed to get location of uniform \"uProjMatrix\"");
     
-    m_program.UniformLightPosition = GL_CALL(glGetUniformLocation(m_program.Program, "lightPosition"));
-    VE_ERROR_IF(m_program.UniformLightPosition == -1, L"Failed to get location of attribute \"lightPosition\"");
+    m_program.UniformLightPosition = GL_CALL(glGetUniformLocation(m_program.Program, "uLightPosition"));
+    VE_ERROR_IF(m_program.UniformLightPosition == -1, L"Failed to get location of uniform \"uLightPosition\"");
+
+    m_program.UniformAmbientLight = GL_CALL(glGetUniformLocation(m_program.Program, "uAmbientLight"));
+    VE_ERROR_IF(m_program.UniformAmbientLight == -1, L"Failed to get location of uniform \"uAmbientLight\"");
     //g_AtribTexCoord = GL_CALL(glGetAttribLocation(g_Program, "textureCoord"));
     //if (g_AtribTexCoord == -1) LOG_ERROR("main", "Init", "Failed to get location of attribute \"textureCoord\"");
 

@@ -129,11 +129,10 @@ struct IObject
 // Base level of all objects
 struct IScene : public IHandle
 {
-    virtual void AddObject(IObjectPtr& object)  = 0;
-    virtual void AddLight(ILightPtr& light)     = 0;
-    virtual void SetCamera(ICameraPtr& camera)  = 0;
-
-    virtual void Render()                       = 0;
+    virtual void AddObject(IObjectPtr& object)              = 0;
+    virtual void AddLight(ILightPtr& light)                 = 0;
+    virtual void SetAmbientLight(const vector3f_t& light)   = 0;
+    virtual void SetCamera(ICameraPtr& camera)              = 0;
 };
 
 struct IEngineCallbacks

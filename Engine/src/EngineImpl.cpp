@@ -33,7 +33,7 @@ IScenePtr EngineImpl::CreateScene()
 
 void EngineImpl::SetScene(IScenePtr scene)
 {
-    m_scene = scene;
+    m_scene = static_pointer_cast<Scene>(scene);
 }
 
 IWindow& EngineImpl::GetWindow() const
