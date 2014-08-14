@@ -87,6 +87,26 @@ void Scene::Render()
         {
             auto& objectDesc = objectGLDescs[i];
             auto& shape = meshDesc.Shapes[i];
+            // Determine gl layout type
+            GLenum primitiveType = 0;
+            switch (shape.LayoutType)
+            {
+            case IMesh::LayoutType::Triangle:
+                primitiveType = GL_TRIANGLES;
+                break;
+            case IMesh::LayoutType::Strip:
+                primitiveType = GL_TRIANGLE_STRIP;
+                break;
+            case IMesh::LayoutType::Fan:
+                primitiveType = GL_TRIANGLE_FAN;
+                break;
+            case IMesh::LayoutType::Points:
+                primitiveType = GL_POINTS;
+                break;
+            default:
+                VE_ERROR(L"Invalid layout type");
+                return;
+            }
             GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, objectDesc.VertexBuffer));
             GL_CALL(glVertexAttribPointer(m_program.AttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0));
 
@@ -100,12 +120,12 @@ void Scene::Render()
             {
                 uint32_t numVertices = shape.Indices.Data.size() / shape.Indices.ElementSize;
                 GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDesc.IndexBuffer));
-                GL_CALL(glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0));
+                GL_CALL(glDrawElements(primitiveType, numVertices, GL_UNSIGNED_INT, 0));
             }
             else
             {
                 uint32_t numVertices = shape.Positions.Data.size() / shape.Positions.ElementSize;
-                GL_CALL(glDrawArrays(GL_TRIANGLES, 0, numVertices));
+                GL_CALL(glDrawArrays(primitiveType, 0, numVertices));
             }
 	        GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
         }
