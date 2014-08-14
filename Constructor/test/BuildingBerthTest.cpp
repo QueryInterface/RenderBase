@@ -636,4 +636,69 @@ TEST_F(BuildingBerthTest, RevercedWeldingHugeGroups)
     EXPECT_EQ(Directions::nZ | Directions::pY, el1->neighbourhood);
     EXPECT_EQ(Directions::nZ | Directions::nY, el2->neighbourhood);
 }
+
+TEST_F(BuildingBerthTest, WeldedCubeWithPillarMesh)
+{
+    const size_t cubeScales = 9;
+    for (size_t x = 0; x < cubeScales; ++x)
+        for (size_t y = 0; y < cubeScales; ++y)
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                if (x != cubeScales/2 || z != cubeScales/2)
+                    m_builder->SetElement(ElementType::Cube, vector3i_t(x,y,z), Directions::pZ);
+            }
+
+    for (size_t y = 1; y < cubeScales - 1; ++y)
+    {
+        m_builder->SetElement(ElementType::Cube, vector3i_t(cubeScales/2, y, cubeScales/2), Directions::pZ);
+    }
+
+    Element* el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, 1, cubeScales/2));
+    ASSERT_EQ(Directions::pY, el->neighbourhood);
+    for (size_t y = 2; y < cubeScales - 2; ++y)
+    {
+        Element* el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2));
+        ASSERT_EQ(Directions::pY | Directions::nY, el->neighbourhood);
+        uint32_t grp = el->group;
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2-1, y, cubeScales/2));
+        ASSERT_EQ(Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_NE(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2+1, y, cubeScales/2));
+        ASSERT_EQ(Directions::pX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_NE(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2+1));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_NE(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2-1));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_NE(grp, el->group);
+    }
+    el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, cubeScales-2, cubeScales/2));
+    ASSERT_EQ(Directions::nY, el->neighbourhood);
+
+    ASSERT_TRUE(m_builder->Weld(0, 1));
+
+    el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, 1, cubeScales/2));
+    ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY, el->neighbourhood);
+    for (size_t y = 2; y < cubeScales - 2; ++y)
+    {
+        Element* el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        uint32_t grp = el->group;
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2-1, y, cubeScales/2));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_EQ(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2+1, y, cubeScales/2));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_EQ(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2+1));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_EQ(grp, el->group);
+        el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, y, cubeScales/2-1));
+        ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::pY | Directions::nY, el->neighbourhood);
+        ASSERT_EQ(grp, el->group);
+    }
+    el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, cubeScales-2, cubeScales/2));
+    ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::nY, el->neighbourhood);
+}
 // eof

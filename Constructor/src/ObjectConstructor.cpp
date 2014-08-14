@@ -159,6 +159,7 @@ bool Core::IsUpdated()
 void Core::Reset()
 {
     m_isDirty = true;
+    m_lastGroupIndex = 0;
     m_pillars.clear();
     m_desc.boundingBox = BBox(vector3i_t(INT32_MAX, INT32_MAX, INT32_MAX), vector3i_t(0,0,0));
 }

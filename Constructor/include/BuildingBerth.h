@@ -42,8 +42,12 @@ namespace ConstructorImpl
         virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom = Directions::nY);
 
         ///////////////////////////////////////////////////////////////////////////////////
-        // Weld two groups into single one
+        // Welds two groups into single one
         virtual bool        Weld(uint32_t group1, uint32_t group2);
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Returns group of element at position, or -1 if no element is there
+        virtual uint32_t    GetGroup(const vector3i_t& position);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Attaches element to construction

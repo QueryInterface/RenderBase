@@ -32,6 +32,12 @@ bool BuildingBerth::Weld(uint32_t group1, uint32_t group2)
     return m_core.Weld(group1, group2);
 }
 
+uint32_t BuildingBerth::GetGroup(const vector3i_t& position)
+{
+    Element *el = m_core.GetElement(position);
+    return el ? el->group : ~0x0;
+}
+
 IMesh& BuildingBerth::GetMesh()
 {
     if (m_core.IsUpdated())

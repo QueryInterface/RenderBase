@@ -179,6 +179,33 @@ TEST_F(MeshBuilderTest, DISABLED_CubeWithPillarMesh)
     ASSERT_NO_FATAL_FAILURE(checkMesh(0, vector3f_t(0,0,0), vector3f_t(BBox, BBox, BBox), "c:\\tmp\\PillaredCube.obj"));
 }
 
+TEST_F(MeshBuilderTest, DISABLED_WeldedCubeWithPillarMesh)
+{
+    const size_t cubeScales = 9;
+    for (size_t x = 0; x < cubeScales; ++x)
+        for (size_t y = 0; y < cubeScales; ++y)
+            for (size_t z = 0; z < cubeScales; ++z)
+            {
+                if (x != cubeScales/2 || z != cubeScales/2)
+                    m_builder.SetElement(ElementType::Cube, vector3i_t(x,y,z), Directions::pZ);
+            }
+
+    for (size_t y = 1; y < cubeScales - 1; ++y)
+    {
+        m_builder.SetElement(ElementType::Cube, vector3i_t(cubeScales/2, y, cubeScales/2), Directions::pZ);
+    }
+
+    ASSERT_NE(uint32_t(~0x0), m_builder.GetGroup(vector3i_t(cubeScales/2, cubeScales/2, cubeScales/2)));
+    ASSERT_NE(uint32_t(~0x0), m_builder.GetGroup(vector3i_t(0,0,0)));
+    ASSERT_NE(m_builder.GetGroup(vector3i_t(cubeScales/2, cubeScales/2, cubeScales/2)), m_builder.GetGroup(vector3i_t(0,0,0)));
+
+    ASSERT_TRUE(m_builder.Weld(m_builder.GetGroup(vector3i_t(0,0,0)), m_builder.GetGroup(vector3i_t(cubeScales/2, cubeScales/2, cubeScales/2))));
+
+    ASSERT_EQ(m_builder.GetGroup(vector3i_t(cubeScales/2, cubeScales/2, cubeScales/2)), m_builder.GetGroup(vector3i_t(0,0,0)));
+    const float BBox = (float)cubeScales;
+    ASSERT_NO_FATAL_FAILURE(checkMesh(0, vector3f_t(0,0,0), vector3f_t(BBox, BBox, BBox), "c:\\tmp\\PillaredCubeWelded.obj"));
+}
+
 TEST_F(MeshBuilderTest, DISABLED_SpongeMesh)
 {
     const size_t cubeScales = 6;
