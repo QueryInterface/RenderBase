@@ -35,7 +35,7 @@ enum class LightType
 enum class CoordType
 {
     Local,
-    World
+    Global
 };
 
 struct IWindowCallbacks 
@@ -53,16 +53,19 @@ struct IWindowCallbacks
 
 struct ISceneElement : public IHandle
 {
-    virtual void        SetPosition(CoordType type, const vector3f_t& pos)                  = 0;
-    virtual void        SetScale(CoordType type, const vector3f_t& scale)                   = 0;
-    virtual void        Shift(CoordType type, const vector3f_t& shift)                      = 0;
-    virtual void        Rotate(CoordType type, const vector3f_t& angles)                    = 0;
-    virtual void        Rotate(CoordType type, const quat& q)                               = 0;
-
-    virtual vector3f_t  GetPosition()                                                       = 0;
-    virtual vector3f_t  GetPosition(CoordType type)                                         = 0;
-    virtual vector3f_t  GetDirection(CoordType type, const vector3f_t& initDirection)       = 0;
-    virtual vector3f_t  GetScale(CoordType type)                                            = 0;
+    virtual void                SetPosition(CoordType type, const vector3f_t& pos)                  = 0;
+    virtual void                SetScale(CoordType type, const vector3f_t& scale)                   = 0;
+    virtual void                Shift(CoordType type, const vector3f_t& shift)                      = 0;
+    virtual void                Rotate(CoordType type, const vector3f_t& angles)                    = 0;
+    virtual void                Rotate(CoordType type, const quat& q)                               = 0;
+    //// Returns position of object center after local and global transformations
+    //virtual const vector3f_t&   GetPosition()                                                       = 0;
+    // Returns position of object after global transformation
+    virtual const vector3f_t&   GetPosition(CoordType type)                                         = 0;
+    // Returns initPosition after specified transformation
+    virtual       vector3f_t    GetPosition(CoordType type, const vector3f_t& initPosition)         = 0;
+    virtual       vector3f_t    GetDirection(CoordType type, const vector3f_t& initDirection)       = 0;
+    virtual const vector3f_t&   GetScale(CoordType type)                                            = 0;
 };
 
 struct IWindow
@@ -88,7 +91,7 @@ struct ILight
 {
 };
 
-struct CameraSetup
+struct CameraDesc
 {
     vector3f_t  Eye;
     vector3f_t  At;
@@ -102,13 +105,8 @@ struct ICamera
     : public IClonable<ICameraPtr>
     , public ISceneElement 
 {
-    virtual const vector3f_t&   GetEye()                    = 0;
-    virtual const vector3f_t&   GetAt()                     = 0;
-    virtual const vector3f_t&   GetUp()                     = 0;
-    virtual const float         GetFieldOfView() const      = 0;
-    virtual const float         GetNearZ() const            = 0;
-    virtual const float         GetFarZ() const             = 0;
-    virtual void                SetFiledOfViewY(float fovy) = 0;
+    virtual const CameraDesc&  GetDesc() const = 0;
+    virtual void SetFiledOfViewY(float fovy) = 0;
 };
 
 struct IObject
@@ -150,7 +148,7 @@ struct IEngine
     virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
 
     virtual ILightPtr               CreateLight(LightType type, vector3f_t position)    = 0;
-    virtual ICameraPtr              CreateCamera(const CameraSetup& setup)              = 0;
+    virtual ICameraPtr              CreateCamera(const CameraDesc& setup)              = 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine&  CALLING_CONVENTION Instance();

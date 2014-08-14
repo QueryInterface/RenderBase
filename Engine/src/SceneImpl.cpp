@@ -61,7 +61,7 @@ void Scene::Render()
     if (!m_lights.empty())
     {
         ILightPtr light = *m_lights.begin();
-        GL_CALL(glUniform3fv(m_program.UniformLightPosition, 1, glm::value_ptr(light->GetPosition())));
+        GL_CALL(glUniform3fv(m_program.UniformLightPosition, 1, glm::value_ptr(light->GetPosition(CoordType::Global))));
     }
 	// Set texture
 	//GL_CALL(glActiveTexture(GL_TEXTURE0));
@@ -79,7 +79,7 @@ void Scene::Render()
         // Get object desc
         const Object::GLMeshDescs& objectGLDescs = object->GetMeshDescs();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        glm::mat4 worldViewMatrix = object->GetMatrix(CoordType::World) * object->GetMatrix(CoordType::Local);
+        glm::mat4 worldViewMatrix = object->GetMatrix(CoordType::Global) * object->GetMatrix(CoordType::Local);
         GL_CALL(glUniformMatrix4fv(m_program.UniformModelWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldViewMatrix)));
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));

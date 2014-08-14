@@ -9,27 +9,21 @@ class Camera
     , protected SceneElementImpl
 {
 public:
-    Camera(const CameraSetup& setup);
+    Camera(const CameraDesc& setup);
     virtual ~Camera();
     // IClonable
     virtual ICameraPtr Clone() const override;
     // ICamera
-    virtual const vector3f_t&   GetEye() override;
-    virtual const vector3f_t&   GetAt() override;
-    virtual const vector3f_t&   GetUp() override;
-    virtual const float         GetFieldOfView() const;
-    virtual const float         GetNearZ() const;
-    virtual const float         GetFarZ() const;
+    virtual const CameraDesc&   GetDesc() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
     scene_elements_impl;
     // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
-    virtual const glm::mat4 GetViewMatrix() {return m_viewMatrix * glm::inverse(GetMatrix(CoordType::World) * GetMatrix(CoordType::Local));}
+    virtual const glm::mat4 GetViewMatrix() {return m_viewMatrix * glm::inverse(GetMatrix(CoordType::Global) * GetMatrix(CoordType::Local));}
     virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
 private:
     void initCamera();
-    void updateState();
 
-    CameraSetup     m_setup;
+    CameraDesc      m_desc;
     vector3f_t      m_eye;
     vector3f_t      m_at;
     vector3f_t      m_up;

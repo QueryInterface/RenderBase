@@ -46,11 +46,11 @@ void SceneElementImplTest::check(const vector3f_t& lPos,      const vector3f_t& 
                                  const vector3f_t& lDir,      const vector3f_t& wDir)
 {
     COMPARE_FLOAT_VEC(lPos, GetPositionImpl(CoordType::Local));
-    COMPARE_FLOAT_VEC(wPos, GetPositionImpl(CoordType::World));
+    COMPARE_FLOAT_VEC(wPos, GetPositionImpl(CoordType::Global));
     COMPARE_FLOAT_VEC(lScale, GetScaleImpl(CoordType::Local));
-    COMPARE_FLOAT_VEC(wScale, GetScaleImpl(CoordType::World));
+    COMPARE_FLOAT_VEC(wScale, GetScaleImpl(CoordType::Global));
     COMPARE_FLOAT_VEC(lDir, GetDirectionImpl(CoordType::Local, lInitDir));
-    COMPARE_FLOAT_VEC(wDir, GetDirectionImpl(CoordType::World, wInitDir));
+    COMPARE_FLOAT_VEC(wDir, GetDirectionImpl(CoordType::Global, wInitDir));
 }
 
 TEST_F(SceneElementImplTest, PositionTest)
@@ -61,7 +61,7 @@ TEST_F(SceneElementImplTest, PositionTest)
     {
         check(test_pos, zero, one, one, z, z, z, z);
     }
-    SetPositionImpl(CoordType::World, test_pos);
+    SetPositionImpl(CoordType::Global, test_pos);
     {
         check(test_pos, test_pos, one, one, z, z, z, z);
     }
@@ -69,7 +69,7 @@ TEST_F(SceneElementImplTest, PositionTest)
     {
         check(test_pos - test_shift, test_pos, one, one, z, z, z, z);
     }
-    ShiftImpl(CoordType::World, test_shift);
+    ShiftImpl(CoordType::Global, test_shift);
     {
         check(test_pos - test_shift, test_pos + test_shift, one, one, z, z, z, z);
     }
@@ -86,11 +86,11 @@ TEST_F(SceneElementImplTest, RotateTest)
     {
         check(-z, zero, one, one, z, z, -x, z);
     }
-    SetPositionImpl(CoordType::World, x);
+    SetPositionImpl(CoordType::Global, x);
     {
         check(-z, x, one, one, z, z, -x, z);
     }
-    RotateImpl(CoordType::World, test_angles);
+    RotateImpl(CoordType::Global, test_angles);
     {
         check(-z, -z, one, one, z, z, -x, -x);
     }
@@ -108,11 +108,11 @@ TEST_F(SceneElementImplTest, QRotateTest)
     {
         check(-z, zero, one, one, z, z, -x, z);
     }
-    SetPositionImpl(CoordType::World, x);
+    SetPositionImpl(CoordType::Global, x);
     {
         check(-z, x, one, one, z, z, -x, z);
     }
-    RotateImpl(CoordType::World, q);
+    RotateImpl(CoordType::Global, q);
     {
         check(-z, -z, one, one, z, z, -x, -x);
     }
@@ -121,7 +121,7 @@ TEST_F(SceneElementImplTest, QRotateTest)
     {
         check(x, -z, one, one, z, z, z, -x);
     }
-    RotateImpl(CoordType::World, -q);
+    RotateImpl(CoordType::Global, -q);
     {
         check(x, x, one, one, z, z, z, z);
     }

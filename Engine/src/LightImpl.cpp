@@ -4,7 +4,7 @@
 Light::Light(LightType type, vector3f_t position)
     : m_type(type)
 {
-    SetPosition(CoordType::World, position);
+    SetPosition(CoordType::Global, position);
 }
 
 Light::~Light()

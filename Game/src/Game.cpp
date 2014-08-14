@@ -18,7 +18,7 @@ Game::Game()
     // Subscribe on user input
     m_window.RegisterInputCallbacks(this);
     // Create camera
-    CameraSetup cameraSetup;
+    CameraDesc cameraSetup;
     cameraSetup.Eye = vector3f_t(8.0, 5.0, -8.0);
     cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
     cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
@@ -46,7 +46,7 @@ void Game::InitHelpers()
     ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
     m_lightShape = IObject::CreateObject(mesh, texture0);
-    m_lightShape->SetPosition(CoordType::World, vector3f_t(-5, -5, 7));
+    m_lightShape->SetPosition(CoordType::Global, vector3f_t(-5, -5, 7));
     m_lightShape->SetScale(CoordType::Local, vector3f_t(0.2f, 0.2f, 0.2f));
     m_scene->AddObject(m_lightShape);
 }
@@ -59,9 +59,9 @@ void Game::InitScene0()
     ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
     // // Create objects
     IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-    object0->SetPosition(CoordType::World, vector3f_t(-3, -3, 7));
+    object0->SetPosition(CoordType::Global, vector3f_t(-3, -3, 7));
     IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
-    object1->SetPosition(CoordType::World, vector3f_t(3, 3, 7));
+    object1->SetPosition(CoordType::Global, vector3f_t(3, 3, 7));
     m_objects.push_back(object0);
     m_objects.push_back(object1);
 }
@@ -80,7 +80,7 @@ void Game::InitScene1()
     BBox bbox = m_builder.GetBoundingBox();
     vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
     object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
-    object0->SetPosition(CoordType::World, vector3f_t(0, 0, 7));
+    object0->SetPosition(CoordType::Global, vector3f_t(0, 0, 7));
     object0->SetScale(CoordType::Local, vector3f_t(0.5, 0.5, 0.5));
     m_objects.push_back(object0);
 }
@@ -105,16 +105,16 @@ void Game::OnSceneUpdate()
     vector3f_t pos;
     /*    for (IObjectPtr& object : m_objects)
     {
-    pos = object->GetPosition(CoordType::World);
-    object->Shift(CoordType::World, vector3f_t(0, 0, -7));
+    pos = object->GetPosition(CoordType::Global);
+    object->Shift(CoordType::Global, vector3f_t(0, 0, -7));
     glm::quat objectQ = glm::angleAxis(angle, vector3f_t(-1, 0, -1));        
     objectQ = glm::normalize(objectQ);
-    object->Rotate(CoordType::World, objectQ);
-    object->Shift(CoordType::World, vector3f_t(0, 0, 7));
-    pos = object->GetPosition(CoordType::World);
+    object->Rotate(CoordType::Global, objectQ);
+    object->Shift(CoordType::Global, vector3f_t(0, 0, 7));
+    pos = object->GetPosition(CoordType::Global);
     }*/
-    m_lightShape->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
-    m_light->Rotate(CoordType::World, vector3f_t(0, 0, angle / 2));
+    m_lightShape->Rotate(CoordType::Global, vector3f_t(0, 0, angle / 2));
+    m_light->Rotate(CoordType::Global, vector3f_t(0, 0, angle / 2));
 }
 
 void Game::OnKeyDown(EKey key) 
@@ -123,7 +123,7 @@ void Game::OnKeyDown(EKey key)
     {
     case EKey::EK_W:
         {
-            //m_camera->Shift(
+            //m_camera->Shift(CoordType::Global, 
         } break;
     }
 }
