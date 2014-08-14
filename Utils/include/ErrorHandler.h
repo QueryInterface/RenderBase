@@ -34,9 +34,9 @@ private:
 #define VE_INFO_IF(cond, ...)       if (cond) {ErrorHandler::Instance()->Process(ERROR_TYPE_INFO,       COMPONENT_NAME, __FILE__, __LINE__, __VA_ARGS__);}
 #define VE_DEBUG_IF(cond, ...)      if (cond) {ErrorHandler::Instance()->Process(ERROR_TYPE_DEBUG,      COMPONENT_NAME, __FILE__, __LINE__, __VA_ARGS__);}
 
-#define DEBUG_OPENGL
+//#define DEBUG_OPENGL
 
-#ifdef DEBUG_OPENGL
+#if defined _DEBUG || defined DEBUG_OPENGL
 #define GL_CALL(expression)                             \
 	expression;					                        \
 	{                                                   \

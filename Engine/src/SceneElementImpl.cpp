@@ -133,6 +133,7 @@ void SceneElementImpl::SetPositionInit(CoordType type, const vector3f_t& initPos
     default:
         VE_ERROR(L"Invalid coord type");
     }
+    m_changed = true;
 }
 
 

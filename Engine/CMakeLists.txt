@@ -8,7 +8,8 @@ file(GLOB SHADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/shaders/*.shader)
 file(GLOB TEST_FILES            ${CMAKE_CURRENT_LIST_DIR}/test/*.*)
 
 set(TEST_DEP_FILES 
-    ${CMAKE_CURRENT_LIST_DIR}/src/SceneElementImpl.cpp)
+    ${CMAKE_CURRENT_LIST_DIR}/src/SceneElementImpl.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/CameraImpl.cpp)
 
 # Generate headers from shader files
 foreach(file ${SHADER_FILES})
@@ -24,8 +25,6 @@ endforeach()
 foreach(file ${SHADER_FILES})
     list(APPEND SHADER_FILES "${file}.h")
 endforeach()
-
-message(STATUS "GGG: ${SHADER_FILES}")
 
 add_executable(EngineTest
     ${TEST_FILES}

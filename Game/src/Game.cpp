@@ -129,7 +129,40 @@ void Game::OnKeyDown(EKey key)
     {
     case EKey::EK_W:
         {
-            //m_camera->Shift(CoordType::Global, 
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(desc.At - desc.Eye);
+            m_camera->Shift(CoordType::Global, shift);
+        } break;
+    case EKey::EK_S:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(desc.At - desc.Eye);
+            m_camera->Shift(CoordType::Global, -shift);
+        } break;
+    case EKey::EK_D:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(glm::cross(desc.At - desc.Eye, desc.Up));
+            m_camera->Shift(CoordType::Global, shift);
+        } break;
+    case EKey::EK_A:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(glm::cross(desc.At - desc.Eye, desc.Up));
+            m_camera->Shift(CoordType::Global, -shift);
+        } break;
+    case EKey::EK_SPACE:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(desc.Up);
+            m_camera->Shift(CoordType::Global, shift);
+        } break;
+    case EKey::EK_LCTRL:
+    case EKey::EK_RCTRL:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            vector3f_t shift = glm::normalize(desc.Up);
+            m_camera->Shift(CoordType::Global, -shift);
         } break;
     }
 }

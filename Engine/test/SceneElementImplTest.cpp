@@ -3,12 +3,7 @@
 #include <memory>
 #define _USE_MATH_DEFINES
 #include <math.h>
-
-#define EPSILON 0.000001
-#define EPSILON_VEC vector3f_t(EPSILON, EPSILON, EPSILON)
-#define COMPARE_FLOAT(val0, val1) (val0 > val1 - EPSILON && val0 < val1 + EPSILON)
-//#define COMPARE_FLOAT_VEC(val0, val1) COMPARE_FLOAT((val0).x, (val1).x) && COMPARE_FLOAT((val0).y, (val1).y) && COMPARE_FLOAT((val0).z, (val1).z)
-#define COMPARE_FLOAT_VEC(val0, val1) EXPECT_NEAR((val0).x, (val1).x, EPSILON); EXPECT_NEAR((val0).y, (val1).y, EPSILON); EXPECT_NEAR((val0).z, (val1).z, EPSILON)
+#include "custom_macros.h"
 
 class SceneElementImplTest 
     : public ::testing::Test
@@ -18,11 +13,6 @@ public:
 
     void SetUp()
     {
-        zero = vector3f_t(0,0,0);
-        one = vector3f_t(1,1,1);
-        x = vector3f_t(1, 0, 0);
-        y = vector3f_t(0, 1, 0);
-        z = vector3f_t(0, 0, 1);
     }
     void TearDown()
     {
@@ -32,12 +22,6 @@ protected:
                const vector3f_t& lScale,    const vector3f_t& wSclale,
                const vector3f_t& lInitDir,  const vector3f_t& wInitDir,
                const vector3f_t& lDir,      const vector3f_t& wDir);
-
-    vector3f_t zero;
-    vector3f_t one;
-    vector3f_t x;
-    vector3f_t y;
-    vector3f_t z;
 };
 
 void SceneElementImplTest::check(const vector3f_t& lPos,      const vector3f_t& wPos, 

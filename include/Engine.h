@@ -147,7 +147,7 @@ struct IEngine
     virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
 
     virtual ILightPtr               CreateLight(LightType type, vector3f_t position)    = 0;
-    virtual ICameraPtr              CreateCamera(const CameraDesc& setup)              = 0;
+    virtual ICameraPtr              CreateCamera(const CameraDesc& setup)               = 0;
     virtual IScenePtr               CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine&  CALLING_CONVENTION Instance();

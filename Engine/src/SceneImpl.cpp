@@ -23,9 +23,12 @@ Scene::Scene()
 {
     initShaders();
 	GL_CALL(glEnable(GL_DEPTH_TEST));
+	GL_CALL(glEnable(GL_CULL_FACE));
 	GL_CALL(glUseProgram(m_program.Program));
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepthf(1.0f);
+    GL_CALL(glFrontFace(GL_CCW));
+    GL_CALL(glCullFace(GL_BACK));
+    GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+    GL_CALL(glClearDepthf(1.0f));
 }
 
 Scene::~Scene()
