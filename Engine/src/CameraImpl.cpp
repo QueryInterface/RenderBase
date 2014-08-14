@@ -8,9 +8,9 @@ Camera::Camera(const CameraDesc& setup)
     // Set initial position of camera into internal structures
     SetPositionInit(CoordType::Global, m_desc.Eye);
     // Register additional vectors for update when camera moves/rotates
-    EnableVectorUpdate(CoordType::Global, &m_desc.Eye);
-    EnableVectorUpdate(CoordType::Global, &m_desc.At);
-    EnableVectorUpdate(CoordType::Global, &m_desc.Up);
+    EnableVectorUpdate(&m_desc.Eye);
+    EnableVectorUpdate(&m_desc.At);
+    EnableVectorUpdate(&m_desc.Up);
 }
 
 Camera::~Camera()

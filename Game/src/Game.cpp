@@ -164,6 +164,18 @@ void Game::OnKeyDown(EKey key)
             vector3f_t shift = glm::normalize(desc.Up);
             m_camera->Shift(CoordType::Global, -shift);
         } break;
+    case EKey::EK_Q:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            glm::quat q = glm::angleAxis(glm::pi<float>() / 30, desc.Up);
+            m_camera->Rotate(CoordType::Local, q);
+        } break;
+    case EKey::EK_E:
+        {
+            const CameraDesc& desc = m_camera->GetDesc();
+            glm::quat q = glm::angleAxis(-glm::pi<float>() / 30, desc.Up);
+            m_camera->Rotate(CoordType::Local, q);
+        } break;
     }
 }
 
