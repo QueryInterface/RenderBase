@@ -14,7 +14,12 @@ public:
     // IClonable
     virtual ICameraPtr Clone() const override;
     // ICamera
-    virtual const CameraSetup&  GetCameraSetup() const override;
+    virtual const vector3f_t&   GetEye() override;
+    virtual const vector3f_t&   GetAt() override;
+    virtual const vector3f_t&   GetUp() override;
+    virtual const float         GetFieldOfView() const;
+    virtual const float         GetNearZ() const;
+    virtual const float         GetFarZ() const;
     virtual void                SetFiledOfViewY(float fovy) override;
     scene_elements_impl;
     // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
@@ -22,8 +27,12 @@ public:
     virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
 private:
     void initCamera();
-    
+    void updateState();
+
     CameraSetup     m_setup;
+    vector3f_t      m_eye;
+    vector3f_t      m_at;
+    vector3f_t      m_up;
     glm::mat4       m_viewMatrix;
     glm::mat4       m_projectionMatrix;
 };

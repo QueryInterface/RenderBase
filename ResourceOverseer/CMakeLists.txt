@@ -17,7 +17,7 @@ aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 add_library(ResourceOverseer SHARED
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
-    ${SOURCE_FILES}
+    ${SOURCE_FILES} 
 )
 
 target_link_libraries(ResourceOverseer tinyobjloader Utils)

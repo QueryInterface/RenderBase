@@ -5,7 +5,7 @@
 class SceneElementImpl
 {
 public:
-    const glm::mat4&    GetMatrix(CoordType type) {return getMatrix(type);}
+    const glm::mat4&    GetMatrix(CoordType type) const {return getMatrix(type);}
 protected:
     SceneElementImpl();
     // Virtual destructor to prevent direct object creation
@@ -22,21 +22,23 @@ protected:
     vector3f_t  GetDirectionImpl(CoordType type, const vector3f_t& initDirection);
     vector3f_t  GetScaleImpl(CoordType type);
 
-
+    bool        HasChanged(bool reset = false);
 private:
-    glm::mat4&  getMatrix(CoordType type);
-    glm::quat&  getQuaternion(CoordType type);
+    glm::mat4&  getMatrix(CoordType type) const;
+    glm::quat&  getQuaternion(CoordType type) const;
 
     vector3f_t  m_localPosition;
     vector3f_t  m_worldPosition;
     vector3f_t  m_localScale;
     vector3f_t  m_worldScale;
 
-    glm::mat4   m_localMatrix;
-    glm::mat4   m_worldMatrix;
+    mutable glm::mat4 m_localMatrix;
+    mutable glm::mat4 m_worldMatrix;
 
-    glm::quat   m_localQ;
-    glm::quat   m_worldQ;
+    mutable glm::quat   m_localQ;
+    mutable glm::quat   m_worldQ;
+
+    bool                m_changed;
 };
 
 #define setposition_impl            virtual void SetPosition(CoordType type, const vector3f_t& pos) override {SetPositionImpl(type, pos);}

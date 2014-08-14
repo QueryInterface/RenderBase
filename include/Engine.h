@@ -102,7 +102,12 @@ struct ICamera
     : public IClonable<ICameraPtr>
     , public ISceneElement 
 {
-    virtual const CameraSetup&  GetCameraSetup() const      = 0;
+    virtual const vector3f_t&   GetEye()                    = 0;
+    virtual const vector3f_t&   GetAt()                     = 0;
+    virtual const vector3f_t&   GetUp()                     = 0;
+    virtual const float         GetFieldOfView() const      = 0;
+    virtual const float         GetNearZ() const            = 0;
+    virtual const float         GetFarZ() const             = 0;
     virtual void                SetFiledOfViewY(float fovy) = 0;
 };
 

@@ -11,6 +11,7 @@ SceneElementImpl::SceneElementImpl()
     , m_worldMatrix(glm::mat4(1.0))
     , m_localQ(1, 0, 0, 0)
     , m_worldQ(1, 0, 0, 0)
+    , m_changed(false)
 {
 }
 
@@ -25,6 +26,7 @@ void SceneElementImpl::SetPositionImpl(CoordType type, const vector3f_t& pos)
 
     vector3f_t delta = pos - GetPositionImpl(type);
     m = glm::translate(glm::mat4(1.0), delta) * m;
+    m_changed = true;
 }
 
 void SceneElementImpl::SetScaleImpl(CoordType type, const vector3f_t& scale)
@@ -44,6 +46,7 @@ void SceneElementImpl::SetScaleImpl(CoordType type, const vector3f_t& scale)
     default:
         VE_ERROR(L"Invalid coord type");
     }
+    m_changed = true;
 }
 
 void SceneElementImpl::ShiftImpl(CoordType type, const vector3f_t& shift)
@@ -51,18 +54,21 @@ void SceneElementImpl::ShiftImpl(CoordType type, const vector3f_t& shift)
     glm::mat4& m = getMatrix(type);
 
     m = glm::translate(glm::mat4(1.0), shift) * m;
+    m_changed = true;
 }
 
 void SceneElementImpl::RotateImpl(CoordType type, const vector3f_t& angles)
 {
     glm::quat& q = getQuaternion(type);
     q = glm::quat(angles) * q;
+    m_changed = true;
 }
 
 void SceneElementImpl::RotateImpl(CoordType type, const quat& qt)
 {
     glm::quat& q = getQuaternion(type);
     q = qt * q;
+    m_changed = true;
 }
 
 vector3f_t SceneElementImpl::GetPositionImpl()
@@ -102,7 +108,14 @@ vector3f_t SceneElementImpl::GetScaleImpl(CoordType type)
     return vector3f_t(1,1,1);
 }
 
-glm::mat4& SceneElementImpl::getMatrix(CoordType type)
+bool SceneElementImpl::HasChanged(bool reset)
+{
+    bool c = m_changed;
+    if (reset) m_changed = false;
+    return c;
+}
+
+glm::mat4& SceneElementImpl::getMatrix(CoordType type) const
 {
     switch (type)
     {
@@ -130,7 +143,7 @@ glm::mat4& SceneElementImpl::getMatrix(CoordType type)
     return m_localMatrix;
 }
 
-glm::quat& SceneElementImpl::getQuaternion(CoordType type)
+glm::quat& SceneElementImpl::getQuaternion(CoordType type) const
 {
     switch (type)
     {
