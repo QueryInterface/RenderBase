@@ -123,7 +123,7 @@ namespace Utils
 
         void for_each(std::function<void(size_t, T&)> visitor)
         {
-            for (auto range : m_rs)
+            for (auto& range : m_rs)
             {
                 for (size_t index = 0; index != range.items.size(); ++index)
                 {
@@ -134,8 +134,6 @@ namespace Utils
     private:
         //iterator m_iterator;
         std::list<range_desc> m_rs; //list of ranges
-        //duh! this is the way to forcecompiler to check type of iterator
-        //typename std::list<range_desc>::iterator m_it;
     };
 }
 // eof

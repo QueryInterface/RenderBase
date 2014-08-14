@@ -55,6 +55,10 @@ namespace ConstructorImpl
         ///////////////////////////////////////////////////////////////////////////////////
         // Adds element to specified position
         void SetElement(const ConstructionDescription& element, const vector3i_t& position, Directions direction, Directions copySettingsFrom);
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Weld two groups into single one
+        bool Weld(uint32_t group1, uint32_t group2);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Returns element desc on requested position

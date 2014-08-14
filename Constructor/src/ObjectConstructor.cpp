@@ -67,6 +67,24 @@ void Core::SetElement(const ConstructionDescription& desc, const vector3i_t& pos
     }
 }
 
+bool Core::Weld(uint32_t group1, uint32_t group2)
+{
+    bool res = false;
+    m_pillars.for_each([&](size_t x, size_t z, Pillar_t& pillar)
+    {
+        pillar.for_each([&](size_t y, Element& e)
+        {
+            if (e.group == group2 || e.group == group1)
+            {
+                res = true;
+                e.group = group1;
+                UpdateNeighbourhood(vector3i_t(x, y, z), e);
+            }
+        });
+    });
+    return res;
+}
+
 Element* Core::GetElement(const vector3i_t& position)
 {
     auto pillar = m_pillars.get_item_at(position.x, position.z);

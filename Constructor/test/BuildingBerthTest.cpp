@@ -556,4 +556,84 @@ TEST_F(BuildingBerthTest, NotNaighborsIfFromDifferentGroups)
     Element *el = m_builder->GetCore().GetElement(vector3i_t(0,2,0));
     ASSERT_EQ(0, el->neighbourhood);
 }
+
+TEST_F(BuildingBerthTest, WeldingGroups)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,10,0), Directions::pZ, Directions::pZ);
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0,10,0));
+
+    EXPECT_NE(el1->group, el2->group);
+    EXPECT_TRUE(m_builder->Weld(el1->group, el2->group));
+    EXPECT_EQ(el1->group, el2->group);
+}
+
+TEST_F(BuildingBerthTest, WeldingNeighbours)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,1,0), Directions::pZ, Directions::pZ);
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0,1,0));
+
+    EXPECT_NE(el1->group, el2->group);
+
+    EXPECT_EQ(Directions::NO, el1->neighbourhood);
+    EXPECT_EQ(Directions::NO, el2->neighbourhood);
+
+    EXPECT_TRUE(m_builder->Weld(el2->group, el1->group));
+
+    EXPECT_NE(Directions::NO, el1->neighbourhood);
+    EXPECT_NE(Directions::NO, el2->neighbourhood);
+}
+
+TEST_F(BuildingBerthTest, WeldingHugeGroups)
+{
+    const size_t itemLength = 3;
+    for (size_t i = 0; i < itemLength; ++i)
+    {
+        m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,i), Directions::pZ);
+        m_builder->SetElement(ElementType::Cube, vector3i_t(0,1,i), Directions::pZ, Directions::nZ);
+    }
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0,1,0));
+
+    EXPECT_NE(el1->group, el2->group);
+    EXPECT_TRUE(m_builder->Weld(el1->group, el2->group));
+
+    el1 = m_builder->GetCore().GetElement(vector3i_t(0, 0, itemLength - 1));
+    el2 = m_builder->GetCore().GetElement(vector3i_t(0, 1, itemLength - 1));
+
+    EXPECT_EQ(el1->group, el2->group);
+
+    EXPECT_EQ(Directions::nZ | Directions::pY, el1->neighbourhood);
+    EXPECT_EQ(Directions::nZ | Directions::nY, el2->neighbourhood);
+}
+
+TEST_F(BuildingBerthTest, RevercedWeldingHugeGroups)
+{
+    const size_t itemLength = 3;
+    for (size_t i = 0; i < itemLength; ++i)
+    {
+        m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,i), Directions::pZ);
+        m_builder->SetElement(ElementType::Cube, vector3i_t(0,1,i), Directions::pZ, Directions::nZ);
+    }
+
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(0,1,0));
+
+    EXPECT_NE(el1->group, el2->group);
+    EXPECT_TRUE(m_builder->Weld(el2->group, el1->group));
+
+    el1 = m_builder->GetCore().GetElement(vector3i_t(0, 0, itemLength - 1));
+    el2 = m_builder->GetCore().GetElement(vector3i_t(0, 1, itemLength - 1));
+
+    EXPECT_EQ(el1->group, el2->group);
+
+    EXPECT_EQ(Directions::nZ | Directions::pY, el1->neighbourhood);
+    EXPECT_EQ(Directions::nZ | Directions::nY, el2->neighbourhood);
+}
 // eof

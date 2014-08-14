@@ -190,15 +190,22 @@ TEST_F(RangeVectorTest, ForEachItems)
     });
     ASSERT_EQ(reference, count);
 }
-/*
-TEST_F(RangeVectorTest, BeginIterator)
+
+TEST_F(RangeVectorTest, ForEachItemsUpdate)
 {
-    m_ranges->insert(100, 10);
-    m_ranges->insert(150, 12);
+    for (size_t i = 0; i < 100; ++i)
+    {
+        m_ranges->insert(i, 10);
+    }
 
-    auto iterator = m_ranges->begin();
+    m_ranges->for_each([&](size_t, int& v) {
+        v = 100;
+    });
 
-    ASSERT_EQ( 10, iterator.value() );
+    for (size_t i = 0; i < 100; ++i)
+    {
+        ASSERT_EQ(100, *m_ranges->get_item_at(i)) << "update for_each element failed on " << i << "th";
+    }
 }
-*/
+
 // eof

@@ -167,6 +167,17 @@ TEST_F(QuadTreeTest, ForEachItems)
     EXPECT_EQ(c_size, count) << "for each should be called for all non-null items";
 }
 
+TEST_F(QuadTreeTest, ForEachUpdateItems)
+{
+    for (size_t i = 0; i < c_size; ++i)
+        m_tree->item(i, i) = 10;
+
+    m_tree->for_each([&](size_t, size_t, int& v){v = 100;});
+
+    for (size_t i = 0; i < c_size; ++i)
+        ASSERT_EQ(100, *m_tree->get_item_at(i, i)) << "update for_each element failed on [" << i << "," << i << "]th";
+}
+
 class QuadTreeBenchmark : public ::testing::Test
 {
 public:

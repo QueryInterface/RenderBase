@@ -27,6 +27,11 @@ bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Dir
     return true;
 }
 
+bool BuildingBerth::Weld(uint32_t group1, uint32_t group2)
+{
+    return m_core.Weld(group1, group2);
+}
+
 IMesh& BuildingBerth::GetMesh()
 {
     if (m_core.IsUpdated())
