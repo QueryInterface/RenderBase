@@ -557,6 +557,23 @@ TEST_F(BuildingBerthTest, NotNaighborsIfFromDifferentGroups)
     ASSERT_EQ(0, el->neighbourhood);
 }
 
+TEST_F(BuildingBerthTest, WeldingNothing)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ);
+    EXPECT_FALSE(m_builder->Weld(0, 100));
+}
+
+TEST_F(BuildingBerthTest, WeldSelf)
+{
+    m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ);
+    m_builder->SetElement(ElementType::Cube, vector3i_t(1,0,0), Directions::pZ);
+    Element *el1 = m_builder->GetCore().GetElement(vector3i_t(0,0,0));
+    Element *el2 = m_builder->GetCore().GetElement(vector3i_t(1,0,0));
+    ASSERT_EQ(el1->group, el2->group);
+
+    EXPECT_FALSE(m_builder->Weld(el1->group, el1->group));
+}
+
 TEST_F(BuildingBerthTest, WeldingGroups)
 {
     m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ);
