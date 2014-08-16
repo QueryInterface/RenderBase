@@ -42,12 +42,17 @@ void Library::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
     m_meshLibrary.RegisterMesh(id, mesh);
 }
 
+Status Library::CheckObjectStatus(std::string name)
+{
+    return m_objectLibrary.CheckObjectStatus(name);
+}
+
 const IGameObject* Library::GetObjectByName(std::string name)
 {
     return m_objectLibrary.GetObject(name);
 }
 
-Errors Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
+Status Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
 {
     return m_objectLibrary.RegisterObject(name, prototype);
 }

@@ -6,10 +6,12 @@ struct IMesh;
 struct ITexture;
 struct IScript;
 struct IGameObject;
+struct IConstructable;
 
 typedef std::shared_ptr<IMesh> IMeshPtr;
 typedef std::shared_ptr<ITexture> ITexturePtr;
 typedef std::shared_ptr<IScript> IScriptPtr;
+typedef std::shared_ptr<IConstructable> IConstructablePtr;
 typedef std::shared_ptr<IGameObject> IGameObjectPtr;
 
 struct IResource
@@ -20,12 +22,25 @@ struct IResource
 struct IGameObject
     : public IResource
 {
-    virtual bool     IsComplete()   const = 0;
-    virtual const std::string& GetName()  const = 0;
-    virtual uint32_t GetElementId() const = 0;
-    virtual uint32_t GetMeshId()    const = 0;
+    struct ObjectProperties
+    {
+        std::string    name;
+        std::string    meshName;
+        std::string    materialName;
+        std::string    elementName;
+    };
 
+    struct ObjectResources
+    {
+        IMeshPtr            mesh;
+        IConstructablePtr   construction;
+    };
+
+    virtual const ObjectProperties& GetObjectContent()   const = 0;
+    virtual const ObjectResources&  GetObjectResources() const = 0;
     // lot's of stuff to do here
+    // FIXME: remove
+    virtual const std::string& GetName() const = 0;
 
     virtual ~IGameObject() {};
 };

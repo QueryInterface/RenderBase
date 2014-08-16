@@ -23,9 +23,16 @@ using std::static_pointer_cast;
 
 #define UNUSED(var) var;
 
-enum class Errors
+enum class Status
 {
-    NoError = 0,
+    // Statuses
+    OK = 0,
+    Pending,
+
+    // TODO: maybe here we should split enum on two???
+
+    // Error codes
+    ResourceNotFound,
     AlreadyExists,
 };
 

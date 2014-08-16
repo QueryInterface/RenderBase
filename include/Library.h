@@ -29,7 +29,8 @@ struct ILibrary
     virtual const ILibraryMesh& GetMesh(uint32_t id) = 0;
     virtual void RegisterMesh(uint32_t id, const ILibraryMesh& mesh) = 0;
 
+    virtual Status CheckObjectStatus(std::string name) = 0;
     virtual const IGameObject* GetObjectByName(std::string name) = 0;
-    virtual Errors RegisterObject(std::string name, IGameObjectPtr & prototype) = 0;
+    virtual Status RegisterObject(std::string name, IGameObjectPtr & prototype) = 0;
 };
 // eof

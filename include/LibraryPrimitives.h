@@ -35,29 +35,24 @@ struct ILibraryMesh : public IMesh
 ///
 /////////////////////////////////////////////////////////////////////
 
-struct ObjectProperties
-{
-    std::string    name;
-    std::string    meshName;
-    std::string    materialName;
-    std::string    elementName;
-};
-
 class GameObjectBase
     : public IGameObject
 {
 public:
     GameObjectBase(std::string name) : m_name(name) {}
-    GameObjectBase(ObjectProperties& objProperties) {objProperties;}
+    GameObjectBase(ObjectProperties& objProperties) : m_properties(objProperties){;}
 
-    virtual bool     IsComplete() const {return m_isComplete;};
-    virtual const std::string& GetName()  const {return m_name;};
-    virtual uint32_t GetElementId() const {return 0;};
-    virtual uint32_t GetMeshId() const {return 0;};
-    
+    virtual const ObjectProperties& GetObjectContent()   const {return m_properties;};
+    virtual const ObjectResources&  GetObjectResources() const {return m_linkedResources;};
+
+    const std::string& GetName() const {return m_name;}
 private:
     bool m_isComplete;
     std::string m_name;
+
+    ObjectProperties m_properties;
+    ObjectResources  m_linkedResources;
+
     PREVENT_COPY(GameObjectBase)
 };
 

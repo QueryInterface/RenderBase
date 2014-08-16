@@ -36,8 +36,9 @@ public:
     // - mesh
     // - construction
     // - material
+    virtual Status CheckObjectStatus(std::string name);
     virtual const IGameObject* GetObjectByName(std::string name);
-    virtual Errors RegisterObject(std::string name, IGameObjectPtr & prototype);
+    virtual Status RegisterObject(std::string name, IGameObjectPtr & prototype);
 
     virtual ~Library() {};
 
