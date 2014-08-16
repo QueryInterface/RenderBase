@@ -16,20 +16,21 @@
 /////////////////////////////////////////////////////////////////////
 namespace LibraryImpl
 {
+
     class ObjectLibrary
     {
     public:
-        //const ObjectDescription& GetObjectDescription(uint32_t id) const;
+        void Cleanup();
 
         const IGameObject* GetObject(std::string name);
-        bool RegisterObject(std::string name, const IGameObject& primitive);
+        Errors RegisterObject(std::string name, IGameObjectPtr & primitive);
 
 
         ObjectLibrary();
         virtual ~ObjectLibrary() {};
 
     private: // arguments
-        std::map<std::string, const IGameObject*>  m_primitives;
+        std::map<std::string, IGameObjectPtr>  m_primitives;
     };
 }
 //end  of namespace

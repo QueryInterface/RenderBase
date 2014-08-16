@@ -23,6 +23,12 @@ using std::static_pointer_cast;
 
 #define UNUSED(var) var;
 
+enum class Errors
+{
+    NoError = 0,
+    AlreadyExists,
+};
+
 template<typename ClonableType>
 struct IClonable  
 {

@@ -5,16 +5,31 @@
 struct IMesh;
 struct ITexture;
 struct IScript;
+struct IGameObject;
 
 typedef std::shared_ptr<IMesh> IMeshPtr;
 typedef std::shared_ptr<ITexture> ITexturePtr;
 typedef std::shared_ptr<IScript> IScriptPtr;
+typedef std::shared_ptr<IGameObject> IGameObjectPtr;
 
 struct IResource
 {
 };
 
 // resource interfaces
+struct IGameObject
+    : public IResource
+{
+    virtual bool     IsComplete()   const = 0;
+    virtual const std::string& GetName()  const = 0;
+    virtual uint32_t GetElementId() const = 0;
+    virtual uint32_t GetMeshId()    const = 0;
+
+    // lot's of stuff to do here
+
+    virtual ~IGameObject() {};
+};
+
 struct IMesh 
     : public IResource
     , public IHandle

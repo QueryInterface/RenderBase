@@ -43,4 +43,52 @@ END_CHECK_PRIMITIVE_TEST();
 BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Sphere, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
+class ObjectLibraryTest : public ::testing::Test
+{
+public:
+
+    void SetUp()
+    {
+        ILibrary::library()->Reset();
+    }
+    void TearDown()
+    {
+    }
+};
+
+TEST_F(ObjectLibraryTest, RegisterNamedObject)
+{
+    std::string testName = "testObject";
+    {
+        IGameObjectPtr test_obj(new GameObjectBase(testName));
+        ASSERT_EQ(Errors::NoError, ILibrary::library()->RegisterObject(testName, test_obj));
+    }
+    const IGameObject* desc = ILibrary::library()->GetObjectByName(testName);
+    ASSERT_TRUE(desc != nullptr);
+    ASSERT_STREQ(testName.c_str(), desc->GetName().c_str());
+}
+
+TEST_F(ObjectLibraryTest, ResetLibrary)
+{
+    std::string testName = "testObject";
+    {
+        IGameObjectPtr test_obj(new GameObjectBase(testName));
+        ILibrary::library()->RegisterObject(testName, test_obj);
+    }
+    const IGameObject* desc = ILibrary::library()->GetObjectByName(testName);
+    ASSERT_TRUE(desc != nullptr);
+    ILibrary::library()->Reset();
+    desc = ILibrary::library()->GetObjectByName(testName);
+    ASSERT_TRUE(desc == nullptr);
+}
+
+TEST_F(ObjectLibraryTest, DoubleRegistrationOfNamedObject)
+{
+    std::string testName = "testObject";
+
+    IGameObjectPtr test_obj(new GameObjectBase(testName));
+    ILibrary::library()->RegisterObject(testName, test_obj);
+
+    ASSERT_EQ(Errors::AlreadyExists, ILibrary::library()->RegisterObject(testName, test_obj));
+}
 // eof

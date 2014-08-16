@@ -17,6 +17,11 @@ Library::Library()
 {
 }
 
+void Library::Reset()
+{
+    m_objectLibrary.Cleanup();
+}
+
 void Library::RegisterConstruction(IConstructable& element)
 {
     m_constructionLibrary.RegisterPrimitive(element);
@@ -37,13 +42,13 @@ void Library::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
     m_meshLibrary.RegisterMesh(id, mesh);
 }
 
-const IGameObject* Library::GetObjectByName(const char* name)
+const IGameObject* Library::GetObjectByName(std::string name)
 {
     return m_objectLibrary.GetObject(name);
 }
 
-void Library::RegisterObject(const char* name, const IGameObject& prototype)
+Errors Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
 {
-    m_objectLibrary.RegisterObject(name, prototype);
+    return m_objectLibrary.RegisterObject(name, prototype);
 }
 // eof

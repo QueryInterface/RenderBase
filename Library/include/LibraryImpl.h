@@ -20,6 +20,8 @@ namespace LibraryImpl
 class Library : public ILibrary
 {
 public:
+    virtual void Reset();
+
     // construction library object
     virtual const ConstructionDescription& GetConstruction(ElementType et);
     virtual void RegisterConstruction(IConstructable& element);
@@ -34,9 +36,8 @@ public:
     // - mesh
     // - construction
     // - material
-    //virtual const IGameObject& GetObjectByID(uint32_t id);
-    virtual const IGameObject* GetObjectByName(const char* name);
-    virtual void RegisterObject(const char* name, const IGameObject& prototype);
+    virtual const IGameObject* GetObjectByName(std::string name);
+    virtual Errors RegisterObject(std::string name, IGameObjectPtr & prototype);
 
     virtual ~Library() {};
 
