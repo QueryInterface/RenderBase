@@ -1,4 +1,5 @@
 #version 100
+precision highp float;
 
 varying highp vec3 vPosition;
 varying highp vec3 vNormal;
@@ -8,15 +9,16 @@ uniform highp vec3 uAmbientLight;
 
 void main(void) 
 {
-	const highp vec3 camera_pos = vec3(0.0, 0.0, 0.0);
-	highp vec3 reflectedLight = vec3(0.0, 0.0, 0.0);
-	highp vec3 lightDirection = vPosition - vLightPosition;
-	// If light direction is oppsoite to normal calculate reflected light
-	if (dot(lightDirection, vNormal) < 0.00001)
-	{
-		reflectedLight = normalize(reflect(vPosition - vLightPosition, vNormal));
-	}
-    highp float color = dot(reflectedLight, normalize(camera_pos - vPosition));
-	if (color < 0.0) color = 0.0;
-    gl_FragColor = vec4(color, color, color, 1.0) + vec4(uAmbientLight, 1.0);
+    vec3 Normal         = normalize(vNormal);
+    vec3 LightDirection = normalize(vLightPosition - vPosition);
+    vec3 EyeDirection   = -normalize(vPosition);
+    vec3 ReflectLight   = normalize(reflect(-LightDirection, Normal));
+
+    vec4 IDiffuse       = 0.5 * vec4(1.0, 1.0, 1.0, 1.0) * max( dot(LightDirection, Normal), 0.0);
+    IDiffuse            = clamp(IDiffuse, 0.0, 1.0);
+
+    vec4 ISpecular      = 0.7 * vec4(1.0, 1.0, 1.0, 1.0) * pow( max( dot(ReflectLight, EyeDirection), 0.0), 10.0); //10.0 - material shininess power
+    ISpecular           = clamp(ISpecular, 0.0, 1.0);
+
+    gl_FragColor        = vec4(uAmbientLight, 0) + IDiffuse + ISpecular;
 }

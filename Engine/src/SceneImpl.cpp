@@ -65,7 +65,8 @@ void Scene::Render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set pipline states
-	GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetViewMatrix())));
+//    glm::mat4 ModelView = m_camera->GetViewMatrix()
+    GL_CALL(glUniformMatrix4fv(m_program.UniformViewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetViewMatrix())));
     GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjectionMatrix())));
     if (!m_lights.empty())
     {
@@ -90,8 +91,11 @@ void Scene::Render()
         // Get object desc
         const Object::GLMeshDescs& objectGLDescs = object->GetMeshDescs();
         const IMesh::Desc& meshDesc = object->GetMesh()->GetDesc();
-        glm::mat4 worldViewMatrix = object->GetMatrix(CoordType::Global) * object->GetMatrix(CoordType::Local);
-        GL_CALL(glUniformMatrix4fv(m_program.UniformModelWorldMatrix, 1, GL_FALSE, glm::value_ptr(worldViewMatrix)));
+        glm::mat4 worldMatrix = object->GetMatrix(CoordType::Global) * object->GetMatrix(CoordType::Local);
+        glm::mat4 modelViewMatrix = m_camera->GetViewMatrix() * worldMatrix;
+        glm::mat4 normalMatrix = glm::transpose( glm::inverse(modelViewMatrix) );
+        GL_CALL(glUniformMatrix4fv(m_program.UniformNormalMatrix, 1, GL_FALSE, glm::value_ptr(normalMatrix)));
+        GL_CALL(glUniformMatrix4fv(m_program.UniformModelViewMatrix, 1, GL_FALSE, glm::value_ptr(modelViewMatrix)));
 	    // glActiveTexture(GL_TEXTURE0);
 	    // GL_CALL(glBindTexture(GL_TEXTURE_2D, g_Texture));
         for (uint32_t i = 0; i < objectGLDescs.size(); ++i)
@@ -192,11 +196,14 @@ void Scene::initShaders()
     m_program.AttribNormal = GL_CALL(glGetAttribLocation(m_program.Program, "aNormal"));
     VE_ERROR_IF(m_program.AttribNormal == -1, L"Failed to get location of attribute \"aNormal\"");
 
-    m_program.UniformModelWorldMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uWorldModelMatrix"));
-    VE_ERROR_IF(m_program.UniformModelWorldMatrix == -1, L"Failed to get location of uniform \"uWorldModelMatrix\"");
-
     m_program.UniformViewMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uViewMatrix"));
     VE_ERROR_IF(m_program.UniformViewMatrix == -1, L"Failed to get location of uniform \"uViewMatrix\"");
+
+    m_program.UniformModelViewMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uModelViewMatrix"));
+    VE_ERROR_IF(m_program.UniformModelViewMatrix == -1, L"Failed to get location of uniform \"uModelViewMatrix\"");
+
+    m_program.UniformNormalMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uNormalMatrix"));
+    VE_ERROR_IF(m_program.UniformNormalMatrix == -1, L"Failed to get location of uniform \"uNormalMatrix\"");
 
     m_program.UniformProjMatrix = GL_CALL(glGetUniformLocation(m_program.Program, "uProjMatrix"));
     VE_ERROR_IF(m_program.UniformProjMatrix == -1, L"Failed to get location of uniform \"uProjMatrix\"");
