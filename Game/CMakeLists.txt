@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # Include directories
 include_directories(include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/Utils)
+include_directories(${PROJECT_SOURCE_DIR}/Utils/include)
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
@@ -17,7 +17,7 @@ aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 add_executable(Game
     ${HEADER_FILES}
 	${PUBLIC_HEADER_FILES}
-    ${PRIVATE_HEADER_FILES}
+    ${PRIVATE_HEADER_FILES} 
     ${SOURCE_FILES}
 )
 

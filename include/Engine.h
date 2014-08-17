@@ -42,13 +42,13 @@ struct IWindowCallbacks
 {
     virtual void OnKeyDown(EKey key) {key;}
     virtual void OnKeyUp(EKey key) {key;}
-    virtual void OnMouseDown() {}
-    virtual void OnMouseUp() {}
-    virtual void OnMouseMove() {}
-    virtual void OnFingerDown() {}
-    virtual void OnFingerUp() {}
-    virtual void OnFingerMove() {}
-    virtual void OnMultiGesture() {}
+    virtual void OnMouseDown(EKey key, uint32_t x, uint32_t y) {key;x;y;}
+    virtual void OnMouseUp(EKey key, uint32_t  x, uint32_t  y) {key;x;y;}
+    virtual void OnMouseMove(uint32_t x, uint32_t y) {x;y;}
+    virtual void OnFingerDown(float x, float y, float dx, float dy) {x;y;dx;dy;}
+    virtual void OnFingerUp(float x, float y, float dx, float dy) {x;y;dx;dy;}
+    virtual void OnFingerMove(float x, float y, float dx, float dy) {x;y;dx;dy;}
+    virtual void OnMultiGesture(uint16_t numfingers, float x, float y, float theta, float dist) {numfingers;x;y;theta;dist;}
 };
 
 struct ISceneElement : public IHandle

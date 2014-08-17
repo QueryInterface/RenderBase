@@ -174,6 +174,27 @@ WINDOW_MSG WindowSDL::ProcessMessage()
         case SDL_KEYUP:
             for (auto& cb : m_inputCallbacks) cb->OnKeyUp(convert(event.key.keysym.sym));
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            for (auto& cb : m_inputCallbacks) cb->OnMouseDown(convert(event.button.button), event.button.x, event.button.y);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            for (auto& cb : m_inputCallbacks) cb->OnMouseUp(convert(event.button.button), event.button.x, event.button.y);
+            break;
+        case SDL_MOUSEMOTION:
+            for (auto& cb : m_inputCallbacks) cb->OnMouseMove(event.motion.x, event.motion.y);
+            break;
+        case SDL_FINGERDOWN:
+            for (auto& cb : m_inputCallbacks) cb->OnFingerDown(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            break;
+        case SDL_FINGERUP:
+            for (auto& cb : m_inputCallbacks) cb->OnFingerUp(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            break;
+        case SDL_FINGERMOTION:
+            for (auto& cb : m_inputCallbacks) cb->OnFingerMove(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            break;
+        case SDL_MULTIGESTURE:
+            for (auto& cb : m_inputCallbacks) cb->OnMultiGesture(event.mgesture.numFingers, event.mgesture.x, event.mgesture.y, event.mgesture.dTheta, event.mgesture.dDist);
+            break;
         case SDL_QUIT:
             return WINDOW_MSG::QUIT;
             break;
@@ -427,6 +448,10 @@ EKey WindowSDL::convert(uint32_t sdlKey)
         case SDLK_KBDILLUMUP:           return EKey::EK_KBDILLUMUP; break;
         case SDLK_EJECT:                return EKey::EK_EJECT; break;
         case SDLK_SLEEP:                return EKey::EK_SLEEP; break;
+
+        case SDL_BUTTON_LEFT:           return EKey::EK_MOUSE_BUTTON_LEFT; break;
+        case SDL_BUTTON_MIDDLE:         return EKey::EK_MOUSE_BUTTON_MIDDLE; break;
+        case SDL_BUTTON_RIGHT:          return EKey::EK_MOUSE_BUTTON_RIGHT; break;
         default:
             {
                 VE_ERROR(L"Invalid SDL key");
