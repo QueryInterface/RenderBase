@@ -1,4 +1,4 @@
-#include "Utils.h"
+﻿#include "Utils.h"
 #include <chrono>
 #include "Game.h"
 
@@ -6,6 +6,8 @@ CameraMove::CameraMove()
     : m_moveMask(0)
     , m_previousX(0)
     , m_previousY(0)
+    , m_currentX(0)
+    , m_currentY(0)
     , m_enableRotate(false)
     , m_moveSpeed(1.0f)
 {
@@ -42,8 +44,11 @@ void CameraMove::DisableRotate()
 
 void CameraMove::OnMouseMove(uint32_t x, uint32_t y)
 {
-    m_currentX = x;
-    m_currentY = y;
+    if (m_enableRotate)
+    {
+        m_currentX = x;
+        m_currentY = y;
+    }
 }
 
 void CameraMove::Process(ICameraPtr& camera, float timeElapsed)
@@ -60,8 +65,16 @@ void CameraMove::Process(ICameraPtr& camera, float timeElapsed)
     if (m_enableRotate)
     {
         //float angle = glm::acos(glm::dot())
-        m_previousX = 0;
-        m_previousY = 0;
+        const CameraDesc desc = camera->GetDesc();
+        float deltaX = float(m_currentX - m_previousX) / IEngine::Instance().GetWindow().GetWidth();
+        float deltaY = float(m_currentY - m_previousY) / IEngine::Instance().GetWindow().GetHeight();
+        float fovX = (deltaX * desc.FieldOfViewY / 180) * glm::pi<float>();
+        float fovY = ((desc.FieldOfViewY / desc.Aspect) / 180) * glm::pi<float>();
+        float angleX = deltaX * fovX;
+        float angleY = deltaY * fovY;
+        camera->Rotate(CoordType::Local, vector3f_t(angleY, angleX, 0));
+        m_previousX = m_currentX;
+        m_previousY = m_currentY;
     }
 }
 
@@ -92,7 +105,7 @@ Game::Game()
     //cameraSetup.Eye = vector3f_t(0.0, 0.0, -10.0);
     //cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
     //cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
-
+    cameraSetup.Aspect = 1.0f * m_window.GetWidth() / m_window.GetHeight();
     cameraSetup.FieldOfViewY = 45.0;
     cameraSetup.NearZ = 0.1f;
     cameraSetup.FarZ = 100.0f;
@@ -130,7 +143,7 @@ void Game::InitScene0()
     // Load resources
     IMeshPtr mesh = m_resourceOverseer.LoadMesh(Utils::Internal::GetMediaFolderPath() + L"Meshes/sphere/sphere.obj");
     ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
-    ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.obj");
+    ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
     IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
     object0->SetPosition(CoordType::Global, vector3f_t(-3, -3, 7));

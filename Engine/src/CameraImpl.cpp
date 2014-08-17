@@ -3,6 +3,7 @@
 
 Camera::Camera(const CameraDesc& setup)
     : m_originalDesc(setup)
+    , m_desc(setup)
 {
     initCamera();
     // Set initial position of camera into internal structures
@@ -34,8 +35,6 @@ void Camera::SetFiledOfViewY(float fovy)
 
 void Camera::initCamera()
 {
-    IWindow& window = IEngine::Instance().GetWindow();
-    float aspect = 1.0f * window.GetWidth() / window.GetHeight();
     m_viewMatrix = glm::lookAt(m_originalDesc.Eye, m_originalDesc.At, m_originalDesc.Up);
-	m_projectionMatrix = glm::perspective(m_originalDesc.FieldOfViewY, aspect, m_originalDesc.NearZ, m_originalDesc.FarZ);
+	m_projectionMatrix = glm::perspective(m_originalDesc.FieldOfViewY, m_originalDesc.Aspect, m_originalDesc.NearZ, m_originalDesc.FarZ);
 }

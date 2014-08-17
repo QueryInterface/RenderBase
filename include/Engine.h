@@ -96,6 +96,7 @@ struct CameraDesc
     vector3f_t  Eye;
     vector3f_t  At;
     vector3f_t  Up;
+    float       Aspect;
     float       FieldOfViewY;
     float       NearZ;
     float       FarZ;
