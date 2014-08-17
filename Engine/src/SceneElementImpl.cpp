@@ -27,7 +27,6 @@ void SceneElementImpl::SetPositionImpl(CoordType type, const vector3f_t& pos)
 
     vector3f_t delta = pos - GetPositionImpl(type);
     m = glm::translate(glm::mat4(1.0), delta) * m;
-    updateState();
 }
 
 void SceneElementImpl::SetScaleImpl(CoordType type, const vector3f_t& scale)
@@ -47,28 +46,24 @@ void SceneElementImpl::SetScaleImpl(CoordType type, const vector3f_t& scale)
     default:
         VE_ERROR(L"Invalid coord type");
     }
-    updateState();
 }
 
 void SceneElementImpl::ShiftImpl(CoordType type, const vector3f_t& shift)
 {
     glm::mat4& m = getMatrix(type);
     m = glm::translate(glm::mat4(1.0), shift) * m;
-    updateState();
 }
 
 void SceneElementImpl::RotateImpl(CoordType type, const vector3f_t& angles)
 {
     glm::quat& q = getQuaternion(type);
     q = glm::quat(angles) * q;
-    updateState();
 }
 
 void SceneElementImpl::RotateImpl(CoordType type, const quat& qt)
 {
     glm::quat& q = getQuaternion(type);
     q = qt * q;
-    updateState();
 }
 
 const vector3f_t& SceneElementImpl::GetPositionImpl(CoordType type)
@@ -77,10 +72,14 @@ const vector3f_t& SceneElementImpl::GetPositionImpl(CoordType type)
     {
     case CoordType::Local:
         {
+            glm::mat4& ml = getMatrix(CoordType::Local);
+            m_localPosition = vector3f_t(ml * m_localPositionInit);
             return m_localPosition;
         } break;
     case CoordType::Global:
         {
+            glm::mat4& mg = getMatrix(CoordType::Global);
+            m_globalPosition = vector3f_t(mg * m_globalPositionInit);
             return m_globalPosition;
         } break;
     default:
@@ -129,32 +128,6 @@ void SceneElementImpl::SetPositionInit(CoordType type, const vector3f_t& initPos
         break;
     default:
         VE_ERROR(L"Invalid coord type");
-    }
-}
-
-
-void SceneElementImpl::EnableVectorUpdate(vector3f_t* v, bool includeShift)
-{
-    float w = includeShift ? 1.0f : 0.0f;
-    m_updateVectors[v] = vector4f_t(*v, w);
-}
-
-void SceneElementImpl::DisableVectorUpdate(vector3f_t* v)
-{
-    m_updateVectors.erase(v);
-}
-
-void SceneElementImpl::updateState()
-{
-    glm::mat4& ml = getMatrix(CoordType::Local);
-    glm::mat4& mg = getMatrix(CoordType::Global);
-    m_localPosition = vector3f_t(ml * m_localPositionInit);
-    m_globalPosition = vector3f_t(mg * m_globalPositionInit);
-    for (auto& v : m_updateVectors)
-    {
-        vector3f_t* updateVector = v.first;
-        const vector4f_t& initValue = v.second;
-        *updateVector = vector3f_t(mg * ml * initValue);
     }
 }
 

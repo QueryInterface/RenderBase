@@ -28,15 +28,7 @@ protected:
     // Sets starting position of object without matrix modifications
     // Should be used really carefully and only once during derivered class constructor
     void        SetPositionInit(CoordType type, const vector3f_t& initPosition);
-    // SceneElementImpl will update registered vectors whenever its internal state has changed.
-    // Value of 'v' during registration is taken as initial for multiplication my internal matrices
-    void        EnableVectorUpdate(vector3f_t* v, bool includeShift = false);
-    // Disable vector update
-    void        DisableVectorUpdate(vector3f_t* v);
 private:
-    // Updates internal position variables
-    void        updateState();
-
     glm::mat4&  getMatrix(CoordType type) const;
     glm::quat&  getQuaternion(CoordType type) const;
 
@@ -53,8 +45,6 @@ private:
 
     mutable glm::quat   m_localQ;
     mutable glm::quat   m_globalQ;
-
-    std::map<vector3f_t*, vector4f_t> m_updateVectors;    // pair: update vector <-> initial value
 };
 
 #define setposition_impl            virtual void SetPosition(CoordType type, const vector3f_t& pos) override {SetPositionImpl(type, pos);}

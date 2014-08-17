@@ -14,7 +14,7 @@ public:
     // IClonable
     virtual ICameraPtr Clone() const override;
     // ICamera
-    virtual const CameraDesc&   GetDesc() const override;
+    virtual const CameraDesc    GetDesc() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
     scene_elements_impl;
     // Unlike 'GetPosition' returns position of camera. Keep in mind that GetPosition functions instead returns position of assigned center in world space.
@@ -23,12 +23,13 @@ public:
 private:
     void initCamera();
 
-    CameraDesc      m_desc;
-    vector3f_t      m_eye;
-    vector3f_t      m_at;
-    vector3f_t      m_up;
-    glm::mat4       m_viewMatrix;
-    glm::mat4       m_projectionMatrix;
+    CameraDesc          m_originalDesc;
+    mutable CameraDesc  m_desc;
+    vector3f_t          m_eye;
+    vector3f_t          m_at;
+    vector3f_t          m_up;
+    glm::mat4           m_viewMatrix;
+    glm::mat4           m_projectionMatrix;
 };
 
 typedef std::shared_ptr<Camera> CamerPtr;
