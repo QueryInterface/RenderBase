@@ -14,13 +14,8 @@ void ObjectLibrary::Cleanup()
 
 Status ObjectLibrary::CheckObjectStatus(std::string name)
 {
-    auto pending = m_pendingObjects.find(name);
-    if (m_pendingObjects.end() != pending)
-    {
-        return Status::Pending;
-    }
-    pending = m_primitives.find(name);
-    return m_primitives.end() != pending ? Status::OK : Status::ResourceNotFound;
+    auto primitive = m_primitives.find(name);
+    return m_primitives.end() != primitive ? Status::OK : Status::ResourceNotFound;
 }
 
 const IGameObject* ObjectLibrary::GetObject(std::string name)

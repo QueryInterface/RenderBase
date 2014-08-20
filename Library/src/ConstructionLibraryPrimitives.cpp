@@ -6,7 +6,7 @@ class class_##PrimitiveType : public IConstructable                             
 {                                                                                                   \
 public:                                                                                             \
     ConstructionDescription m_desc;                                                                 \
-    const ConstructionDescription& ConstructionDesc() const {return m_desc;}                        \
+    const ConstructionDescription& ConstructionDesc() const {return m_desc;}                       \
                                                                                                     \
     class_##PrimitiveType()                                                                         \
     {                                                                                               \

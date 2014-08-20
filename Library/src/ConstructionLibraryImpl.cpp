@@ -6,7 +6,6 @@ using namespace LibraryImpl;
 ConstructionLibrary::ConstructionLibrary() 
 {
     m_primitives.resize(ElementType::SimplePrimitivesCount);
-    m_dummy.primitiveUID = ElementType::SimplePrimitivesCount;
 }
 
 void ConstructionLibrary::RegisterPrimitive(std::string name, IConstructablePtr& element)
@@ -30,15 +29,15 @@ const uint32_t ConstructionLibrary::GetConstructionId(std::string& name) const
     return found != m_primitiveNameIdMap.end() ? found->second : ~0x0;
 }
 
-const ConstructionDescription& ConstructionLibrary::GetConstructionDescription(ElementType type) const
+const ConstructionDescription* ConstructionLibrary::GetConstructionDescription(ElementType type) const
 {
-    return (type >= m_primitives.size()) ? m_dummy : m_primitives[type]->ConstructionDesc();
+    return (type >= m_primitives.size()) ? nullptr : &m_primitives[type]->ConstructionDesc();
 }
 
-const ConstructionDescription& ConstructionLibrary::GetConstructionDescription(std::string& name) const
+const ConstructionDescription* ConstructionLibrary::GetConstructionDescription(const std::string& name) const
 {
     auto found = m_primitiveNameIdMap.find(name);
-    return (found != m_primitiveNameIdMap.end()) ? m_primitives[found->second]->ConstructionDesc() : m_dummy;
+    return (found != m_primitiveNameIdMap.end()) ? &m_primitives[found->second]->ConstructionDesc() : nullptr;
 }
 
 #include "ConstructionLibraryPrimitives.cpp"

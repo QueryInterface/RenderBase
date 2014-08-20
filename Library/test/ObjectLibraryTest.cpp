@@ -13,11 +13,11 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 #define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                                             \
     TEST(Fixture, DescriptionOf_##Type##_Element)                                                                       \
 {                                                                                                                       \
-    const ConstructionDescription& desc = ILibrary::library()->GetConstructionByName(#Type);                            \
-    ASSERT_EQ(ElementType::##Type, desc.primitiveUID) << "incorrect primitive type expected: ElementType::" << #Type;   \
-    EXPECT_EQ(desc.boundingBox.LFT, tlf);                                                                               \
-    EXPECT_EQ(desc.boundingBox.RBB, (brb));                                                                             \
-    EXPECT_EQ(desc.direction, Directions::pZ);
+    const ConstructionDescription* desc = ILibrary::library()->GetConstructionByName(#Type);                            \
+    ASSERT_EQ(ElementType::##Type, desc->primitiveUID) << "incorrect primitive type expected: ElementType::" << #Type;  \
+    EXPECT_EQ(desc->boundingBox.LFT, tlf);                                                                              \
+    EXPECT_EQ(desc->boundingBox.RBB, (brb));                                                                            \
+    EXPECT_EQ(desc->direction, Directions::pZ);
 
 #define END_CHECK_PRIMITIVE_TEST() }
 
@@ -67,6 +67,19 @@ TEST_F(ObjectLibraryTest, Registeration)
     ASSERT_STREQ(testName.c_str(), desc->GetName().c_str());
 }
 
+TEST_F(ObjectLibraryTest, RegisterationWithElement)
+{
+    std::string testName = "testObject";
+    {
+        IGameObject::ObjectProperties newComplexObject = {testName, "", "", "Cube"};
+        IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
+        ASSERT_EQ(Status::OK, ILibrary::library()->RegisterObject(testName, test_obj));
+    }
+    const IGameObject* desc = ILibrary::library()->GetObjectByName(testName);
+    ASSERT_TRUE(desc != nullptr);
+    ASSERT_STREQ(testName.c_str(), desc->GetName().c_str());
+}
+
 TEST_F(ObjectLibraryTest, Reset)
 {
     std::string testName = "testObject";
@@ -102,8 +115,8 @@ TEST_F(ObjectLibraryTest, PendingRegistration)
     IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
     ILibrary::library()->RegisterObject(testName, test_obj);
 
-//    ASSERT_EQ(Status::Pending, ILibrary::library()->RegisterObject(testName, test_obj));
-//    ASSERT_EQ(Status::Pending, ILibrary::library()->CheckObjectStatus(testName));
-//    ASSERT_TRUE(nullptr == ILibrary::library()->GetObjectByName(testName));
+    ASSERT_EQ(Status::Pending, ILibrary::library()->RegisterObject(testName, test_obj));
+    ASSERT_EQ(Status::Pending, ILibrary::library()->CheckObjectStatus(testName));
+    ASSERT_TRUE(nullptr == ILibrary::library()->GetObjectByName(testName));
 }
 // eof

@@ -23,8 +23,8 @@ public:
     virtual void Reset();
 
     // construction library object
-    virtual const ConstructionDescription& GetConstruction(ElementType et);
-    virtual const ConstructionDescription& GetConstructionByName(std::string name);
+    virtual const ConstructionDescription* GetConstruction(ElementType et);
+    virtual const ConstructionDescription* GetConstructionByName(std::string name);
     virtual void RegisterDefaultConstruction(std::string name, IConstructable* element);
     virtual void RegisterConstruction(std::string name, IConstructablePtr& element);
 
@@ -52,6 +52,10 @@ private:
     ConstructionLibrary m_constructionLibrary;
     MeshLibrary         m_meshLibrary;
     ObjectLibrary       m_objectLibrary;
+
+    // list of object that have linked resources, not loaded into library,
+    // so these objects cannot be pushed into object library until all required resources are loaded
+    std::map<std::string, IGameObjectPtr> m_pendingObjects;
 };
 
 };

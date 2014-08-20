@@ -33,10 +33,6 @@ namespace LibraryImpl
         // loaded objects. all dependencies are loaded properly.
         // The objects are fully equiped and can be used in game.
         std::map<std::string, IGameObjectPtr> m_primitives;
-
-        // list of object that have linked resources, that are not loaded yet,
-        // so these objects cannot be pushed to object library until all required resources are loaded
-        std::map<std::string, IGameObjectPtr> m_pendingObjects;
     };
 }
 //end  of namespace

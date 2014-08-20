@@ -23,7 +23,7 @@ bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Dir
         return false;
     }
 
-    m_core.SetElement(ILibrary::library()->GetConstruction(type), position, direction, copySettingsFrom);
+    m_core.SetElement(*ILibrary::library()->GetConstruction(type), position, direction, copySettingsFrom);
     return true;
 }
 

@@ -32,12 +32,12 @@ void Library::RegisterConstruction(std::string name, IConstructablePtr& element)
     m_constructionLibrary.RegisterPrimitive(name, element);
 }
 
-const ConstructionDescription& Library::GetConstruction(ElementType type)
+const ConstructionDescription* Library::GetConstruction(ElementType type)
 {
     return m_constructionLibrary.GetConstructionDescription(type);
 }
 
-const ConstructionDescription& Library::GetConstructionByName(std::string name)
+const ConstructionDescription* Library::GetConstructionByName(std::string name)
 {
     return m_constructionLibrary.GetConstructionDescription(name);
 }
@@ -54,6 +54,11 @@ void Library::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
 
 Status Library::CheckObjectStatus(std::string name)
 {
+    auto pending = m_pendingObjects.find(name);
+    if (m_pendingObjects.end() != pending)
+    {
+        return Status::Pending;
+    }
     return m_objectLibrary.CheckObjectStatus(name);
 }
 
@@ -64,6 +69,13 @@ const IGameObject* Library::GetObjectByName(std::string name)
 
 Status Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
 {
-    return m_objectLibrary.RegisterObject(name, prototype);
+    const IGameObject::ObjectProperties& properties = prototype->GetObjectContent();
+    if (!properties.elementName.length() || m_constructionLibrary.GetConstructionDescription(properties.elementName))
+    {
+        return m_objectLibrary.RegisterObject(name, prototype);
+    }
+
+    m_pendingObjects[name] = prototype;
+    return Status::Pending;
 }
 // eof

@@ -40,7 +40,7 @@ class GameObjectBase
 {
 public:
     GameObjectBase(std::string name) : m_name(name) {}
-    GameObjectBase(ObjectProperties& objProperties) : m_properties(objProperties){;}
+    GameObjectBase(ObjectProperties& objProperties) : m_name(objProperties.name), m_properties(objProperties){;}
 
     virtual const ObjectProperties& GetObjectContent()   const {return m_properties;};
     virtual const ObjectResources&  GetObjectResources() const {return m_linkedResources;};
