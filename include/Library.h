@@ -24,8 +24,10 @@ struct ILibrary
 
 // access to constructions
     virtual const ConstructionDescription& GetConstruction(ElementType et) = 0;
-    virtual const ConstructionDescription& GetConstructionByName(std::string name) = 0;
     virtual void RegisterDefaultConstruction(std::string name, IConstructable* element) = 0;
+
+// interface available from Overmind
+    virtual const ConstructionDescription& GetConstructionByName(std::string name) = 0;
     virtual void RegisterConstruction(std::string name, IConstructablePtr& element) = 0;
 
     virtual const ILibraryMesh& GetMesh(uint32_t id) = 0;

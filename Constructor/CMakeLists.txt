@@ -50,8 +50,11 @@ set_property(
 # add required definitions (tr1 tuple is not supported under VS11)
 set_target_properties(ConstructorTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
 
-add_dependencies(ConstructorTest Constructor Library gtest)
-target_link_libraries(ConstructorTest Constructor Library gtest)
+add_dependencies(Constructor Library)
+target_link_libraries(Constructor Library)
+
+add_dependencies(ConstructorTest Constructor gtest)
+target_link_libraries(ConstructorTest Constructor gtest)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})
