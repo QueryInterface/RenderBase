@@ -22,14 +22,24 @@ void Library::Reset()
     m_objectLibrary.Cleanup();
 }
 
-void Library::RegisterConstruction(IConstructable& element)
+void Library::RegisterDefaultConstruction(std::string name, IConstructable* element)
 {
-    m_constructionLibrary.RegisterPrimitive(element);
+    m_constructionLibrary.RegisterSimplePrimitive(name, element);
+}
+
+void Library::RegisterConstruction(std::string name, IConstructablePtr& element)
+{
+    m_constructionLibrary.RegisterPrimitive(name, element);
 }
 
 const ConstructionDescription& Library::GetConstruction(ElementType type)
 {
     return m_constructionLibrary.GetConstructionDescription(type);
+}
+
+const ConstructionDescription& Library::GetConstructionByName(std::string name)
+{
+    return m_constructionLibrary.GetConstructionDescription(name);
 }
 
 const ILibraryMesh& Library::GetMesh(unsigned int id)

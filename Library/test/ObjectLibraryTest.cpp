@@ -13,14 +13,13 @@ TEST(ConstructionLibraryTest, ConstructionLibraryIsASingletone)
 #define BEGIN_CHECK_PRIMITIVE_TEST(Fixture, Type, tlf, brb)                                                             \
     TEST(Fixture, DescriptionOf_##Type##_Element)                                                                       \
 {                                                                                                                       \
-    const ConstructionDescription& desc = ILibrary::library()->GetConstruction(ElementType::##Type);                    \
+    const ConstructionDescription& desc = ILibrary::library()->GetConstructionByName(#Type);                            \
     ASSERT_EQ(ElementType::##Type, desc.primitiveUID) << "incorrect primitive type expected: ElementType::" << #Type;   \
-    EXPECT_EQ(desc.boundingBox.LFT, tlf);                                                                                           \
-    EXPECT_EQ(desc.boundingBox.RBB, (brb));                                                                                         \
+    EXPECT_EQ(desc.boundingBox.LFT, tlf);                                                                               \
+    EXPECT_EQ(desc.boundingBox.RBB, (brb));                                                                             \
     EXPECT_EQ(desc.direction, Directions::pZ);
 
 #define END_CHECK_PRIMITIVE_TEST() }
-
 
 BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Space, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();

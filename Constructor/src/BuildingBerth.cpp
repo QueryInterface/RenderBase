@@ -18,7 +18,7 @@ Core& BuildingBerth::GetCore()
 
 bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom)
 {
-    if (type == ElementType::Space) 
+    if (type == ElementType::Space || type >= ElementType::SimplePrimitivesCount) 
     {
         return false;
     }

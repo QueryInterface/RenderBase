@@ -1,32 +1,32 @@
 
 //define standard primitive class.
 
-#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX)                                 \
-class class_##PrimitiveType : public IConstructable                                     \
-{                                                                                       \
-public:                                                                                 \
-    ConstructionDescription m_desc;                                                     \
-    const ConstructionDescription& ConstructionDesc() const {return m_desc;}            \
-                                                                                        \
-    class_##PrimitiveType()                                                             \
-    {                                                                                   \
-        m_desc.primitiveUID = ElementType::##PrimitiveType;                             \
+#define BEGIN_PRIMITIVE_DEFINITION(PrimitiveType, BBOX)                                             \
+class class_##PrimitiveType : public IConstructable                                                 \
+{                                                                                                   \
+public:                                                                                             \
+    ConstructionDescription m_desc;                                                                 \
+    const ConstructionDescription& ConstructionDesc() const {return m_desc;}                        \
+                                                                                                    \
+    class_##PrimitiveType()                                                                         \
+    {                                                                                               \
+        m_desc.primitiveUID = ElementType::##PrimitiveType;                                         \
         m_desc.boundingBox = (BBOX);
 
-#define BEGIN_NEIGHBORS_LIST(count)                                                     \
+#define BEGIN_NEIGHBORS_LIST(count)                                                                 \
         const NeighborDesc neighbors[(count)] = {
 
-#define END_NEIGHBORS_LIST(count)                                                       \
-        };                                                                              \
+#define END_NEIGHBORS_LIST(count)                                                                   \
+        };                                                                                          \
         m_desc.neighbors.assign(neighbors, neighbors + count);
 
-#define END_PRIMITIVE_DEFINITION(PrimitiveType)                                         \
-        ILibrary::library()->RegisterConstruction(*this);                               \
-    }                                                                                   \
-    virtual ~class_##PrimitiveType() {};                                                \
-    static std::unique_ptr<IConstructable> self;                                        \
-};                                                                                      \
-std::unique_ptr<IConstructable> class_##PrimitiveType::self(new class_##PrimitiveType());
+#define END_PRIMITIVE_DEFINITION(PrimitiveType)                                                     \
+        ILibrary::library()->RegisterDefaultConstruction(#PrimitiveType, this);                     \
+    }                                                                                               \
+    virtual ~class_##PrimitiveType() {};                                                            \
+    static IConstructable* self;                                                                    \
+};                                                                                                  \
+IConstructable* class_##PrimitiveType::self = new class_##PrimitiveType(); // ownership will be transferred to Library
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

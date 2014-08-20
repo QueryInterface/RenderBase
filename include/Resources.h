@@ -11,7 +11,6 @@ struct IConstructable;
 typedef std::shared_ptr<IMesh> IMeshPtr;
 typedef std::shared_ptr<ITexture> ITexturePtr;
 typedef std::shared_ptr<IScript> IScriptPtr;
-typedef std::shared_ptr<IConstructable> IConstructablePtr;
 typedef std::shared_ptr<IGameObject> IGameObjectPtr;
 
 struct IResource
@@ -33,7 +32,7 @@ struct IGameObject
     struct ObjectResources
     {
         IMeshPtr            mesh;
-        IConstructablePtr   construction;
+        //IConstructablePtr   construction;
     };
 
     virtual const ObjectProperties& GetObjectContent()   const = 0;

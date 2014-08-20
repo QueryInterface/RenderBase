@@ -124,5 +124,7 @@ struct IConstructable
     virtual ~IConstructable() {};
 };
 
+typedef std::shared_ptr<IConstructable> IConstructablePtr;
+
 
 // eof

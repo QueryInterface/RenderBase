@@ -25,6 +25,11 @@ TEST_F(BuildingBerthTest, AddSpace)
     ASSERT_FALSE(m_builder->SetElement(ElementType::Space, vector3i_t(0,0,0), Directions::pZ));
 }
 
+TEST_F(BuildingBerthTest, AddInvalidPrimitive)
+{
+    ASSERT_FALSE(m_builder->SetElement(ElementType::SimplePrimitivesCount, vector3i_t(0,0,0), Directions::pZ));
+}
+
 TEST_F(BuildingBerthTest, AddPrimitive)
 {
     ASSERT_TRUE(m_builder->SetElement(ElementType::Cube, vector3i_t(0,0,0), Directions::pZ));

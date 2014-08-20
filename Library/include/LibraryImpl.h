@@ -24,7 +24,9 @@ public:
 
     // construction library object
     virtual const ConstructionDescription& GetConstruction(ElementType et);
-    virtual void RegisterConstruction(IConstructable& element);
+    virtual const ConstructionDescription& GetConstructionByName(std::string name);
+    virtual void RegisterDefaultConstruction(std::string name, IConstructable* element);
+    virtual void RegisterConstruction(std::string name, IConstructablePtr& element);
 
     // mesh library object
     // according to flags, mesh may contain different geometry
