@@ -16,7 +16,7 @@
 /// object library public interface. Library is a singletone
 ///
 /////////////////////////////////////////////////////////////////////
-namespace LibraryImpl
+namespace ConstructorImpl
 {
     class ConstructionLibrary
     {

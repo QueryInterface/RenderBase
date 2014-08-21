@@ -1,17 +1,7 @@
 #include "LibraryImpl.h"
 #include <memory>
 
-using namespace LibraryImpl;
-
-ILibrary* ILibrary::library()
-{
-    static std::unique_ptr<ILibrary> library;
-    if (nullptr == library)
-    {
-        library.reset(new Library());
-    }
-    return library.get();
-}
+using namespace ConstructorImpl;
 
 Library::Library() 
 {
@@ -22,19 +12,9 @@ void Library::Reset()
     m_objectLibrary.Cleanup();
 }
 
-void Library::RegisterDefaultConstruction(std::string name, IConstructable* element)
-{
-    m_constructionLibrary.RegisterSimplePrimitive(name, element);
-}
-
 void Library::RegisterConstruction(std::string name, IConstructablePtr& element)
 {
     m_constructionLibrary.RegisterPrimitive(name, element);
-}
-
-const ConstructionDescription* Library::GetConstruction(ElementType type)
-{
-    return m_constructionLibrary.GetConstructionDescription(type);
 }
 
 const ConstructionDescription* Library::GetConstructionByName(std::string name)
@@ -47,7 +27,7 @@ const ILibraryMesh& Library::GetMesh(unsigned int id)
     return m_meshLibrary.GetMeshObject(id);
 }
 
-void Library::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
+void Library::RegisterMesh(unsigned int id, ILibraryMeshPtr& mesh)
 {
     m_meshLibrary.RegisterMesh(id, mesh);
 }

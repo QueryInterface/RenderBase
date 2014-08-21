@@ -1,7 +1,7 @@
 #include "ConstructionLibraryImpl.h"
 #include <memory>
 
-using namespace LibraryImpl;
+using namespace ConstructorImpl;
 
 ConstructionLibrary::ConstructionLibrary() 
 {
@@ -39,7 +39,5 @@ const ConstructionDescription* ConstructionLibrary::GetConstructionDescription(c
     auto found = m_primitiveNameIdMap.find(name);
     return (found != m_primitiveNameIdMap.end()) ? &m_primitives[found->second]->ConstructionDesc() : nullptr;
 }
-
-#include "ConstructionLibraryPrimitives.cpp"
 
 // eof

@@ -12,8 +12,9 @@ using namespace ConstructorImpl;
 #define max(a, b) (a)>(b) ? (a) : (b)
 #endif
 
-Core::Core() 
-    : m_pillars(256)
+Core::Core(ConstructionLibrary& constructionLibrary) 
+    : m_library(constructionLibrary)
+    , m_pillars(256)
     , m_isDirty(false)
     , m_lastGroupIndex(0)
 {
@@ -198,7 +199,7 @@ void Core::morph(const vector3i_t& position, Element& self)
         // morph objects if they are perpendicular
         if (iD.x * sD.x + iD.z * sD.z == 0 )
         {
-            self.construction = ILibrary::library()->GetConstruction(WedgeOutCorner);
+            self.construction = m_library.GetConstructionDescription(WedgeOutCorner);
             //mirror wedge angle if required
             if (iD.x * sD.z - iD.z * sD.x > 0)
             {
@@ -215,7 +216,7 @@ void Core::morph(const vector3i_t& position, Element& self)
         // morph objects if they are perpendicular
         if (iD.x * sD.x + iD.z * sD.z == 0 )
         {
-            self.construction = ILibrary::library()->GetConstruction(WedgeInCorner);
+            self.construction = m_library.GetConstructionDescription(WedgeInCorner);
             //mirror wedge angle if required
             if (iD.x * sD.z - iD.z * sD.x < 0)
             {
@@ -235,7 +236,7 @@ void Core::morph(const vector3i_t& position, Element& self)
         if (iD.x * sD.x + iD.z * sD.z == 0)
         {
             item->direction |= Directions::LeftToRight;
-            item->construction = ILibrary::library()->GetConstruction( (iD.x * sD.z - iD.z * sD.x < 0) ? WedgeOutCorner : WedgeInCorner);
+            item->construction = m_library.GetConstructionDescription( (iD.x * sD.z - iD.z * sD.x < 0) ? WedgeOutCorner : WedgeInCorner);
         }
     }
 
@@ -250,7 +251,7 @@ void Core::morph(const vector3i_t& position, Element& self)
         // morph objects if they are perpendicular
         if (iD.x * sD.x + iD.z * sD.z == 0)
         {
-            item->construction = ILibrary::library()->GetConstruction( (iD.x * sD.z - iD.z * sD.x > 0) ? WedgeOutCorner : WedgeInCorner);
+            item->construction = m_library.GetConstructionDescription( (iD.x * sD.z - iD.z * sD.x > 0) ? WedgeOutCorner : WedgeInCorner);
         }
     }
 }

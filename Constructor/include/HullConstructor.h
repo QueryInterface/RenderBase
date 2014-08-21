@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Constructor.h"
+#include "MeshLibraryImpl.h"
 
 #include <list>
 #include <memory>
@@ -31,15 +32,16 @@ namespace ConstructorImpl
 
         //IClonable interface
         virtual IMeshPtr Clone() const { return nullptr;};
-    public:
-        Hull();
+
+        Hull(MeshLibrary& meshLibrary);
         virtual ~Hull() {};
 
         // Construct mesh for object
         void ConstructMesh(Core& objectCore);
 
     private:
-        IMesh::Desc m_hullDescription;
+        MeshLibrary&    m_library;
+        IMesh::Desc     m_hullDescription;
 
         PREVENT_COPY(Hull);
     };

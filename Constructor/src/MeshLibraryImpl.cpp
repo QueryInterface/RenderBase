@@ -1,7 +1,7 @@
 #include "MeshLibraryImpl.h"
 #include <memory>
 
-using namespace LibraryImpl;
+using namespace ConstructorImpl;
 
 MeshLibrary::MeshLibrary() 
 {
@@ -13,10 +13,13 @@ const ILibraryMesh& MeshLibrary::GetMeshObject(unsigned int id)
     return *m_primitives[id];
 }
 
-void MeshLibrary::RegisterMesh(unsigned int id, const ILibraryMesh& mesh)
+void MeshLibrary::RegisterMesh(unsigned int id, ILibraryMeshPtr& mesh)
 {
-    m_primitives[id] = &mesh;
+    m_primitives[id] = mesh;
 }
 
-#include "MeshLibraryPrimitives.cpp"
+void MeshLibrary::RegisterSimpleMesh(std::string name, int id, ILibraryMesh* mesh)
+{
+    m_primitives[id].reset(mesh);
+}
 // eof

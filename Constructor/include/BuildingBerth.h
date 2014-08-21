@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Constructor.h"
+#include "LibraryImpl.h"
 #include "ObjectConstructor.h"
 #include "HullConstructor.h"
 
@@ -27,7 +28,7 @@ namespace ConstructorImpl
     class BuildingBerth : public Constructor
     {
     public:
-        BuildingBerth() {};
+        BuildingBerth();
         ~BuildingBerth() {};
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +59,11 @@ namespace ConstructorImpl
         virtual BBox        GetBoundingBox() const;
 
         ///////////////////////////////////////////////////////////////////////////////////
+        // Return reference to library object
+        virtual ILibrary&   GetLibrary();
+
+
+        ///////////////////////////////////////////////////////////////////////////////////
         // Return reference to logic constructor object
         Core&  GetCore();
 
@@ -67,6 +73,7 @@ namespace ConstructorImpl
         // virtual const GLMeshDescs& GetMeshDescs() const override;
 
     private:
+        Library     m_buildingBlocksLibrary;
         Core        m_core;
         Hull        m_hull;
 

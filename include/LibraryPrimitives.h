@@ -29,6 +29,8 @@ struct ILibraryMesh : public IMesh
     virtual ~ILibraryMesh() {};
 };
 
+typedef std::shared_ptr<ILibraryMesh> ILibraryMeshPtr;
+
 /////////////////////////////////////////////////////////////////////
 ///
 /// Library implementation of Game object

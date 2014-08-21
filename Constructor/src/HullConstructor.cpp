@@ -13,7 +13,8 @@ using namespace ConstructorImpl;
 #define max(a, b) (a)>(b) ? (a) : (b)
 #endif
 
-Hull::Hull() 
+Hull::Hull(MeshLibrary& library) 
+    : m_library(library)
 {
     m_hullDescription.Shapes.resize(ConstructorElements::ComponentsCount);
     m_hullDescription.Shapes[ConstructorElements::BaseIndex].Indices.ElementSize     = 1;
@@ -40,7 +41,7 @@ void Hull::ConstructMesh(Core& objectCore)
     objectCore.IterrateObject([&](size_t x, size_t y, size_t z, Element& e)
     {
         MeshProperties prop = {~e.neighbourhood, vector3f_t(x,y,z), e.direction};
-        ILibrary::library()->GetMesh(e.construction->primitiveUID).ConstructGeometry(prop, m_hullDescription.Shapes[ConstructorElements::MeshIndex]);
+        m_library.GetMeshObject(e.construction->primitiveUID).ConstructGeometry(prop, m_hullDescription.Shapes[ConstructorElements::MeshIndex]);
     });
 }
 

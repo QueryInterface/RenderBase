@@ -10,7 +10,7 @@
 #include "MeshLibraryImpl.h"
 #include "ObjectLibraryImpl.h"
 
-namespace LibraryImpl
+namespace ConstructorImpl
 {
 /////////////////////////////////////////////////////////////////////
 ///
@@ -20,18 +20,19 @@ namespace LibraryImpl
 class Library : public ILibrary
 {
 public:
+    Library();
+    virtual ~Library() {};
+
     virtual void Reset();
 
     // construction library object
-    virtual const ConstructionDescription* GetConstruction(ElementType et);
     virtual const ConstructionDescription* GetConstructionByName(std::string name);
-    virtual void RegisterDefaultConstruction(std::string name, IConstructable* element);
     virtual void RegisterConstruction(std::string name, IConstructablePtr& element);
 
     // mesh library object
     // according to flags, mesh may contain different geometry
     virtual const ILibraryMesh& GetMesh(unsigned int id);
-    virtual void  RegisterMesh(unsigned int id, const ILibraryMesh& mesh);
+    virtual void  RegisterMesh(unsigned int id, ILibraryMeshPtr& mesh);
 
     // object library primitives
     // object contains information about 
@@ -42,12 +43,12 @@ public:
     virtual const IGameObject* GetObjectByName(std::string name);
     virtual Status RegisterObject(std::string name, IGameObjectPtr & prototype);
 
-    virtual ~Library() {};
+    /////////////////////////////////////////////////////////////////////
+    ///
+    ConstructionLibrary& GetConstructionLibrary() {return m_constructionLibrary;}
+    MeshLibrary&         GetMeshLibrary() {return m_meshLibrary;}
 
 private:
-    friend struct ILibrary;
-
-    Library();
 
     ConstructionLibrary m_constructionLibrary;
     MeshLibrary         m_meshLibrary;

@@ -92,26 +92,23 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////////
 // Space mesh, this mesh will be provided as dummy mesh object
 ///////////////////////////////////////////////////////////////////////////////////
-class SpaceMesh : public BaseMesh
+class mesh_Space : public BaseMesh
 {
 public:
-    SpaceMesh() { ILibrary::library()->RegisterMesh(ElementType::Space, *this); };
+    mesh_Space() {};
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, SpaceMesh);
+        CLONE_HANDLE(IMesh, mesh_Space);
     };
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> SpaceMesh::self(new SpaceMesh());
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Simple Cube mesh
 ///////////////////////////////////////////////////////////////////////////////////
-class CubeMesh : public BaseMesh
+class mesh_Cube : public BaseMesh
 {
 public:
-    CubeMesh()
+    mesh_Cube()
     {
         const float vertices[] = 
         {//     vertex         normal    texcoord
@@ -137,13 +134,11 @@ public:
         };
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
-
-        ILibrary::library()->RegisterMesh(ElementType::Cube, *this);
     }
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, CubeMesh);
+        CLONE_HANDLE(IMesh, mesh_Cube);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -177,19 +172,15 @@ public:
             }
         }
     }
-
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> CubeMesh::self(new CubeMesh());
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Simple Wedge mesh
 ///////////////////////////////////////////////////////////////////////////////////
-class WedgeMesh : public BaseMesh
+class mesh_Wedge : public BaseMesh
 {
 public:
-    WedgeMesh()
+    mesh_Wedge()
     {
         float vertices[] = 
         {//     vertex         normal    texcoord
@@ -213,13 +204,11 @@ public:
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
-
-        ILibrary::library()->RegisterMesh(ElementType::Wedge, *this);
     }
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, WedgeMesh);
+        CLONE_HANDLE(IMesh, mesh_Wedge);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -263,19 +252,15 @@ public:
             }
         }
     }
-
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> WedgeMesh::self(new WedgeMesh());
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Wedge angle mesh
 ///////////////////////////////////////////////////////////////////////////////////
-class WedgeOuterAngleMesh : public BaseMesh
+class mesh_WedgeOutCorner : public BaseMesh
 {
 public:
-    WedgeOuterAngleMesh()
+    mesh_WedgeOutCorner()
     {
         float vertices[] = 
         {//     vertex         normal    texcoord
@@ -300,13 +285,11 @@ public:
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
-
-        ILibrary::library()->RegisterMesh(ElementType::WedgeOutCorner, *this);
     }
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, WedgeOuterAngleMesh);
+        CLONE_HANDLE(IMesh, mesh_WedgeOutCorner);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -353,15 +336,12 @@ public:
         //copyTriangles(out_descriptor, properties.offset, properties.orientation, m_indices.data(), m_indices.size());
     }
 
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> WedgeOuterAngleMesh::self(new WedgeOuterAngleMesh());
 
-class WedgeInnerAngleMesh : public BaseMesh
+class mesh_WedgeInCorner : public BaseMesh
 {
 public:
-    WedgeInnerAngleMesh()
+    mesh_WedgeInCorner()
     {
         float vertices[] = 
         {//     vertex         normal    texcoord
@@ -386,13 +366,11 @@ public:
 
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
-
-        ILibrary::library()->RegisterMesh(ElementType::WedgeInCorner, *this);
     }
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, WedgeInnerAngleMesh);
+        CLONE_HANDLE(IMesh, mesh_WedgeInCorner);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -417,19 +395,15 @@ public:
         };
         copyTriangles(out_descriptor, properties.offset, properties.orientation, indexGroups, normalGroups, sizeof(indexGroups)/sizeof(index_t));
     }
-
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> WedgeInnerAngleMesh::self(new WedgeInnerAngleMesh());
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Common cilinder mesh
 ///////////////////////////////////////////////////////////////////////////////////
-class Cilinder : public BaseMesh
+class mesh_Cilinder : public BaseMesh
 {
 public:
-    Cilinder()
+    mesh_Cilinder()
     {
         float vertices[] = 
         {//     vertex         normal    texcoord
@@ -473,13 +447,11 @@ public:
         };
         m_vertices.assign(vertices, vertices + sizeof(vertices)/sizeof(float));
         m_normals.assign(normals, normals + sizeof(normals)/sizeof(float));
-
-        ILibrary::library()->RegisterMesh(ElementType::Cilinder, *this);
     }
 
     virtual IMeshPtr Clone() const 
     {
-        CLONE_HANDLE(IMesh, Cilinder);
+        CLONE_HANDLE(IMesh, mesh_Cilinder);
     };
 
     virtual void ConstructGeometry(const MeshProperties& properties, IMesh::Shape& out_descriptor) const
@@ -518,9 +490,21 @@ public:
 
         copyTriangles(out_descriptor, properties.offset, properties.orientation, indexGroups, normalGroups, sizeof(indexGroups)/sizeof(index_t));
     }
-
-private:
-    static std::unique_ptr<IMesh> self;
 };
-std::unique_ptr<IMesh> Cilinder::self(new Cilinder());
+
+
+#define REGISTER_MESH(PrimitiveType) library.RegisterSimpleMesh(#PrimitiveType, PrimitiveType, new mesh_##PrimitiveType())
+
+static void RegisterDefaultMeshes(MeshLibrary& library)
+{
+    REGISTER_MESH(Space);
+    REGISTER_MESH(Cube);
+    REGISTER_MESH(Wedge);
+    REGISTER_MESH(WedgeOutCorner);
+    REGISTER_MESH(WedgeInCorner);
+//    REGISTER_MESH(Ledder);
+    REGISTER_MESH(Cilinder);
+//    REGISTER_MESH(CilindricPlatform);
+//    REGISTER_MESH(Sphere);
+}
 //eof

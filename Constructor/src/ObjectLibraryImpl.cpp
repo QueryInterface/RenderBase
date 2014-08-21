@@ -1,7 +1,7 @@
 #include "ObjectLibraryImpl.h"
 #include <memory>
 
-using namespace LibraryImpl;
+using namespace ConstructorImpl;
 
 ObjectLibrary::ObjectLibrary() 
 {

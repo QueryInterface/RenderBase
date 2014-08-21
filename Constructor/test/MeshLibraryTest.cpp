@@ -1,10 +1,10 @@
-#include "Library.h"
+#include "Constructor.h"
 #include <gtest/gtest.h>
 #include <memory>
 
 TEST(MeshLibraryTest, GetSpaceMesh)
 {
-    ILibrary& lib = *ILibrary::library();
+    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Space);
 
     IMesh::Shape desc;
@@ -19,7 +19,7 @@ TEST(MeshLibraryTest, GetSpaceMesh)
 
 TEST(MeshLibraryTest, GetCubeMesh)
 {
-    ILibrary& lib = *ILibrary::library();
+    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
 
     IMesh::Shape desc;
@@ -30,7 +30,7 @@ TEST(MeshLibraryTest, GetCubeMesh)
 
 TEST(MeshLibraryTest, GetClonedCubeMesh)
 {
-    ILibrary& lib = *ILibrary::library();
+    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
     IMeshPtr meshCloneTemp = lib.GetMesh(ElementType::Cube).Clone();
     ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
     IMesh::Shape desc;
@@ -42,7 +42,7 @@ TEST(MeshLibraryTest, GetClonedCubeMesh)
 
 TEST(MeshLibraryTest, GetCubeMeshFace)
 {
-    ILibrary& lib = *ILibrary::library();
+    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
     IMesh::Shape desc;
     MeshProperties prop = {Directions::pX, vector3f_t(0,0,0)};

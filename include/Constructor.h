@@ -7,6 +7,7 @@
 #pragma once
 #include <Resources.h>
 #include <Construction.h>
+#include <Library.h>
 //#include <../Engine/include/ObjectImpl.h>
 #include "MathBasics.h"
 #include <vector>
@@ -25,6 +26,7 @@ struct Constructor// : public Object
     virtual uint32_t    GetGroup(const vector3i_t& position) = 0;
     virtual IMesh&      GetMesh() = 0;
     virtual BBox        GetBoundingBox() const = 0;
+    virtual ILibrary&   GetLibrary() = 0;
 
     static Constructor& GetConstructor();
 };

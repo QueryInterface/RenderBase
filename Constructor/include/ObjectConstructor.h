@@ -15,6 +15,7 @@
 
 #include "include/QuadTree.h"
 #include "include/RangeList.h"
+#include "ConstructionLibraryImpl.h"
 #include <vector>
 #include <list>
 #include <memory>
@@ -45,7 +46,7 @@ namespace ConstructorImpl
     class Core : public IConstructable
     {
     public:
-        Core();
+        Core(ConstructionLibrary& objectLibrary);
         virtual ~Core() {};
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +98,8 @@ namespace ConstructorImpl
         ///////////////////////////////////////////////////////////////////////////////////
         // fast rotate operation on multiple by Pi/2 angles
         vector3i_t rotate(const vector3i_t& vec, unsigned int dst) const;
+
+        ConstructionLibrary&        m_library;
 
         ConstructionDescription      m_desc;
         Utils::QuadTree< Pillar_t >  m_pillars;

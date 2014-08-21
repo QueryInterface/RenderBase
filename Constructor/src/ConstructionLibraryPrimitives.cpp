@@ -6,7 +6,7 @@ class class_##PrimitiveType : public IConstructable                             
 {                                                                                                   \
 public:                                                                                             \
     ConstructionDescription m_desc;                                                                 \
-    const ConstructionDescription& ConstructionDesc() const {return m_desc;}                       \
+    const ConstructionDescription& ConstructionDesc() const {return m_desc;}                        \
                                                                                                     \
     class_##PrimitiveType()                                                                         \
     {                                                                                               \
@@ -21,12 +21,10 @@ public:                                                                         
         m_desc.neighbors.assign(neighbors, neighbors + count);
 
 #define END_PRIMITIVE_DEFINITION(PrimitiveType)                                                     \
-        ILibrary::library()->RegisterDefaultConstruction(#PrimitiveType, this);                     \
     }                                                                                               \
     virtual ~class_##PrimitiveType() {};                                                            \
-    static IConstructable* self;                                                                    \
-};                                                                                                  \
-IConstructable* class_##PrimitiveType::self = new class_##PrimitiveType(); // ownership will be transferred to Library
+};
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,4 +118,19 @@ BEGIN_PRIMITIVE_DEFINITION(Sphere,              BBox(vector3i_t(0, 0, 0), vector
         NeighborDesc(Influences::FULLY_COVERED, vector3i_t(0,0,-1), Directions::nZ),
     END_NEIGHBORS_LIST(6);
 END_PRIMITIVE_DEFINITION(Sphere);
+
+#define REGISTER_PRIMITIVE(PrimitiveType) library.RegisterSimplePrimitive(#PrimitiveType, new class_##PrimitiveType())
+
+static void RegisterDefaultConstructions(ConstructionLibrary& library)
+{
+    REGISTER_PRIMITIVE(Space);
+    REGISTER_PRIMITIVE(Cube);
+    REGISTER_PRIMITIVE(Wedge);
+    REGISTER_PRIMITIVE(WedgeOutCorner);
+    REGISTER_PRIMITIVE(WedgeInCorner);
+    REGISTER_PRIMITIVE(Ledder);
+    REGISTER_PRIMITIVE(Cilinder);
+    REGISTER_PRIMITIVE(CilindricPlatform);
+    REGISTER_PRIMITIVE(Sphere);
+}
 // eof

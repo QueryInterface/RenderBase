@@ -4,16 +4,32 @@
 
 using namespace ConstructorImpl;
 
+#include "ConstructionLibraryPrimitives.cpp"
+#include "MeshLibraryPrimitives.cpp"
+
 Constructor& Constructor::GetConstructor()
 {
     static unique_ptr<Constructor> constructor(new BuildingBerth);
     return *(constructor.get());
 }
 
+BuildingBerth::BuildingBerth()
+    : m_core(m_buildingBlocksLibrary.GetConstructionLibrary())
+    , m_hull(m_buildingBlocksLibrary.GetMeshLibrary())
+{
+    RegisterDefaultConstructions(m_buildingBlocksLibrary.GetConstructionLibrary());
+    RegisterDefaultMeshes(m_buildingBlocksLibrary.GetMeshLibrary());
+};
+
 Core& BuildingBerth::GetCore()
 {
     //assert(index < m_cores.size());
     return m_core;
+}
+
+ILibrary& BuildingBerth::GetLibrary()
+{
+    return m_buildingBlocksLibrary;
 }
 
 bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom)
@@ -23,7 +39,7 @@ bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Dir
         return false;
     }
 
-    m_core.SetElement(*ILibrary::library()->GetConstruction(type), position, direction, copySettingsFrom);
+    m_core.SetElement(*m_buildingBlocksLibrary.GetConstructionLibrary().GetConstructionDescription(type), position, direction, copySettingsFrom);
     return true;
 }
 
