@@ -3,6 +3,7 @@ set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 project(RenderBase)
 
 include(cmake/useful_functions.cmake)
+
 update_compiler_settings()
 check_apple_platform()
 
@@ -64,7 +65,6 @@ set (EXECUTABLE_OUTPUT_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_subdirectory(3rdParty)
 add_subdirectory(Engine)
 add_subdirectory(Game)
-add_subdirectory(Library)
 add_subdirectory(Constructor)
 add_subdirectory(Utils)
 add_subdirectory(ResourceOverseer)

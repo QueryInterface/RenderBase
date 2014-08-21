@@ -21,7 +21,7 @@ add_executable(Game
     ${SOURCE_FILES}
 )
 
-target_link_libraries(Game Engine ResourceOverseer Constructor Library)
+target_link_libraries(Game Engine ResourceOverseer Constructor)
 
 # files layout for all targets
 source_group ("Headers"             FILES ${HEADER_FILES})

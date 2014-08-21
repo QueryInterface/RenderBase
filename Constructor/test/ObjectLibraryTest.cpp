@@ -119,4 +119,16 @@ TEST_F(ObjectLibraryTest, PendingRegistration)
     ASSERT_EQ(Status::Pending, ILibrary::library()->CheckObjectStatus(testName));
     ASSERT_TRUE(nullptr == ILibrary::library()->GetObjectByName(testName));
 }
+
+TEST_F(ObjectLibraryTest, PendingRegistrationMovesOnline)
+{
+    std::string testName = "testObject";
+
+    IGameObject::ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
+    IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
+    ILibrary::library()->RegisterObject(testName, test_obj);
+
+    ASSERT_EQ(Status::Pending, ILibrary::library()->RegisterObject(testName, test_obj));
+    ASSERT_EQ(Status::Pending, ILibrary::library()->CheckObjectStatus(testName));
+}
 // eof

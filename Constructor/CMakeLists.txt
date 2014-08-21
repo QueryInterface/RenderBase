@@ -28,7 +28,7 @@ set_property (TARGET ConstructorTest  PROPERTY FOLDER "UnitTests")
 # set include directories
 # set property for library 
 set_property(
-    TARGET Constructor 
+    TARGET Constructor
     PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}/src
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
@@ -47,11 +47,16 @@ set_property(
 	APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/include
 )
 
+# exclude file from build. this cpp files are included to another cpp
+set_source_files_properties(
+    ${CMAKE_CURRENT_LIST_DIR}/src/ConstructionLibraryPrimitives.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/MeshLibraryPrimitives.cpp
+    PROPERTIES
+    HEADER_FILE_ONLY true
+)
+
 # add required definitions (tr1 tuple is not supported under VS11)
 set_target_properties(ConstructorTest         PROPERTIES COMPILE_FLAGS -DGTEST_HAS_TR1_TUPLE=0)
-
-add_dependencies(Constructor Library)
-target_link_libraries(Constructor Library)
 
 add_dependencies(ConstructorTest Constructor gtest)
 target_link_libraries(ConstructorTest Constructor gtest)
