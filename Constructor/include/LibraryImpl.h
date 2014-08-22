@@ -8,6 +8,7 @@
 #include "Library.h"
 #include "ConstructionLibraryImpl.h"
 #include "MeshLibraryImpl.h"
+#include "MaterialLibraryImpl.h"
 #include "ObjectLibraryImpl.h"
 
 namespace ConstructorImpl
@@ -52,6 +53,7 @@ private:
 
     ConstructionLibrary m_constructionLibrary;
     MeshLibrary         m_meshLibrary;
+    MaterialLibrary     m_materialLibrary;
     ObjectLibrary       m_objectLibrary;
 
     // list of object that have linked resources, not loaded into library,
