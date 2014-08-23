@@ -21,6 +21,13 @@ BuildingBerth::BuildingBerth()
     RegisterDefaultMeshes(m_buildingBlocksLibrary.GetMeshLibrary());
 };
 
+void BuildingBerth::Reset()
+{
+    m_buildingBlocksLibrary.Reset();
+    RegisterDefaultConstructions(m_buildingBlocksLibrary.GetConstructionLibrary());
+    RegisterDefaultMeshes(m_buildingBlocksLibrary.GetMeshLibrary());
+}
+
 Core& BuildingBerth::GetCore()
 {
     //assert(index < m_cores.size());

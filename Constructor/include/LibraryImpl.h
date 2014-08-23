@@ -28,7 +28,7 @@ public:
 
     // construction library object
     virtual const ConstructionDescription* GetConstructionByName(std::string name);
-    virtual void RegisterConstruction(std::string name, IConstructablePtr& element);
+    virtual Status RegisterConstruction(std::string name, IConstructablePtr& element);
 
     // mesh library object
     // according to flags, mesh may contain different geometry
@@ -58,7 +58,8 @@ private:
 
     // list of object that have linked resources, not loaded into library,
     // so these objects cannot be pushed into object library until all required resources are loaded
-    std::map<std::string, IGameObjectPtr> m_pendingObjects;
+    std::map<std::string, IGameObjectPtr>               m_pendingObjects;
+    std::map<std::string, std::vector<IGameObjectPtr> > m_constructionSubscribers;
 };
 
 };

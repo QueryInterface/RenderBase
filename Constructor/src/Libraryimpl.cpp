@@ -10,11 +10,23 @@ Library::Library()
 void Library::Reset()
 {
     m_objectLibrary.Cleanup();
+    m_constructionLibrary.Cleanup();
 }
 
-void Library::RegisterConstruction(std::string name, IConstructablePtr& element)
+Status Library::RegisterConstruction(std::string name, IConstructablePtr& element)
 {
-    m_constructionLibrary.RegisterPrimitive(name, element);
+    auto subscribers = m_constructionSubscribers.find(name);
+    if (subscribers != m_constructionSubscribers.end())
+    {
+        for (auto& subscriber : subscribers->second)
+        {
+            std::string objName = subscriber->GetName();
+            m_objectLibrary.RegisterObject(objName, subscriber);
+            m_pendingObjects.erase(objName);
+        }
+        m_constructionSubscribers.erase(subscribers);
+    }
+    return m_constructionLibrary.RegisterPrimitive(name, element);
 }
 
 const ConstructionDescription* Library::GetConstructionByName(std::string name)
@@ -55,6 +67,11 @@ Status Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
         return m_objectLibrary.RegisterObject(name, prototype);
     }
 
+    if (Status::OK == m_objectLibrary.CheckObjectStatus(name))
+    {
+        return Status::AlreadyExists;
+    }
+    m_constructionSubscribers[properties.elementName].push_back(prototype);
     m_pendingObjects[name] = prototype;
     return Status::Pending;
 }

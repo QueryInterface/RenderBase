@@ -8,11 +8,23 @@ ConstructionLibrary::ConstructionLibrary()
     m_primitives.resize(ElementType::SimplePrimitivesCount);
 }
 
-void ConstructionLibrary::RegisterPrimitive(std::string name, IConstructablePtr& element)
+void ConstructionLibrary::Cleanup() 
 {
+    m_primitiveNameIdMap.clear(); 
+    m_primitives.clear();
+    m_primitives.resize(ElementType::SimplePrimitivesCount);
+}
+
+Status ConstructionLibrary::RegisterPrimitive(std::string name, IConstructablePtr& element)
+{
+    if (m_primitiveNameIdMap.find(name) != m_primitiveNameIdMap.end())
+        return Status::AlreadyExists;
+
     size_t id = m_primitives.size();
     m_primitives.push_back(element);
     m_primitiveNameIdMap[name] = id;
+
+    return Status::OK;
 }
 
 void ConstructionLibrary::RegisterSimplePrimitive(std::string name, IConstructable* element)

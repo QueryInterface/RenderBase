@@ -62,6 +62,10 @@ namespace ConstructorImpl
         // Return reference to library object
         virtual ILibrary&   GetLibrary();
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Invalidates all content of Building berth including bound libraries
+        // set building berth to state as if it was just constructed
+        void        Reset();
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Return reference to logic constructor object

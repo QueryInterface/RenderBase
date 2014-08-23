@@ -28,6 +28,8 @@ struct Constructor// : public Object
     virtual BBox        GetBoundingBox() const = 0;
     virtual ILibrary&   GetLibrary() = 0;
 
+    virtual void        Reset() = 0;
+
     static Constructor& GetConstructor();
 };
 

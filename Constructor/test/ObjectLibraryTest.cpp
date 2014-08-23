@@ -34,6 +34,18 @@ END_CHECK_PRIMITIVE_TEST();
 BEGIN_CHECK_PRIMITIVE_TEST(ConstructionLibraryTest, Sphere, vector3i_t(0, 0, 0), vector3i_t(1, 1, 1))
 END_CHECK_PRIMITIVE_TEST();
 
+class testConstruction : public IConstructable
+{
+public:
+    testConstruction() {};
+    virtual ~testConstruction() {};
+
+    virtual const ConstructionDescription& ConstructionDesc() const {return m_desc;}
+
+    ConstructionDescription m_desc;
+
+};
+
 class ObjectLibraryTest : public ::testing::Test
 {
 public:
@@ -41,7 +53,8 @@ public:
 
     void SetUp()
     {
-        m_constructor.GetLibrary().Reset();
+        m_constructor.Reset();
+        ASSERT_TRUE(nullptr != m_constructor.GetLibrary().GetConstructionByName("Cube"));
     }
     void TearDown()
     {
@@ -85,20 +98,39 @@ TEST_F(ObjectLibraryTest, Reset)
     const IGameObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
     ASSERT_EQ(Status::OK, m_constructor.GetLibrary().CheckObjectStatus(testName));
     ASSERT_TRUE(desc != nullptr);
-    m_constructor.GetLibrary().Reset();
+    m_constructor.Reset();
 
     ASSERT_EQ(Status::ResourceNotFound, m_constructor.GetLibrary().CheckObjectStatus(testName));
     desc = m_constructor.GetLibrary().GetObjectByName(testName);
     ASSERT_TRUE(desc == nullptr);
 }
 
-TEST_F(ObjectLibraryTest, DoubleRegistration)
+TEST_F(ObjectLibraryTest, DoubleElementRegistration)
+{
+    IConstructablePtr ptr(new testConstruction());
+    //ptr.reset(new testConstruction());
+    ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterConstruction("Cube", ptr));
+}
+
+TEST_F(ObjectLibraryTest, DoubleObjectRegistration)
 {
     std::string testName = "testObject";
 
     IGameObjectPtr test_obj(new GameObjectBase(testName));
     m_constructor.GetLibrary().RegisterObject(testName, test_obj);
 
+    ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
+}
+
+TEST_F(ObjectLibraryTest, DoubleObjectRegistrationPending)
+{
+    std::string testName = "testObject";
+
+    IGameObjectPtr test_obj(new GameObjectBase(testName));
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
+
+    IGameObject::ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
+    test_obj.reset(new GameObjectBase(newComplexObject));
     ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 }
 
@@ -125,5 +157,32 @@ TEST_F(ObjectLibraryTest, PendingRegistrationMovesOnline)
 
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().CheckObjectStatus(testName));
+
+    IConstructablePtr ptr(new testConstruction());
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterConstruction("SomeElement", ptr));
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().CheckObjectStatus(testName));
+}
+
+TEST_F(ObjectLibraryTest, PendingRegistrationMultipleConstructionWaiters)
+{
+    std::string testName = "testObject";
+
+    ASSERT_TRUE(nullptr == m_constructor.GetLibrary().GetConstructionByName("SomeElement"));
+
+    IGameObject::ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
+    IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
+
+    ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
+    ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().CheckObjectStatus(testName));
+
+    std::string SecondTestName = testName + "1";
+    newComplexObject.name = SecondTestName;
+    test_obj.reset(new GameObjectBase(newComplexObject));
+    ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(SecondTestName, test_obj));
+
+    IConstructablePtr ptr(new testConstruction());
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterConstruction("SomeElement", ptr));
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().CheckObjectStatus(testName));
+    ASSERT_EQ(Status::OK, m_constructor.GetLibrary().CheckObjectStatus(SecondTestName));
 }
 // eof
