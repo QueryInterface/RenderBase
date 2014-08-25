@@ -66,6 +66,7 @@ add_subdirectory(3rdParty)
 add_subdirectory(Engine)
 add_subdirectory(Game)
 add_subdirectory(Constructor)
+add_subdirectory(Overmind)
 add_subdirectory(Utils)
 add_subdirectory(ResourceOverseer)
 
