@@ -1,4 +1,5 @@
 #include "OvermindImpl.h"
+#include "Constructor.h"
 #include <gtest/gtest.h>
 #include <memory>
 
@@ -10,19 +11,41 @@ public:
 
     void SetUp()
     {
-        m_builder.reset(new Overmind);
+        m_overmind.reset(new Overmind);
     }
     void TearDown()
     {
-        m_builder.reset();
+        m_overmind.reset();
     }
 protected:
-    std::unique_ptr<Overmind> m_builder;
+    std::unique_ptr<Overmind> m_overmind;
 };
 
-TEST_F(OvermindTest, AddSpace)
+TEST_F(OvermindTest, ErrorCheck)
 {
-    //ASSERT_FALSE(m_builder->SetElement(ElementType::Space, vector3i_t(0,0,0), Directions::pZ));
+    ASSERT_NE(Status::OK, m_overmind->ExecuteScript("blah.blah"));
+    std::string message = m_overmind->GetLastError().c_str();
+    ASSERT_STRNE("", message.c_str());
+}
+
+TEST_F(OvermindTest, ExecuteTestScript)
+{
+    ASSERT_EQ(Status::OK, m_overmind->ExecuteScript("test_scripts/empty.lua"));
+    std::string message = m_overmind->GetLastError().c_str();
+    ASSERT_STREQ("", message.c_str()) << "Error received: " << message.c_str();
+}
+
+TEST_F(OvermindTest, RegisterObject)
+{
+    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+
+    ASSERT_EQ(Status::ResourceNotFound, lib.CheckObjectStatus("NewObject"));
+
+    ASSERT_EQ(Status::OK, m_overmind->ExecuteScript("test_scripts/registerObject.lua"));
+    std::string message = m_overmind->GetLastError().c_str();
+    ASSERT_STREQ("", message.c_str()) << "Error received: " << message.c_str();
+
+    ASSERT_EQ(Status::OK, lib.CheckObjectStatus("NewObject"));
 }
 
 // eof

@@ -61,7 +61,7 @@ const IGameObject* Library::GetObjectByName(std::string name)
 
 Status Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
 {
-    const IGameObject::ObjectProperties& properties = prototype->GetObjectContent();
+    const ObjectProperties& properties = prototype->GetObjectContent();
     if (!properties.elementName.length() || m_constructionLibrary.GetConstructionDescription(properties.elementName))
     {
         return m_objectLibrary.RegisterObject(name, prototype);

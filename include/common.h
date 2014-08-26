@@ -34,6 +34,7 @@ enum class Status
     // Error codes
     ResourceNotFound,
     AlreadyExists,
+    ScriptFailure,
 };
 
 template<typename ClonableType>

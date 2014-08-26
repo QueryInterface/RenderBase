@@ -79,7 +79,7 @@ TEST_F(ObjectLibraryTest, RegisterationWithElement)
 {
     std::string testName = "testObject";
     {
-        IGameObject::ObjectProperties newComplexObject = {testName, "", "", "Cube"};
+        ObjectProperties newComplexObject = {testName, "", "", "Cube"};
         IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
         ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     }
@@ -129,7 +129,7 @@ TEST_F(ObjectLibraryTest, DoubleObjectRegistrationPending)
     IGameObjectPtr test_obj(new GameObjectBase(testName));
     ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 
-    IGameObject::ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
+    ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
     test_obj.reset(new GameObjectBase(newComplexObject));
     ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 }
@@ -138,7 +138,7 @@ TEST_F(ObjectLibraryTest, PendingRegistration)
 {
     std::string testName = "testObject";
 
-    IGameObject::ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
+    ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
     IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
     m_constructor.GetLibrary().RegisterObject(testName, test_obj);
 
@@ -151,7 +151,7 @@ TEST_F(ObjectLibraryTest, PendingRegistrationMovesOnline)
 {
     std::string testName = "testObject";
 
-    IGameObject::ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
+    ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
     IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
     m_constructor.GetLibrary().RegisterObject(testName, test_obj);
 
@@ -169,7 +169,7 @@ TEST_F(ObjectLibraryTest, PendingRegistrationMultipleConstructionWaiters)
 
     ASSERT_TRUE(nullptr == m_constructor.GetLibrary().GetConstructionByName("SomeElement"));
 
-    IGameObject::ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
+    ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
     IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
 
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));

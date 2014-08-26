@@ -17,18 +17,16 @@ struct IResource
 {
 };
 
+////////////////////////////////////////////
+// FIXME: do it in more simple way
+#define DEFINE_OBJECTPROPERTIES
+    #include "Reflections.h"
+#undef DEFINE_OBJECTPROPERTIES
+
 // resource interfaces
 struct IGameObject
     : public IResource
 {
-    struct ObjectProperties
-    {
-        std::string    name;
-        std::string    meshName;
-        std::string    materialName;
-        std::string    elementName;
-    };
-
     struct ObjectResources
     {
         IMeshPtr            mesh;
