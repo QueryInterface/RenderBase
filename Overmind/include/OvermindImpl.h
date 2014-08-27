@@ -35,9 +35,14 @@ namespace OvermindImpl
         // if string is empty, no errors happened
         std::string GetLastError();
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Access to modules
+        Constructor& GetConstructor() {return m_constructor;}
+
     private:
         void registerGlobals();
         void registerLibrary();
+        void registerConstructor();
 
         lua_State *m_lua;
         Constructor& m_constructor;

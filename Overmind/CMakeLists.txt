@@ -70,6 +70,7 @@ add_custom_command(TARGET OvermindTest
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${CMAKE_CURRENT_LIST_DIR}/test_scripts/empty.lua             ${CMAKE_CURRENT_BINARY_DIR}/test_scripts/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${CMAKE_CURRENT_LIST_DIR}/test_scripts/registerObject.lua    ${CMAKE_CURRENT_BINARY_DIR}/test_scripts/
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${CMAKE_CURRENT_LIST_DIR}/test_scripts/building.lua          ${CMAKE_CURRENT_BINARY_DIR}/test_scripts/
 )
 
 # add tests

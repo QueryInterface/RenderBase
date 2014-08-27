@@ -1,30 +1,25 @@
 #pragma once
 #include "common.h"
 #include <vector>
+#include "Reflections.h"
 
 struct IMesh;
 struct ITexture;
 struct IScript;
-struct IGameObject;
+struct IConstructorObject;
 struct IConstructable;
 
 typedef std::shared_ptr<IMesh> IMeshPtr;
 typedef std::shared_ptr<ITexture> ITexturePtr;
 typedef std::shared_ptr<IScript> IScriptPtr;
-typedef std::shared_ptr<IGameObject> IGameObjectPtr;
+typedef std::shared_ptr<IConstructorObject> IConstructorObjectPtr;
 
 struct IResource
 {
 };
 
-////////////////////////////////////////////
-// FIXME: do it in more simple way
-#define DEFINE_OBJECTPROPERTIES
-    #include "Reflections.h"
-#undef DEFINE_OBJECTPROPERTIES
-
 // resource interfaces
-struct IGameObject
+struct IConstructorObject
     : public IResource
 {
     struct ObjectResources
@@ -33,13 +28,15 @@ struct IGameObject
         //IConstructablePtr   construction;
     };
 
-    virtual const ObjectProperties& GetObjectContent()   const = 0;
-    virtual const ObjectResources&  GetObjectResources() const = 0;
+    virtual const       ObjectProperties& GetObjectContent()   const = 0;
+    virtual const       ObjectResources&  GetObjectResources() const = 0;
+    virtual void        SetConstructionId(uint32_t id) = 0;
+    virtual uint32_t    GetConstructionId() const = 0;
     // lot's of stuff to do here
     // FIXME: remove
     virtual const std::string& GetName() const = 0;
 
-    virtual ~IGameObject() {};
+    virtual ~IConstructorObject() {};
 };
 
 struct IMesh 

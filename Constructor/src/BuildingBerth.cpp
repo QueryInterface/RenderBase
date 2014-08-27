@@ -39,6 +39,24 @@ ILibrary& BuildingBerth::GetLibrary()
     return m_buildingBlocksLibrary;
 }
 
+Status BuildingBerth::PlaceObject(PlacementParameters& parameters)
+{
+    const IConstructorObject* obj = m_buildingBlocksLibrary.GetObjectByName(parameters.name);
+    if (nullptr == obj)
+        return Status::ResourceNotFound;
+
+    if (ElementType::Space == obj->GetConstructionId())
+        return Status::OK;
+
+    const ConstructionDescription* desc = m_buildingBlocksLibrary.GetConstructionLibrary().GetConstructionDescription(obj->GetConstructionId());
+    if (nullptr == desc)
+        return Status::ResourceNotFound;
+
+    m_core.SetElement(*desc, parameters.position, (Directions)parameters.orientation, (Directions)parameters.placeDirection);
+
+    return Status::OK;
+}
+
 bool BuildingBerth::SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom)
 {
     if (type == ElementType::Space || type >= ElementType::SimplePrimitivesCount) 

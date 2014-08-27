@@ -27,7 +27,7 @@ namespace ConstructorImpl
         Status RegisterPrimitive(std::string name, IConstructablePtr& element);
 
         // fast access to built in primitives
-        const ConstructionDescription* GetConstructionDescription(ElementType type) const;
+        const ConstructionDescription* GetConstructionDescription(uint32_t type) const;
         void RegisterSimplePrimitive(std::string name, IConstructable* element);
 
         void Cleanup();

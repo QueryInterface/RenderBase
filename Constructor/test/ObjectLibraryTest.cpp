@@ -63,14 +63,14 @@ public:
     Constructor& m_constructor;
 };
 
-TEST_F(ObjectLibraryTest, Registeration)
+TEST_F(ObjectLibraryTest, Registration)
 {
     std::string testName = "testObject";
     {
-        IGameObjectPtr test_obj(new GameObjectBase(testName));
+        IConstructorObjectPtr test_obj(new ConstructorObjectBase(testName));
         ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     }
-    const IGameObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
+    const IConstructorObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
     ASSERT_TRUE(desc != nullptr);
     ASSERT_STREQ(testName.c_str(), desc->GetName().c_str());
 }
@@ -80,10 +80,10 @@ TEST_F(ObjectLibraryTest, RegisterationWithElement)
     std::string testName = "testObject";
     {
         ObjectProperties newComplexObject = {testName, "", "", "Cube"};
-        IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
+        IConstructorObjectPtr test_obj(new ConstructorObjectBase(newComplexObject));
         ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     }
-    const IGameObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
+    const IConstructorObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
     ASSERT_TRUE(desc != nullptr);
     ASSERT_STREQ(testName.c_str(), desc->GetName().c_str());
 }
@@ -92,10 +92,10 @@ TEST_F(ObjectLibraryTest, Reset)
 {
     std::string testName = "testObject";
     {
-        IGameObjectPtr test_obj(new GameObjectBase(testName));
+        IConstructorObjectPtr test_obj(new ConstructorObjectBase(testName));
         m_constructor.GetLibrary().RegisterObject(testName, test_obj);
     }
-    const IGameObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
+    const IConstructorObject* desc = m_constructor.GetLibrary().GetObjectByName(testName);
     ASSERT_EQ(Status::OK, m_constructor.GetLibrary().CheckObjectStatus(testName));
     ASSERT_TRUE(desc != nullptr);
     m_constructor.Reset();
@@ -116,7 +116,7 @@ TEST_F(ObjectLibraryTest, DoubleObjectRegistration)
 {
     std::string testName = "testObject";
 
-    IGameObjectPtr test_obj(new GameObjectBase(testName));
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(testName));
     m_constructor.GetLibrary().RegisterObject(testName, test_obj);
 
     ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
@@ -126,11 +126,11 @@ TEST_F(ObjectLibraryTest, DoubleObjectRegistrationPending)
 {
     std::string testName = "testObject";
 
-    IGameObjectPtr test_obj(new GameObjectBase(testName));
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(testName));
     ASSERT_EQ(Status::OK, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 
     ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
-    test_obj.reset(new GameObjectBase(newComplexObject));
+    test_obj.reset(new ConstructorObjectBase(newComplexObject));
     ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 }
 
@@ -139,12 +139,22 @@ TEST_F(ObjectLibraryTest, PendingRegistration)
     std::string testName = "testObject";
 
     ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
-    IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
-    m_constructor.GetLibrary().RegisterObject(testName, test_obj);
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(newComplexObject));
 
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().CheckObjectStatus(testName));
     ASSERT_TRUE(nullptr == m_constructor.GetLibrary().GetObjectByName(testName));
+}
+
+TEST_F(ObjectLibraryTest, DoublePendingRegistration)
+{
+    std::string testName = "testObject";
+
+    ObjectProperties newComplexObject = {testName, "SomeMesh", "SomeMaterial", "SomeElement"};
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(newComplexObject));
+
+    ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
+    ASSERT_EQ(Status::AlreadyExists, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
 }
 
 TEST_F(ObjectLibraryTest, PendingRegistrationMovesOnline)
@@ -152,8 +162,7 @@ TEST_F(ObjectLibraryTest, PendingRegistrationMovesOnline)
     std::string testName = "testObject";
 
     ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
-    IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
-    m_constructor.GetLibrary().RegisterObject(testName, test_obj);
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(newComplexObject));
 
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().CheckObjectStatus(testName));
@@ -170,14 +179,14 @@ TEST_F(ObjectLibraryTest, PendingRegistrationMultipleConstructionWaiters)
     ASSERT_TRUE(nullptr == m_constructor.GetLibrary().GetConstructionByName("SomeElement"));
 
     ObjectProperties newComplexObject = {testName, "", "", "SomeElement"};
-    IGameObjectPtr test_obj(new GameObjectBase(newComplexObject));
+    IConstructorObjectPtr test_obj(new ConstructorObjectBase(newComplexObject));
 
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(testName, test_obj));
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().CheckObjectStatus(testName));
 
     std::string SecondTestName = testName + "1";
     newComplexObject.name = SecondTestName;
-    test_obj.reset(new GameObjectBase(newComplexObject));
+    test_obj.reset(new ConstructorObjectBase(newComplexObject));
     ASSERT_EQ(Status::Pending, m_constructor.GetLibrary().RegisterObject(SecondTestName, test_obj));
 
     IConstructablePtr ptr(new testConstruction());

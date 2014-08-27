@@ -1,20 +1,16 @@
 
-#ifndef BEGIN_REFLECTION_TABLE
-#define SELF_DEFINED_BEGIN
-#define BEGIN_REFLECTION_TABLE(_name) struct _name {
+#ifndef CUSTOM_REFLECTION_DEFINITIONS
+    #define BEGIN_REFLECTION_TABLE(_name) struct _name {
+    #define STRING_FIELD(fieldName) std::string fieldName;
+    #define VEC3_FIELD(fieldName) vector3i_t fieldName;
+    #define INT_FIELD(fieldName) int fieldName;
+    #define END_REFLECTION_TABLE() }
 #endif
 
-#ifndef STRING_FIELD
-#define SELF_DEFINED_FIELD
-#define STRING_FIELD(fieldName) std::string fieldName;
-#endif
+///////////////////////////////////////////////////////////////////////////////////
+//reflection structures
 
-#ifndef END_REFLECTION_TABLE
-#define SELF_DEFINED_END
-#define END_REFLECTION_TABLE() }
-#endif
-
-#if defined(DEFINE_OBJECTPROPERTIES) || defined(ALL_DEFINITIONS)
+#include "MathBasics.h"
 
 BEGIN_REFLECTION_TABLE(ObjectProperties)
     STRING_FIELD(name)
@@ -23,17 +19,18 @@ BEGIN_REFLECTION_TABLE(ObjectProperties)
     STRING_FIELD(elementName)
 END_REFLECTION_TABLE();
 
-#endif
+BEGIN_REFLECTION_TABLE(PlacementParameters)
+    STRING_FIELD(name)
+    VEC3_FIELD(position)
+    INT_FIELD(orientation)
+    INT_FIELD(placeDirection)
+END_REFLECTION_TABLE();
 
 
-#ifdef SELF_DEFINED_BEGIN
-#undef BEGIN_REFLECTION_TABLE
-#endif
-
-#ifdef SELF_DEFINED_FIELD
-#undef STRING_FIELD
-#endif
-
-#ifdef SELF_DEFINED_END
-#undef END_REFLECTION_TABLE
+#ifndef CUSTOM_REFLECTION_DEFINITIONS
+    #undef BEGIN_REFLECTION_TABLE
+    #undef STRING_FIELD
+    #undef VEC3_FIELD
+    #undef INT_FIELD
+    #undef END_REFLECTION_TABLE
 #endif

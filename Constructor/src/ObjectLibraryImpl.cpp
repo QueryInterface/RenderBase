@@ -18,7 +18,7 @@ Status ObjectLibrary::CheckObjectStatus(std::string name)
     return m_primitives.end() != primitive ? Status::OK : Status::ResourceNotFound;
 }
 
-const IGameObject* ObjectLibrary::GetObject(std::string name)
+const IConstructorObject* ObjectLibrary::GetObject(std::string name)
 {
     auto object = m_primitives.find(name);
     if (object != m_primitives.end())
@@ -29,7 +29,7 @@ const IGameObject* ObjectLibrary::GetObject(std::string name)
     return nullptr;
 }
 
-Status ObjectLibrary::RegisterObject(std::string name, IGameObjectPtr & primitive)
+Status ObjectLibrary::RegisterObject(std::string name, IConstructorObjectPtr & primitive)
 {
     auto object = m_primitives.find(name);
     if (object != m_primitives.end())

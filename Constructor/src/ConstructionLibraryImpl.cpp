@@ -41,7 +41,7 @@ const uint32_t ConstructionLibrary::GetConstructionId(std::string& name) const
     return found != m_primitiveNameIdMap.end() ? found->second : ~0x0;
 }
 
-const ConstructionDescription* ConstructionLibrary::GetConstructionDescription(ElementType type) const
+const ConstructionDescription* ConstructionLibrary::GetConstructionDescription(uint32_t type) const
 {
     return (type >= m_primitives.size()) ? nullptr : &m_primitives[type]->ConstructionDesc();
 }

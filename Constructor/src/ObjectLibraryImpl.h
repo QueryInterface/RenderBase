@@ -23,8 +23,8 @@ namespace ConstructorImpl
         void Cleanup();
 
         Status CheckObjectStatus(std::string name);
-        const IGameObject* GetObject(std::string name);
-        Status RegisterObject(std::string name, IGameObjectPtr & primitive);
+        const IConstructorObject* GetObject(std::string name);
+        Status RegisterObject(std::string name, IConstructorObjectPtr & primitive);
 
         ObjectLibrary();
         virtual ~ObjectLibrary() {};
@@ -32,7 +32,7 @@ namespace ConstructorImpl
     private: 
         // loaded objects. all dependencies are loaded properly.
         // The objects are fully equiped and can be used in game.
-        std::map<std::string, IGameObjectPtr> m_primitives;
+        std::map<std::string, IConstructorObjectPtr> m_primitives;
     };
 }
 //end  of namespace

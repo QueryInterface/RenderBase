@@ -723,4 +723,23 @@ TEST_F(BuildingBerthTest, WeldedCubeWithPillarMesh)
     el = m_builder->GetCore().GetElement(vector3i_t(cubeScales/2, cubeScales-2, cubeScales/2));
     ASSERT_EQ(Directions::pX | Directions::nX | Directions::pZ | Directions::nZ | Directions::nY, el->neighbourhood);
 }
+
+TEST_F(BuildingBerthTest, AddInvalidObject)
+{
+    PlacementParameters params = {"Nothing", vector3i_t(0,0,0), Directions::pZ, Directions::nY};
+    ASSERT_EQ(Status::ResourceNotFound, m_builder->PlaceObject(params));
+}
+
+TEST_F(BuildingBerthTest, AddCubeShapedObject)
+{
+    ObjectProperties properties = {"Cube", "", "", "Cube"};
+    IConstructorObjectPtr ptr( new ConstructorObjectBase(properties));
+    m_builder->GetLibrary().RegisterObject("Cube", ptr);
+    PlacementParameters params = {"Cube", vector3i_t(0,0,0), Directions::pZ, Directions::nY};
+    ASSERT_EQ(Status::OK, m_builder->PlaceObject(params));
+
+    Element* el = m_builder->GetCore().GetElement(vector3i_t(0, 0, 0));
+    ASSERT_TRUE(nullptr != el);
+    ASSERT_EQ(ElementType::Cube, el->construction->primitiveUID);
+}
 // eof

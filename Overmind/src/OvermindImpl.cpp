@@ -4,29 +4,70 @@
 
 using namespace OvermindImpl;
 
-#define INTERFACE_FUNCTION(InterfaceName, FunctionName)                                         \
-    lua_pushcfunction(m_lua, LUA_##InterfaceName##FunctionName);                                \
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// MACRO MADNESS
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+#define INTERFACE_FUNCTION(InterfaceName, FunctionName)                                                         \
+    lua_pushcfunction(m_lua, LUA_##InterfaceName##FunctionName);                                                \
     lua_setfield(m_lua, -2, #FunctionName)
 
-#define BEGIN_REFLECTION_TABLE(_name) static void parse##_name(lua_State* L, _name& table)      \
-{                                                                                               \
-    luaL_checktype(L, -1, LUA_TTABLE); lua_pushnil(L);                                          \
-    while(lua_next(L, -2) != 0)                                                                 \
-    {                                                                                           \
+#define LUA_ARRAY_ITEM(dst, idx)                                                                                \
+    lua_rawgeti(L, -1, idx);                                                                                    \
+    if (lua_isnumber(L, -1))                                                                                    \
+        dst = lua_tointeger(L, -1);                                                                             \
+    lua_pop(L, 1)
+
+#define LUA_GOTO_NEXT_RECORD lua_pop(L, 1); continue
+
+#define BEGIN_REFLECTION_TABLE(_name) static int parse##_name(lua_State* L, _name& table)                       \
+{                                                                                                               \
+    luaL_checktype(L, -1, LUA_TTABLE); lua_pushnil(L);                                                          \
+    while(lua_next(L, -2) != 0)                                                                                 \
+    {                                                                                                           \
         std::string field(lua_tostring(L, -2));
 
-#define STRING_FIELD(_fieldName)                                                                \
-        if (0 == field.compare(#_fieldName))                                                    \
-            table._fieldName = lua_tostring(L, -1);
+#define STRING_FIELD(_fieldName)                                                                                \
+        if (0 == field.compare(#_fieldName) && lua_isstring(L, -1)) {                                           \
+            table._fieldName = lua_tostring(L, -1); LUA_GOTO_NEXT_RECORD; }
 
-#define END_REFLECTION_TABLE()                                                                  \
-            lua_pop(L, 1);                                                                      \
-    } /* while */                                                                               \
+#define INT_FIELD(_fieldName)                                                                                   \
+        if (0 == field.compare(#_fieldName) && lua_isnumber(L, -1)) {                                           \
+            table._fieldName = lua_tointeger(L, -1); LUA_GOTO_NEXT_RECORD; }
+
+#define VEC3_FIELD(_fieldName)                                                                                  \
+        if (0 == field.compare(#_fieldName) && lua_istable(L, -1)) {                                            \
+            if ( lua_rawlen(L, -1) != 3)                                                                        \
+                return luaL_error(L, "incorrect parameter " #_fieldName " 3 components vector expected");       \
+            LUA_ARRAY_ITEM(table._fieldName.x, 1);                                                              \
+            LUA_ARRAY_ITEM(table._fieldName.y, 2);                                                              \
+            LUA_ARRAY_ITEM(table._fieldName.z, 3);                                                              \
+            LUA_GOTO_NEXT_RECORD; }
+
+#define END_REFLECTION_TABLE()                                                                                  \
+        lua_pop(L, 1);                                                                                          \
+    } /* while */                                                                                               \
+    return 0;                                                                                                   \
 }
 
-#define ALL_DEFINITIONS
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// LUA reflections. 
+// Generate parsers for all structures defined in reflections.h 
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+#define CUSTOM_REFLECTION_DEFINITIONS
     #include "Reflections.h"
-#undef ALL_DEFINITIONS
+#undef CUSTOM_REFLECTION_DEFINITIONS
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// OVERMIND itself
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
 
 Overmind::Overmind()
     : m_lua(luaL_newstate())
@@ -35,6 +76,7 @@ Overmind::Overmind()
     luaL_openlibs(m_lua);
 
     registerGlobals();
+    registerConstructor();
     registerLibrary();
 }
 
@@ -63,40 +105,6 @@ std::string Overmind::GetLastError()
     return errorString;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-//
-// LUA Interfaces: LIBRARY
-//
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-ILibrary& LUA_getLibrary(lua_State* L)
-{
-    lua_getfield(L, LUA_REGISTRYINDEX, "_library");
-    ILibrary* library = (ILibrary*)lua_touserdata(L, -1);
-    lua_pop(L, 1);
-
-    assert(library);
-    return *library;
-}
-
-int LUA_LibraryNewConstruction(lua_State* L)
-{
-    return luaL_error(L, "NOT IMPLEMENTED");
-}
-
-int LUA_LibraryNewObject(lua_State* L)
-{
-    if (lua_gettop(L) > 1)
-        return luaL_error(L, "invalid arguments count, only 1 table expected");
-
-    ObjectProperties properties = {};
-    parseObjectProperties(L, properties);
-    IGameObjectPtr obj(new GameObjectBase(properties));
-
-    lua_pushinteger(L, (int)LUA_getLibrary(L).RegisterObject(properties.name, obj));
-    return 1;
-}
-
 void Overmind::registerGlobals()
 {
     lua_pushlightuserdata(m_lua, this);
@@ -109,6 +117,48 @@ void Overmind::registerGlobals()
     lua_setfield(m_lua, LUA_REGISTRYINDEX, "_library");
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// HELPERS
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+#define LUA_CHECK_ARGUMENTS(count)                                      \
+    if (lua_gettop(L) > count)                                          \
+        return luaL_error(L, "invalid arguments count, only " #count " expected")
+
+#define LUA_GETGLOBAL(type, object)                                     \
+    lua_getfield(L, LUA_REGISTRYINDEX, "_" #object);                    \
+    type* object = (type*)lua_touserdata(L, -1);                        \
+    lua_pop(L, 1);                                                      \
+    if (!object)                                                        \
+        return luaL_error(L, "PANIC: " #object " interface not found")
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// LUA Interfaces: LIBRARY
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+int LUA_LibraryNewConstruction(lua_State* L)
+{
+    return luaL_error(L, "NOT IMPLEMENTED");
+}
+
+int LUA_LibraryNewObject(lua_State* L)
+{
+    LUA_CHECK_ARGUMENTS(1);
+
+    ObjectProperties properties = {};
+    parseObjectProperties(L, properties);
+    IConstructorObjectPtr obj(new ConstructorObjectBase(properties));
+
+    LUA_GETGLOBAL(ILibrary, library);
+
+    lua_pushinteger(L, (int)library->RegisterObject(properties.name, obj));
+    return 1;
+}
+
 void Overmind::registerLibrary()
 {
     lua_newtable(m_lua);
@@ -116,5 +166,31 @@ void Overmind::registerLibrary()
     INTERFACE_FUNCTION(Library, NewObject);
 
     lua_setglobal(m_lua, "Library");
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// LUA Interfaces: CONSTRUCTOR
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+int LUA_ConstructorPlace(lua_State* L)
+{
+    LUA_CHECK_ARGUMENTS(1);
+
+    PlacementParameters pp = {"", vector3i_t(0,0,0), Directions::pZ, Directions::nY};
+    parsePlacementParameters(L, pp);
+
+    LUA_GETGLOBAL(Constructor, constructor);
+    lua_pushinteger(L, (int)constructor->PlaceObject(pp));
+    return 1;
+}
+
+void Overmind::registerConstructor()
+{
+    lua_newtable(m_lua);
+    INTERFACE_FUNCTION(Constructor, Place);
+
+    lua_setglobal(m_lua, "Constructor");
 }
 // eof

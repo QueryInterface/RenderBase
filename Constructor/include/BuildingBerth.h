@@ -42,6 +42,16 @@ namespace ConstructorImpl
         // Attaches element to construction
         virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions direction, Directions copySettingsFrom = Directions::nY);
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Construction assembly.
+//
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // Add construction object into building berth
+        virtual Status      PlaceObject(PlacementParameters& parameters);
+
         ///////////////////////////////////////////////////////////////////////////////////
         // Welds two groups into single one
         virtual bool        Weld(uint32_t group1, uint32_t group2);

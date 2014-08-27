@@ -11,6 +11,8 @@ void Library::Reset()
 {
     m_objectLibrary.Cleanup();
     m_constructionLibrary.Cleanup();
+    m_pendingObjects.clear();
+    m_constructionSubscribers.clear();
 }
 
 Status Library::RegisterConstruction(std::string name, IConstructablePtr& element)
@@ -21,6 +23,7 @@ Status Library::RegisterConstruction(std::string name, IConstructablePtr& elemen
         for (auto& subscriber : subscribers->second)
         {
             std::string objName = subscriber->GetName();
+            subscriber->SetConstructionId(element->ConstructionDesc().primitiveUID);
             m_objectLibrary.RegisterObject(objName, subscriber);
             m_pendingObjects.erase(objName);
         }
@@ -54,20 +57,22 @@ Status Library::CheckObjectStatus(std::string name)
     return m_objectLibrary.CheckObjectStatus(name);
 }
 
-const IGameObject* Library::GetObjectByName(std::string name)
+const IConstructorObject* Library::GetObjectByName(std::string name)
 {
     return m_objectLibrary.GetObject(name);
 }
 
-Status Library::RegisterObject(std::string name, IGameObjectPtr & prototype)
+Status Library::RegisterObject(std::string name, IConstructorObjectPtr & prototype)
 {
     const ObjectProperties& properties = prototype->GetObjectContent();
-    if (!properties.elementName.length() || m_constructionLibrary.GetConstructionDescription(properties.elementName))
+    const ConstructionDescription* desc = m_constructionLibrary.GetConstructionDescription(properties.elementName);
+    if (properties.elementName.empty() || desc)
     {
+        prototype->SetConstructionId(desc ? desc->primitiveUID : ElementType::Space);
         return m_objectLibrary.RegisterObject(name, prototype);
     }
 
-    if (Status::OK == m_objectLibrary.CheckObjectStatus(name))
+    if (Status::OK == m_objectLibrary.CheckObjectStatus(name) || m_pendingObjects.find(name) != m_pendingObjects.end())
     {
         return Status::AlreadyExists;
     }

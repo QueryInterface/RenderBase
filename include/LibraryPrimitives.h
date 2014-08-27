@@ -33,29 +33,32 @@ typedef std::shared_ptr<ILibraryMesh> ILibraryMeshPtr;
 
 /////////////////////////////////////////////////////////////////////
 ///
-/// Library implementation of Game object
+/// Constructor object basic implementation
 ///
 /////////////////////////////////////////////////////////////////////
 
-class GameObjectBase
-    : public IGameObject
+class ConstructorObjectBase
+    : public IConstructorObject
 {
 public:
-    GameObjectBase(std::string name) : m_name(name) {}
-    GameObjectBase(ObjectProperties& objProperties) : m_name(objProperties.name), m_properties(objProperties){;}
+    ConstructorObjectBase(std::string name) : m_name(name), m_constructionID(0) {}
+    ConstructorObjectBase(ObjectProperties& objProperties) : m_name(objProperties.name), m_constructionID(0), m_properties(objProperties){;}
 
-    virtual const ObjectProperties& GetObjectContent()   const {return m_properties;};
-    virtual const ObjectResources&  GetObjectResources() const {return m_linkedResources;};
+    virtual const       ObjectProperties& GetObjectContent()   const {return m_properties;};
+    virtual const       ObjectResources&  GetObjectResources() const {return m_linkedResources;};
+    virtual void        SetConstructionId(uint32_t id)               {m_constructionID = id;}
+    virtual uint32_t    GetConstructionId() const                    {return m_constructionID;}
 
     const std::string& GetName() const {return m_name;}
 private:
     bool m_isComplete;
     std::string m_name;
+    uint32_t m_constructionID;
 
     ObjectProperties m_properties;
     ObjectResources  m_linkedResources;
 
-    PREVENT_COPY(GameObjectBase)
+    PREVENT_COPY(ConstructorObjectBase)
 };
 
 

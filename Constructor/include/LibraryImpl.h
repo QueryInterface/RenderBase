@@ -41,8 +41,8 @@ public:
     // - construction
     // - material
     virtual Status CheckObjectStatus(std::string name);
-    virtual const IGameObject* GetObjectByName(std::string name);
-    virtual Status RegisterObject(std::string name, IGameObjectPtr & prototype);
+    virtual const IConstructorObject* GetObjectByName(std::string name);
+    virtual Status RegisterObject(std::string name, IConstructorObjectPtr & prototype);
 
     /////////////////////////////////////////////////////////////////////
     ///
@@ -58,8 +58,8 @@ private:
 
     // list of object that have linked resources, not loaded into library,
     // so these objects cannot be pushed into object library until all required resources are loaded
-    std::map<std::string, IGameObjectPtr>               m_pendingObjects;
-    std::map<std::string, std::vector<IGameObjectPtr> > m_constructionSubscribers;
+    std::map<std::string, IConstructorObjectPtr>               m_pendingObjects;
+    std::map<std::string, std::vector<IConstructorObjectPtr> > m_constructionSubscribers;
 };
 
 };
