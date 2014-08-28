@@ -1,9 +1,7 @@
-#include "OvermindImpl.h"
+#include <Overmind.h>
 #include "Constructor.h"
 #include <gtest/gtest.h>
 #include <memory>
-
-using namespace OvermindImpl;
 
 #ifndef min 
 #define min(a, b) (a)<(b) ? (a) : (b)
@@ -19,14 +17,14 @@ public:
 
     void SetUp()
     {
-        m_overmind.reset(new Overmind);
+        m_overmind = &Overmind::Get();
     }
     void TearDown()
     {
-        m_overmind.reset();
+        m_overmind->Amnesia();
     }
 protected:
-    std::unique_ptr<Overmind> m_overmind;
+    Overmind* m_overmind;
 
     void checkMesh(Constructor &builder, size_t refCount, vector3f_t refmin, vector3f_t refmax, std::string fileName = "")
     {
@@ -157,7 +155,7 @@ TEST_F(OvermindTest, BuildObject)
     EXPECT_EQ(Status::OK, m_overmind->ExecuteScript("test_scripts/building.lua"));
     std::string message = m_overmind->GetLastError().c_str();
     ASSERT_STREQ("", message.c_str()) << "Error received: " << message.c_str();
-    checkMesh(m_overmind->GetConstructor(), 0, vector3f_t(0,0,0), vector3f_t(1,3,1), "c:/tmp/a.obj");
+    checkMesh(m_overmind->GetConstructor(), 0, vector3f_t(15,0,15), vector3f_t(18,3,18), "c:/tmp/a.obj");
 }
 
 // eof

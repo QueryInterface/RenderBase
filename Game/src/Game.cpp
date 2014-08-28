@@ -1,6 +1,7 @@
 ﻿#include "Utils.h"
 #include <chrono>
 #include "Game.h"
+#include <Constructor.h>
 
 CameraMove::CameraMove()
     : m_moveMask(0)
@@ -86,9 +87,9 @@ Game::Game()
     , m_camera(nullptr)
     , m_scene(nullptr)
     , m_light(nullptr)
-    , m_builder(Constructor::GetConstructor())
     , m_cameraMoveSpeed(30.0f)
     , m_cameraRotateSpeed(30.0f)
+    , m_overmind(Overmind::Get())
 {
     // Setup window
     m_window.SetWidth(640);
@@ -155,16 +156,14 @@ void Game::InitScene0()
 
 void Game::InitScene1()
 {
-    const size_t cubeScales = 7;
-    for (size_t i = 0; i < cubeScales; ++i)
-    {
-        m_builder.SetElement(i%2 ? ElementType::Cilinder : ElementType::Cube, vector3i_t(16,i,16), Directions::pZ);
-    }
+    if (Status::OK != m_overmind.ExecuteScript("Media/Scripts/Scene0.lua"))
+        return;
 
+    Constructor& builder = m_overmind.GetConstructor();
     IMeshPtr mesh = nullptr;
-    mesh.reset(&m_builder.GetMesh());
+    mesh.reset(&builder.GetMesh());
     IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
-    BBox bbox = m_builder.GetBoundingBox();
+    BBox bbox = builder.GetBoundingBox();
     vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
     object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
     object0->SetPosition(CoordType::Global, vector3f_t(0, 0, 7));

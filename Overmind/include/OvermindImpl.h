@@ -10,7 +10,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
-#include "common.h"
+#include <Overmind.h>
+#include <Constructor.h>
 #include <vector>
 #include <string>
 
@@ -20,36 +21,41 @@ struct Constructor;
 namespace OvermindImpl
 {
 
-    class Overmind
+    class OvermindCerebro : public Overmind
     {
     public:
-        Overmind();
-        ~Overmind();
+        OvermindCerebro();
+        ~OvermindCerebro();
 
         ///////////////////////////////////////////////////////////////////////////////////
         // executes given script
-        Status ExecuteScript(std::string script);
+        virtual Status ExecuteScript(std::string script);
 
         ///////////////////////////////////////////////////////////////////////////////////
         // return last error message
         // if string is empty, no errors happened
-        std::string GetLastError();
+        virtual std::string GetLastError();
 
         ///////////////////////////////////////////////////////////////////////////////////
         // Access to modules
-        Constructor& GetConstructor() {return m_constructor;}
+        virtual Constructor& GetConstructor() {return m_constructor;}
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        // cleanup everything in overmind
+        virtual void Amnesia() {m_constructor.Reset();};
 
     private:
         void registerGlobals();
         void registerLibrary();
         void registerConstructor();
+        void registerDirections();
 
         lua_State *m_lua;
         Constructor& m_constructor;
 
         std::vector<std::string> m_errorMessages;
 
-        PREVENT_COPY(Overmind);
+        PREVENT_COPY(OvermindCerebro);
     };
 
 }//end  of namespace constructor

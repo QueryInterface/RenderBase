@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 #include <vector>
-#include "Reflections.h"
+#include "NativeStructures.h"
 
 struct IMesh;
 struct ITexture;

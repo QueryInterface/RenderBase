@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine.h"
 #include "ResourceOverseer.h"
-#include <Constructor.h>
+#include <Overmind.h>
 #include <list>
 
 class CameraMove
@@ -11,7 +11,7 @@ public:
     enum class Type : uint8_t
     {
         Left, 
-        Right,      
+        Right,
         Up, 
         Down, 
         Forward, 
@@ -72,5 +72,5 @@ private:
     float                   m_cameraMoveSpeed;
     float                   m_cameraRotateSpeed;
 
-    Constructor&            m_builder;
+    Overmind&               m_overmind;
 };
