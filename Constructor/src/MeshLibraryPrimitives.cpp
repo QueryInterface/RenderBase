@@ -196,7 +196,7 @@ public:
         const float normals[] = 
         {
             0.0f, 0.0f, 1.0f,
-            0.707106f, 0.0f, 0.707106f,
+            0.0f, 0.707106f, 0.707106f,
             0.0f, 0.0f, -1.0f,
             0.0f, -1.0f, 0.0f,
             -1.0f, 0.0f, 0.0f,
@@ -311,7 +311,7 @@ public:
         const index_t normalGroups[] = 
         {
             0, 0, 0,          // front  +x
-            1, 1, 1, 2, 2, 2, // left   +y
+            2, 2, 2, 1, 1, 1, // left   +y
             3, 3, 3,          // top    +z
                //               -x
             4, 4, 4, 4, 4, 4, // bottom -y

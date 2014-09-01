@@ -156,9 +156,15 @@ void Game::InitScene0()
 
 void Game::InitScene1()
 {
-    if (Status::OK != m_overmind.ExecuteScript("Media/Scripts/Scene0.lua"))
+    if (Status::OK != m_overmind.ExecuteScript("Media/Scripts/Scene1.lua"))
+    {
+        std::string err = m_overmind.GetLastError();
+        while(err != "")
+        {
+            printf("errors: %s\n", err.c_str());
+        }
         return;
-
+    }
     Constructor& builder = m_overmind.GetConstructor();
     IMeshPtr mesh = nullptr;
     mesh.reset(&builder.GetMesh());
