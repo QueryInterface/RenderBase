@@ -4,6 +4,8 @@
 #include <Overmind.h>
 #include <list>
 
+struct IInputHandler;
+
 class CameraMove
 {
 public:
@@ -40,7 +42,7 @@ class Game
     , public IWindowCallbacks
 {
 public:
-    Game();
+    Game(IInputHandler& inputHandler);
     ~Game();
     void InitHelpers();
     void InitScene0();
@@ -48,12 +50,6 @@ public:
     void Start();
     // IEngineCallbacks
     void OnSceneUpdate() override;
-    // IWindowCallbacks
-    virtual void OnKeyDown(EKey key) override;
-    virtual void OnKeyUp(EKey key) override;
-    virtual void OnMouseDown(EKey key, uint32_t x, uint32_t y) override;
-    virtual void OnMouseUp(EKey key, uint32_t x, uint32_t y) override;
-    virtual void OnMouseMove(uint32_t x, uint32_t y) override;
 private:
     void centerObject(IObjectPtr& obj);
 
@@ -67,10 +63,7 @@ private:
     ILightPtr               m_light;
     IObjectPtr              m_lightShape;
     std::vector<IObjectPtr> m_objects;
-    // Movement commands
-    CameraMove              m_cameraMove;
-    float                   m_cameraMoveSpeed;
-    float                   m_cameraRotateSpeed;
 
+    IInputHandler&          m_inputHandler;
     Overmind&               m_overmind;
 };

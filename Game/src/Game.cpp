@@ -2,6 +2,7 @@
 #include <chrono>
 #include "Game.h"
 #include <Constructor.h>
+#include "InputHandler.h"
 
 CameraMove::CameraMove()
     : m_moveMask(0)
@@ -80,15 +81,14 @@ void CameraMove::Process(ICameraPtr& camera, float timeElapsed)
 }
 
 
-Game::Game()
+Game::Game(IInputHandler& inputHandler)
     : m_engine(IEngine::Instance())
     , m_window(m_engine.GetWindow())
     , m_resourceOverseer(IResourceOverseer::Instance())
     , m_camera(nullptr)
     , m_scene(nullptr)
     , m_light(nullptr)
-    , m_cameraMoveSpeed(30.0f)
-    , m_cameraRotateSpeed(30.0f)
+    , m_inputHandler(inputHandler)
     , m_overmind(Overmind::Get())
 {
     // Setup window
@@ -96,7 +96,7 @@ Game::Game()
     m_window.SetHeight(480);
     m_window.SetFullscreen(false);
     // Subscribe on user input
-    m_window.RegisterInputCallbacks(this);
+    m_window.RegisterInputCallbacks(&m_inputHandler);
     // Create camera
     CameraDesc cameraSetup;
     cameraSetup.Eye = vector3f_t(8.0, 5.0, -8.0);
@@ -119,8 +119,6 @@ Game::Game()
     m_scene->SetCamera(m_camera);
     m_scene->AddLight(m_light);
     m_scene->SetAmbientLight(vector3f_t(0.1, 0.1, 0.1));
-
-    m_cameraMove.SetMoveSpeed(m_cameraMoveSpeed);
 }
 
 Game::~Game()
@@ -195,7 +193,7 @@ void Game::OnSceneUpdate()
     float angle = elapsedTime / 50000.0f * 45;
     start = end;
     // Move camera
-    m_cameraMove.Process(m_camera, elapsedTime);
+    m_inputHandler.Update(m_camera, elapsedTime);
 
     vector3f_t pos;
     /*    for (IObjectPtr& object : m_objects)
@@ -212,141 +210,41 @@ void Game::OnSceneUpdate()
     m_light->Rotate(CoordType::Global, vector3f_t(0, 0, angle / 2));
 }
 
-void Game::OnKeyDown(EKey key) 
-{
-    switch (key)
-    {
-    case EKey::EK_W:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(desc.At - desc.Eye);
-            m_cameraMove.EnableMove(CameraMove::Type::Forward, shift);
-        } break;
-    case EKey::EK_S:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(desc.Eye - desc.At);
-            m_cameraMove.EnableMove(CameraMove::Type::Backward, shift);
-        } break;
-    case EKey::EK_D:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(glm::cross(desc.At - desc.Eye, desc.Up));
-            m_cameraMove.EnableMove(CameraMove::Type::Right, shift);
-        } break;
-    case EKey::EK_A:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(glm::cross(desc.Eye - desc.At, desc.Up));
-            m_cameraMove.EnableMove(CameraMove::Type::Left, shift);
-        } break;
-    case EKey::EK_SPACE:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(desc.Up);
-            m_cameraMove.EnableMove(CameraMove::Type::Up, shift);
-        } break;
-    case EKey::EK_LCTRL:
-    case EKey::EK_RCTRL:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            vector3f_t shift = glm::normalize(-desc.Up);
-            m_cameraMove.EnableMove(CameraMove::Type::Down, shift);
-        } break;
-    case EKey::EK_Q:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            glm::quat q = glm::angleAxis(glm::pi<float>() / 30, desc.Up);
-            m_camera->Rotate(CoordType::Local, q);
-        } break;
-    case EKey::EK_E:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            glm::quat q = glm::angleAxis(-glm::pi<float>() / 30, desc.Up);
-            m_camera->Rotate(CoordType::Local, q);
-        } break;
-    }
-}
-
-void Game::OnKeyUp(EKey key)
-{
-    switch (key)
-    {
-    case EKey::EK_W:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Forward);
-        } break;
-    case EKey::EK_S:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Backward);
-        } break;
-    case EKey::EK_D:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Right);
-        } break;
-    case EKey::EK_A:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Left);
-        } break;
-    case EKey::EK_SPACE:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Up);
-        } break;
-    case EKey::EK_LCTRL:
-    case EKey::EK_RCTRL:
-        {
-            m_cameraMove.DisableMove(CameraMove::Type::Down);
-        } break;
-    case EKey::EK_Q:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            glm::quat q = glm::angleAxis(glm::pi<float>() / 30, desc.Up);
-            m_camera->Rotate(CoordType::Local, q);
-        } break;
-    case EKey::EK_E:
-        {
-            const CameraDesc desc = m_camera->GetDesc();
-            glm::quat q = glm::angleAxis(-glm::pi<float>() / 30, desc.Up);
-            m_camera->Rotate(CoordType::Local, q);
-        } break;
-    }
-}
-
-void Game::OnMouseDown(EKey key, uint32_t x, uint32_t y)
-{
-    switch (key)
-    {
-    case EKey::EK_MOUSE_BUTTON_LEFT:
-        {
-        } break;
-    case EKey::EK_MOUSE_BUTTON_MIDDLE:
-        {
-        } break;
-    case EKey::EK_MOUSE_BUTTON_RIGHT:
-        {
-            m_cameraMove.EnableRotate(x, y);
-        } break;
-    }
-}
-
-void Game::OnMouseUp(EKey key, uint32_t /*x*/, uint32_t /*y*/)
-{
-    switch (key)
-    {
-    case EKey::EK_MOUSE_BUTTON_LEFT:
-        {
-        } break;
-    case EKey::EK_MOUSE_BUTTON_MIDDLE:
-        {
-        } break;
-    case EKey::EK_MOUSE_BUTTON_RIGHT:
-        {
-            m_cameraMove.DisableRotate();
-        } break;
-    }
-}
-
-void Game::OnMouseMove(uint32_t x, uint32_t y)
-{
-    m_cameraMove.OnMouseMove(x, y);
-}
+//void Game::OnMouseDown(EKey key, uint32_t x, uint32_t y)
+//{
+//    switch (key)
+//    {
+//    case EKey::EK_MOUSE_BUTTON_LEFT:
+//        {
+//        } break;
+//    case EKey::EK_MOUSE_BUTTON_MIDDLE:
+//        {
+//        } break;
+//    case EKey::EK_MOUSE_BUTTON_RIGHT:
+//        {
+//            m_cameraMove.EnableRotate(x, y);
+//        } break;
+//    }
+//}
+//
+//void Game::OnMouseUp(EKey key, uint32_t /*x*/, uint32_t /*y*/)
+//{
+//    switch (key)
+//    {
+//    case EKey::EK_MOUSE_BUTTON_LEFT:
+//        {
+//        } break;
+//    case EKey::EK_MOUSE_BUTTON_MIDDLE:
+//        {
+//        } break;
+//    case EKey::EK_MOUSE_BUTTON_RIGHT:
+//        {
+//            m_cameraMove.DisableRotate();
+//        } break;
+//    }
+//}
+//
+//void Game::OnMouseMove(uint32_t x, uint32_t y)
+//{
+//    m_cameraMove.OnMouseMove(x, y);
+//}

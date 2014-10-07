@@ -1,10 +1,12 @@
 #include "Game.h"
+#include "InputHandler.h"
 
 int main() 
 {
     try 
     {
-        Game game;
+        GameInputHandler inputHandler;
+        Game game(inputHandler);
         game.InitHelpers();
         game.InitScene0();
         game.InitScene1();
