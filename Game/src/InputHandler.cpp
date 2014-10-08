@@ -13,16 +13,6 @@ GameInputHandler::~GameInputHandler()
 {
 }
 
-inline void GameInputHandler::SetMoveSpeed(float speed)
-{
-    m_moveSpeed = speed;
-}
-
-inline void GameInputHandler::SetRotateSpeed(float speed)
-{
-    m_rotateSpeed = speed;
-}
-
 void GameInputHandler::OnKeyDown(EKey key)
 {
     switch(key)
@@ -114,6 +104,9 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
     vector3f_t right = glm::cross(forward, up);
 
     vector3f_t shift = forward * (float)m_moveFlags[MoveFlags::Forward] + up * (float)m_moveFlags[MoveFlags::Up] + right * (float)m_moveFlags[MoveFlags::Right];
-    glm::normalize(shift);
+    if (shift.x || shift.y || shift.z)
+    {
+        shift = glm::normalize(shift);
+    }
     camera->Shift(CoordType::Global, shift * velocity);
 }

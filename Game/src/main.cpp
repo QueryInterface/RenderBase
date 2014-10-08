@@ -6,6 +6,7 @@ int main()
     try 
     {
         GameInputHandler inputHandler;
+        inputHandler.SetMoveSpeed(5.0);
         Game game(inputHandler);
         game.InitHelpers();
         game.InitScene0();

@@ -169,32 +169,44 @@ WINDOW_MSG WindowSDL::ProcessMessage()
         switch(event.type) 
         {
         case SDL_KEYDOWN:
-            for (auto& cb : m_inputCallbacks) cb->OnKeyDown(convert(event.key.keysym.sym));
-            break;
+            {
+                if (!event.key.repeat)
+                {
+                    for (auto& cb : m_inputCallbacks) cb->OnKeyDown(convert(event.key.keysym.sym));
+                }
+            } break;
         case SDL_KEYUP:
-            for (auto& cb : m_inputCallbacks) cb->OnKeyUp(convert(event.key.keysym.sym));
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnKeyUp(convert(event.key.keysym.sym));
+            } break;
         case SDL_MOUSEBUTTONDOWN:
-            for (auto& cb : m_inputCallbacks) cb->OnMouseDown(convert(event.button.button), event.button.x, event.button.y);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnMouseDown(convert(event.button.button), event.button.x, event.button.y);
+            } break;
         case SDL_MOUSEBUTTONUP:
-            for (auto& cb : m_inputCallbacks) cb->OnMouseUp(convert(event.button.button), event.button.x, event.button.y);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnMouseUp(convert(event.button.button), event.button.x, event.button.y);
+            } break;
         case SDL_MOUSEMOTION:
-            for (auto& cb : m_inputCallbacks) cb->OnMouseMove(event.motion.x, event.motion.y);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnMouseMove(event.motion.x, event.motion.y);
+            } break;
         case SDL_FINGERDOWN:
-            for (auto& cb : m_inputCallbacks) cb->OnFingerDown(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnFingerDown(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            }break;
         case SDL_FINGERUP:
-            for (auto& cb : m_inputCallbacks) cb->OnFingerUp(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnFingerUp(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            } break;
         case SDL_FINGERMOTION:
-            for (auto& cb : m_inputCallbacks) cb->OnFingerMove(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
-            break;
+            { 
+                for (auto& cb : m_inputCallbacks) cb->OnFingerMove(event.tfinger.x, event.tfinger.y, event.tfinger.dx, event.tfinger.dy);
+            } break;
         case SDL_MULTIGESTURE:
-            for (auto& cb : m_inputCallbacks) cb->OnMultiGesture(event.mgesture.numFingers, event.mgesture.x, event.mgesture.y, event.mgesture.dTheta, event.mgesture.dDist);
-            break;
+            {
+                for (auto& cb : m_inputCallbacks) cb->OnMultiGesture(event.mgesture.numFingers, event.mgesture.x, event.mgesture.y, event.mgesture.dTheta, event.mgesture.dDist);
+            } break;
         case SDL_QUIT:
             return WINDOW_MSG::QUIT;
             break;

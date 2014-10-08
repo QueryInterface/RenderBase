@@ -17,8 +17,8 @@ class GameInputHandler : public IInputHandler
 public:
     GameInputHandler();
     ~GameInputHandler();
-    void SetMoveSpeed(float speed);
-    void SetRotateSpeed(float speed);
+    void SetMoveSpeed(float speed) {m_moveSpeed = speed;}
+    void SetRotateSpeed(float speed) {m_rotateSpeed = speed;};
     // IWindowCallbacks
     virtual void OnKeyDown(EKey key) override;
     virtual void OnKeyUp(EKey key) override;
