@@ -124,7 +124,7 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
     // Update Camera Shift
     float velocity = elapsedMs * m_moveSpeed / 1000; // Velocity in units per second
     CameraDesc cameraDesc = camera->GetDesc();
-    vector3f_t& forward = cameraDesc.At;
+    vector3f_t& forward = cameraDesc.Direction;
     vector3f_t& up = cameraDesc.Up;
     vector3f_t right = glm::cross(forward, up);
 
@@ -137,15 +137,19 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
     // Update camera rotates
     if (m_mousePosCurrent != m_mousePosPrevious)
     {
-        float rotateSpeed = m_rotateSpeed / 1000.0f;
         vector2i_t direction = m_mousePosCurrent - m_mousePosPrevious;
         vector2f_t direction_fn = direction;
-        direction_fn = rotateSpeed * glm::normalize(direction_fn);
-        float yaw = direction_fn.x;
-        float pitch = direction_fn.y;
-        if (!m_yAsixInvert)
+        // Calculate percent of direction offset to window size
+        direction_fn.x /= IEngine::Instance().GetWindow().GetWidth();
+        direction_fn.y /= IEngine::Instance().GetWindow().GetHeight();
+
+        direction_fn = m_rotateSpeed * direction_fn;
+        direction_fn = direction_fn;
+        float yaw = -direction_fn.x;
+        float pitch = -direction_fn.y;
+        if (m_yAsixInvert)
             yaw = -yaw;
-        camera->Rotate(CoordType::Local, vector3f_t(pitch, yaw, 0));
+        camera->Rotate(CoordType::Global, vector3f_t(pitch, yaw, 0));
         m_mousePosPrevious = m_mousePosCurrent;
     }
 }

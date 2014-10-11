@@ -17,7 +17,7 @@ public:
     virtual const CameraDesc    GetDesc() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
     scene_elements_impl;
-    virtual const glm::mat4 GetViewMatrix() {return m_viewMatrix * glm::inverse(GetMatrix(CoordType::Global) * glm::inverse(GetMatrix(CoordType::Local)));}
+    virtual const glm::mat4 GetViewMatrix() {return GetMatrix(CoordType::Global) * GetMatrix(CoordType::Local) * m_viewMatrix;}
     virtual const glm::mat4& GetProjectionMatrix() const {return m_projectionMatrix;}
 private:
     void initCamera();

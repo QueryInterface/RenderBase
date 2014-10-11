@@ -3,6 +3,8 @@
 #include "CameraImpl.h"
 #include "HandleImpl.h"
 #include "EngineStubs.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class CameraImplTest 
     : public ::testing::Test
@@ -10,9 +12,9 @@ class CameraImplTest
 public:
     void SetUp()
     {
-        m_desc.Eye = vector3f_t(0, 0, -10);
+        m_desc.EyePosition = vector3f_t(0, 0, 10);
         m_desc.Up = y;
-        m_desc.At = zero;
+        m_desc.Direction = z;
         m_desc.FieldOfViewY = 45;
         m_desc.FarZ = 100;
         m_desc.NearZ = -100;
@@ -34,12 +36,41 @@ protected:
 TEST_F(CameraImplTest, BasicTest)
 {
     const CameraDesc& desc = m_camera->GetDesc();
-    EXPECT_EQ(desc.At, m_desc.At);
-    EXPECT_EQ(desc.Eye, m_desc.Eye);
-    EXPECT_EQ(desc.Up, m_desc.Up);
+    COMPARE_FLOAT_VEC(desc.Direction, m_desc.Direction);
+    COMPARE_FLOAT_VEC(desc.EyePosition, m_desc.EyePosition);
+    COMPARE_FLOAT_VEC(desc.Up, m_desc.Up);
     EXPECT_EQ(desc.FieldOfViewY, m_desc.FieldOfViewY);
     EXPECT_EQ(desc.FarZ, m_desc.FarZ);
     EXPECT_EQ(desc.NearZ, m_desc.NearZ);
 
-    EXPECT_EQ(desc.Eye, m_camera->GetPosition(CoordType::Global));
+    COMPARE_FLOAT_VEC(desc.EyePosition, m_camera->GetPosition(CoordType::Global));
+}
+
+TEST_F(CameraImplTest, MovementTest)
+{
+    m_camera->Rotate(CoordType::Local, vector3f_t(0, -M_PI / 2, 0));
+    const CameraDesc& desc = m_camera->GetDesc();
+
+    COMPARE_FLOAT_VEC(desc.Direction, -x);
+    COMPARE_FLOAT_VEC(desc.EyePosition, m_desc.EyePosition);
+    COMPARE_FLOAT_VEC(desc.Up, m_desc.Up);
+    EXPECT_EQ(desc.FieldOfViewY, m_desc.FieldOfViewY);
+    EXPECT_EQ(desc.FarZ, m_desc.FarZ);
+    EXPECT_EQ(desc.NearZ, m_desc.NearZ);
+
+    COMPARE_FLOAT_VEC(desc.EyePosition, m_camera->GetPosition(CoordType::Global));
+}
+
+TEST_F(CameraImplTest, ViewMatrixTest)
+{
+    vector4f_t objectX = vector4f_t(10.0f * x, 1);
+    vector4f_t objectY = vector4f_t(10.0f * y, 1);
+    vector4f_t objectZ = vector4f_t(10.0f * z, 1);
+    vector4f_t objectXInCameraSpace = m_camera->GetViewMatrix() * objectX;
+    vector4f_t objectYInCameraSpace = m_camera->GetViewMatrix() * objectY;
+    vector4f_t objectZInCameraSpace = m_camera->GetViewMatrix() * objectZ;
+    COMPARE_FLOAT_VEC(objectXInCameraSpace, vector4f_t(-10, 0, 10, 1.0));
+    COMPARE_FLOAT_VEC(objectYInCameraSpace, vector4f_t(0, 10, 10, 1.0));
+    COMPARE_FLOAT_VEC(objectZInCameraSpace, vector4f_t(0, 0, 0, 1.0));
+    m_camera->Rotate(CoordType::Local, vector3f_t(0, -M_PI / 2, 0));
 }

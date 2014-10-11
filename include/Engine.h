@@ -93,8 +93,8 @@ struct ILight
 
 struct CameraDesc
 {
-    vector3f_t  Eye;
-    vector3f_t  At;
+    vector3f_t  EyePosition;
+    vector3f_t  Direction;
     vector3f_t  Up;
     float       Aspect;
     float       FieldOfViewY;

@@ -4,83 +4,6 @@
 #include <Constructor.h>
 #include "InputHandler.h"
 
-CameraMove::CameraMove()
-    : m_moveMask(0)
-    , m_previousX(0)
-    , m_previousY(0)
-    , m_currentX(0)
-    , m_currentY(0)
-    , m_enableRotate(false)
-    , m_moveSpeed(1.0f)
-{
-}
-
-void CameraMove::SetMoveSpeed(float speed)
-{
-    m_moveSpeed = speed;
-}
-
-void CameraMove::EnableMove(CameraMove::Type type, const vector3f_t& shift)
-{
-    m_moveMask |= (1 << (uint8_t)type);
-    m_shifts[(uint8_t)type] = shift;
-}
-
-void CameraMove::DisableMove(CameraMove::Type type)
-{
-    m_moveMask &= ~(1 << (uint8_t)type);
-}
-
-void CameraMove::EnableRotate(uint32_t x, uint32_t y)
-{
-    m_enableRotate = true;
-    m_previousX = x;
-    m_previousY = y;
-}
-
-void CameraMove::DisableRotate()
-{
-    m_enableRotate = false;
-}
-
-
-void CameraMove::OnMouseMove(uint32_t x, uint32_t y)
-{
-    if (m_enableRotate)
-    {
-        m_currentX = x;
-        m_currentY = y;
-    }
-}
-
-void CameraMove::Process(ICameraPtr& camera, float timeElapsed)
-{
-    // Process shifts
-    for (uint8_t i = 0; i < 6; ++i)
-    {
-        if (m_moveMask & (1 << i))
-        {
-            camera->Shift(CoordType::Global, m_shifts[i] * (timeElapsed / 1000) * m_moveSpeed);
-        }
-    }
-    // Process rotates
-    if (m_enableRotate)
-    {
-        //float angle = glm::acos(glm::dot())
-        const CameraDesc desc = camera->GetDesc();
-        float deltaX = float(m_currentX - m_previousX) / IEngine::Instance().GetWindow().GetWidth();
-        float deltaY = float(m_currentY - m_previousY) / IEngine::Instance().GetWindow().GetHeight();
-        float fovX = (deltaX * desc.FieldOfViewY / 180) * glm::pi<float>();
-        float fovY = ((desc.FieldOfViewY / desc.Aspect) / 180) * glm::pi<float>();
-        float angleX = deltaX * fovX;
-        float angleY = deltaY * fovY;
-        camera->Rotate(CoordType::Local, vector3f_t(angleY, angleX, 0));
-        m_previousX = m_currentX;
-        m_previousY = m_currentY;
-    }
-}
-
-
 Game::Game(IInputHandler& inputHandler)
     : m_engine(IEngine::Instance())
     , m_window(m_engine.GetWindow())
@@ -99,8 +22,8 @@ Game::Game(IInputHandler& inputHandler)
     m_window.RegisterInputCallbacks(&m_inputHandler);
     // Create camera
     CameraDesc cameraSetup;
-    cameraSetup.Eye = vector3f_t(8.0, 5.0, -8.0);
-    cameraSetup.At = vector3f_t(0.0, 0.0, 7.0);
+    cameraSetup.EyePosition = vector3f_t(8.0, 5.0, -8.0);
+    cameraSetup.Direction = vector3f_t(0.0, 0.0, 7.0) - cameraSetup.EyePosition;
     cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
 
     //cameraSetup.Eye = vector3f_t(0.0, 0.0, -10.0);
@@ -209,42 +132,3 @@ void Game::OnSceneUpdate()
     m_lightShape->Rotate(CoordType::Global, vector3f_t(0, 0, angle / 2));
     m_light->Rotate(CoordType::Global, vector3f_t(0, 0, angle / 2));
 }
-
-//void Game::OnMouseDown(EKey key, uint32_t x, uint32_t y)
-//{
-//    switch (key)
-//    {
-//    case EKey::EK_MOUSE_BUTTON_LEFT:
-//        {
-//        } break;
-//    case EKey::EK_MOUSE_BUTTON_MIDDLE:
-//        {
-//        } break;
-//    case EKey::EK_MOUSE_BUTTON_RIGHT:
-//        {
-//            m_cameraMove.EnableRotate(x, y);
-//        } break;
-//    }
-//}
-//
-//void Game::OnMouseUp(EKey key, uint32_t /*x*/, uint32_t /*y*/)
-//{
-//    switch (key)
-//    {
-//    case EKey::EK_MOUSE_BUTTON_LEFT:
-//        {
-//        } break;
-//    case EKey::EK_MOUSE_BUTTON_MIDDLE:
-//        {
-//        } break;
-//    case EKey::EK_MOUSE_BUTTON_RIGHT:
-//        {
-//            m_cameraMove.DisableRotate();
-//        } break;
-//    }
-//}
-//
-//void Game::OnMouseMove(uint32_t x, uint32_t y)
-//{
-//    m_cameraMove.OnMouseMove(x, y);
-//}
