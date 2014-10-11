@@ -3,8 +3,9 @@
 GameInputHandler::GameInputHandler()
     : m_moveSpeed(1.0)
     , m_rotateSpeed(1.0)
-    , m_direction(0.0, 0.0, 0.0)
-    , m_rotatePrevious(0.0, 0.0, 0.0)
+    , m_mousePosPrevious(0, 0)
+    , m_mouseDown(false)
+    , m_yAsixInvert(false)
 {
     ::memset(m_moveFlags, 0, sizeof(m_moveFlags));
 }
@@ -81,22 +82,46 @@ void GameInputHandler::OnKeyUp(EKey key)
 
 void GameInputHandler::OnMouseDown(EKey key, uint32_t x, uint32_t y)
 {
-    key; x; y;
+    switch (key)
+    {
+    case EKey::EK_MOUSE_BUTTON_RIGHT:
+        {
+            m_mouseDown = true;
+            m_mousePosCurrent.x = x;
+            m_mousePosCurrent.y = y;
+            m_mousePosPrevious = m_mousePosCurrent;
+        } break;
+    default: break;
+    }
 }
 
 void GameInputHandler::OnMouseUp(EKey key, uint32_t x, uint32_t y)
 {
-    key; x; y;
+    switch (key)
+    {
+    case EKey::EK_MOUSE_BUTTON_RIGHT:
+        {
+            m_mousePosCurrent.x = x;
+            m_mousePosCurrent.y = y;
+            m_mouseDown = false;
+        } break;
+    default: break;
+    }    
 }
 
 void GameInputHandler::OnMouseMove(uint32_t x, uint32_t y)
 {
-    x; y;
+    if (m_mouseDown)
+    {
+        m_mousePosCurrent.x = x;
+        m_mousePosCurrent.y = y;
+    }
 }
 
 // IInputHandler
 void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
 {
+    // Update Camera Shift
     float velocity = elapsedMs * m_moveSpeed / 1000; // Velocity in units per second
     CameraDesc cameraDesc = camera->GetDesc();
     vector3f_t& forward = cameraDesc.At;
@@ -109,4 +134,18 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
         shift = glm::normalize(shift);
     }
     camera->Shift(CoordType::Global, shift * velocity);
+    // Update camera rotates
+    if (m_mousePosCurrent != m_mousePosPrevious)
+    {
+        float rotateSpeed = m_rotateSpeed / 1000.0f;
+        vector2i_t direction = m_mousePosCurrent - m_mousePosPrevious;
+        vector2f_t direction_fn = direction;
+        direction_fn = rotateSpeed * glm::normalize(direction_fn);
+        float yaw = direction_fn.x;
+        float pitch = direction_fn.y;
+        if (!m_yAsixInvert)
+            yaw = -yaw;
+        camera->Rotate(CoordType::Local, vector3f_t(pitch, yaw, 0));
+        m_mousePosPrevious = m_mousePosCurrent;
+    }
 }

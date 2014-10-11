@@ -7,6 +7,7 @@ int main()
     {
         GameInputHandler inputHandler;
         inputHandler.SetMoveSpeed(5.0);
+        inputHandler.SetRotateSpeed(20.0);
         Game game(inputHandler);
         game.InitHelpers();
         game.InitScene0();

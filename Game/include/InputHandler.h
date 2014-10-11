@@ -19,6 +19,7 @@ public:
     ~GameInputHandler();
     void SetMoveSpeed(float speed) {m_moveSpeed = speed;}
     void SetRotateSpeed(float speed) {m_rotateSpeed = speed;};
+    void InvertYAxis(bool invert);
     // IWindowCallbacks
     virtual void OnKeyDown(EKey key) override;
     virtual void OnKeyUp(EKey key) override;
@@ -28,10 +29,13 @@ public:
     // IInputHandler
     virtual void Update(ICameraPtr& camera, float elapsedMs) override;
 private:
+    // Shift parameters
     float       m_moveSpeed;
-    float       m_rotateSpeed;
-    vector3f_t  m_direction;
-
-    vector3f_t  m_rotatePrevious;
     int32_t     m_moveFlags[3];
+    // Rotate paremters
+    float       m_rotateSpeed;
+    bool        m_yAsixInvert;
+    bool        m_mouseDown;
+    vector2u_t  m_mousePosPrevious;
+    vector2u_t  m_mousePosCurrent;
 };
