@@ -22,7 +22,7 @@ Game::Game(IInputHandler& inputHandler)
     m_window.RegisterInputCallbacks(&m_inputHandler);
     // Create camera
     CameraDesc cameraSetup;
-    cameraSetup.EyePosition = vector3f_t(0.0, 0.0, -8.0);
+    cameraSetup.EyePosition = vector3f_t(8.0, 2.0, -8.0);
     cameraSetup.Direction = vector3f_t(0.0, 0.0, 7.0) - cameraSetup.EyePosition;
     cameraSetup.Up = vector3f_t(0.0, 1.0, 0.0);
 
@@ -68,11 +68,11 @@ void Game::InitScene0()
     ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
     IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
-    object0->SetPosition(CoordType::Global, vector3f_t(-0, -5, 7));
+    object0->SetPosition(CoordType::Global, vector3f_t(-3, -3, 7));
     IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
     object1->SetPosition(CoordType::Global, vector3f_t(3, 3, 7));
     m_objects.push_back(object0);
-    //m_objects.push_back(object1);
+    m_objects.push_back(object1);
 }
 
 void Game::InitScene1()
