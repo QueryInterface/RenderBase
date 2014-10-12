@@ -11,7 +11,7 @@ int main()
         Game game(inputHandler);
         game.InitHelpers();
         game.InitScene0();
-        game.InitScene1();
+        //game.InitScene1();
         game.Start();
     }
     catch (std::exception& ex) 

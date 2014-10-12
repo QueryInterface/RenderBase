@@ -106,7 +106,7 @@ struct ICamera
     : public IClonable<ICameraPtr>
     , public ISceneElement 
 {
-    virtual const CameraDesc  GetDesc() const = 0;
+    virtual const CameraDesc& GetDesc() const = 0;
     virtual void SetFiledOfViewY(float fovy) = 0;
 };
 
