@@ -6,12 +6,31 @@ GameInputHandler::GameInputHandler()
     , m_mousePosPrevious(0, 0)
     , m_mouseDown(false)
     , m_yAsixInvert(false)
+    , m_rotationFunction(nullptr)
 {
     ::memset(m_moveFlags, 0, sizeof(m_moveFlags));
+    SetRotationType(RotationType::Free);
 }
 
 GameInputHandler::~GameInputHandler()
 {
+}
+
+void GameInputHandler::SetRotationType(RotationType type)
+{
+    switch (type)
+    {
+    case RotationType::Free:
+        {
+            m_rotationFunction = &GameInputHandler::updateFreeRotation;
+        } break;
+    case RotationType::FirstPerson:
+        {
+            m_rotationFunction = &GameInputHandler::updateFPRotation;
+        } break;
+    default:
+        assert(0);
+    }
 }
 
 void GameInputHandler::OnKeyDown(EKey key)
@@ -121,20 +140,36 @@ void GameInputHandler::OnMouseMove(uint32_t x, uint32_t y)
 // IInputHandler
 void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
 {
-    // Update Camera Shift
-    float velocity = elapsedMs * m_moveSpeed / 1000; // Velocity in units per second
-    CameraDesc cameraDesc = camera->GetDesc();
-    vector3f_t& forward = cameraDesc.Direction;
-    vector3f_t& up = cameraDesc.Up;
-    vector3f_t right = glm::cross(forward, up);
+    assert(m_rotationFunction);
+    updateShift(camera, elapsedMs);
+    (this->*m_rotationFunction)(camera);
+    //this->(*m_rotationFunction)(camera);
+}
 
-    vector3f_t shift = forward * (float)m_moveFlags[MoveFlags::Forward] + up * (float)m_moveFlags[MoveFlags::Up] + right * (float)m_moveFlags[MoveFlags::Right];
-    if (shift.x || shift.y || shift.z)
+void GameInputHandler::updateShift(ICameraPtr& camera, float elapsedMs)
+{
+    if (m_moveFlags[MoveFlags::Forward] || m_moveFlags[MoveFlags::Up] || m_moveFlags[MoveFlags::Right])
     {
-        shift = glm::normalize(shift);
+        float velocity = elapsedMs * m_moveSpeed / 1000; // Velocity in units per second
+        CameraDesc cameraDesc = camera->GetDesc();
+        vector3f_t& forward = cameraDesc.Direction;
+        vector3f_t& up = cameraDesc.Up;
+        vector3f_t right = glm::cross(forward, up);
+
+        vector3f_t shift = forward * (float)m_moveFlags[MoveFlags::Forward] + up * (float)m_moveFlags[MoveFlags::Up] + right * (float)m_moveFlags[MoveFlags::Right];
+        if (shift.x || shift.y || shift.z)
+        {
+            shift = glm::normalize(shift);
+        }
+        char buf[1024];
+        sprintf_s(buf, "%f, %f, %f", shift.x, shift.y, shift.z);
+        OutputDebugStringA(buf);
+        camera->Shift(CoordType::Global, shift * velocity);
     }
-    camera->Shift(CoordType::Global, shift * velocity);
-    // Update camera rotates
+}
+
+void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
+{
     if (m_mousePosCurrent != m_mousePosPrevious)
     {
         vector2i_t direction = m_mousePosCurrent - m_mousePosPrevious;
@@ -151,5 +186,10 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
             yaw = -yaw;
         camera->Rotate(CoordType::Global, vector3f_t(pitch, yaw, 0));
         m_mousePosPrevious = m_mousePosCurrent;
-    }
+    }    
+}
+
+void GameInputHandler::updateFPRotation(ICameraPtr& camera)
+{
+    camera;
 }

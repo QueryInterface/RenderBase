@@ -6,6 +6,12 @@ struct IInputHandler : public IWindowCallbacks
     virtual void Update(ICameraPtr& camera, float elapsedMs) = 0;
 };
 
+enum class RotationType
+{
+    Free,
+    FirstPerson
+};
+
 class GameInputHandler : public IInputHandler
 {
     enum MoveFlags
@@ -19,7 +25,8 @@ public:
     ~GameInputHandler();
     void SetMoveSpeed(float speed) {m_moveSpeed = speed;}
     void SetRotateSpeed(float speed) {m_rotateSpeed = speed;};
-    void InvertYAxis(bool invert);
+    void SetRotationType(RotationType type);
+    void InvertYAxis(bool invert) {m_yAsixInvert = invert;}
     // IWindowCallbacks
     virtual void OnKeyDown(EKey key) override;
     virtual void OnKeyUp(EKey key) override;
@@ -29,6 +36,10 @@ public:
     // IInputHandler
     virtual void Update(ICameraPtr& camera, float elapsedMs) override;
 private:
+    void updateShift(ICameraPtr& camera, float elapsedMs);
+    void updateFreeRotation(ICameraPtr& camera);
+    void updateFPRotation(ICameraPtr& camera);
+    typedef void (GameInputHandler::*updateRotation_Type)(ICameraPtr&);
     // Shift parameters
     float       m_moveSpeed;
     int32_t     m_moveFlags[3];
@@ -38,4 +49,5 @@ private:
     bool        m_mouseDown;
     vector2u_t  m_mousePosPrevious;
     vector2u_t  m_mousePosCurrent;
+    updateRotation_Type m_rotationFunction;
 };

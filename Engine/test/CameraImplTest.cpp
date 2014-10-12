@@ -24,11 +24,6 @@ public:
     {
     }
 protected:
-    void check(const vector3f_t& lPos,      const vector3f_t& wPos, 
-               const vector3f_t& lScale,    const vector3f_t& wSclale,
-               const vector3f_t& lInitDir,  const vector3f_t& wInitDir,
-               const vector3f_t& lDir,      const vector3f_t& wDir);
-
     shared_ptr<Camera> m_camera;
     CameraDesc         m_desc;
 };
@@ -46,7 +41,21 @@ TEST_F(CameraImplTest, BasicTest)
     COMPARE_FLOAT_VEC(desc.EyePosition, m_camera->GetPosition(CoordType::Global));
 }
 
-TEST_F(CameraImplTest, MovementTest)
+TEST_F(CameraImplTest, RotateTest)
+{
+    m_camera->Rotate(CoordType::Local, vector3f_t(0, -M_PI / 2, 0));
+    const CameraDesc& desc0 = m_camera->GetDesc();
+    COMPARE_FLOAT_VEC(desc0.Direction, x);
+    //m_camera->Rotate(CoordType::Local, vector3f_t(0, 0, -M_PI / 2));
+    //const CameraDesc& desc1 = m_camera->GetDesc();
+    //COMPARE_FLOAT_VEC(desc1.Direction, y);
+    //m_camera->Rotate(CoordType::Local, vector3f_t(-M_PI / 2, 0, 0));
+    //const CameraDesc& desc2 = m_camera->GetDesc();
+    //COMPARE_FLOAT_VEC(desc2.Direction, z);
+    
+}
+
+TEST_F(CameraImplTest, DISABLED_MoveTest)
 {
     m_camera->Rotate(CoordType::Local, vector3f_t(0, -M_PI / 2, 0));
     const CameraDesc& desc = m_camera->GetDesc();
