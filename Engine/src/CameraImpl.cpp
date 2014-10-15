@@ -6,6 +6,7 @@ Camera::Camera(const CameraDesc& setup)
     , m_desc(setup)
 {
     initCamera();
+    m_originalDesc.Direction = glm::normalize(m_originalDesc.Direction);
     // Set initial position of camera into internal structures
     SetPositionInit(CoordType::Global, m_desc.EyePosition);
 }

@@ -182,8 +182,8 @@ void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
         direction_fn = direction_fn;
         float yaw = -direction_fn.x;
         float pitch = -direction_fn.y;
-        if (m_yAsixInvert)
-            yaw = -yaw;
+        if (!m_yAsixInvert)
+            pitch = -pitch;
         camera->Rotate(CoordType::Local, vector3f_t(pitch, yaw, 0));
         m_mousePosPrevious = m_mousePosCurrent;
     }    

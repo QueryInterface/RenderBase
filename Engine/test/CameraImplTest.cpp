@@ -31,7 +31,7 @@ protected:
 TEST_F(CameraImplTest, BasicTest)
 {
     const CameraDesc& desc = m_camera->GetDesc();
-    COMPARE_FLOAT_VEC(desc.Direction, m_desc.Direction);
+    COMPARE_FLOAT_VEC(desc.Direction, glm::normalize(m_desc.Direction));
     COMPARE_FLOAT_VEC(desc.EyePosition, m_desc.EyePosition);
     COMPARE_FLOAT_VEC(desc.Up, m_desc.Up);
     EXPECT_EQ(desc.FieldOfViewY, m_desc.FieldOfViewY);
