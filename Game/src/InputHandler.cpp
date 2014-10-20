@@ -172,6 +172,11 @@ void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
 {
     if (m_mousePosCurrent != m_mousePosPrevious)
     {
+        CameraDesc cameraDesc = camera->GetDesc();
+        vector3f_t& forward = cameraDesc.Direction;
+        vector3f_t& up = cameraDesc.Up;
+        vector3f_t right = glm::cross(forward, up);
+
         vector2i_t direction = m_mousePosCurrent - m_mousePosPrevious;
         vector2f_t direction_fn = direction;
         // Calculate percent of direction offset to window size
@@ -182,9 +187,12 @@ void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
         direction_fn = direction_fn;
         float yaw = -direction_fn.x;
         float pitch = -direction_fn.y;
-        if (!m_yAsixInvert)
+        if (m_yAsixInvert)
             pitch = -pitch;
-        camera->Rotate(CoordType::Local, vector3f_t(pitch, yaw, 0));
+        quat q_yaw = glm::angleAxis(yaw, vector3f_t(0, 1, 0));
+        quat q_pitch = glm::angleAxis(pitch, right);
+        camera->Rotate(CoordType::Local, q_yaw);
+        camera->Rotate(CoordType::Local, q_pitch);
         m_mousePosPrevious = m_mousePosCurrent;
     }    
 }
