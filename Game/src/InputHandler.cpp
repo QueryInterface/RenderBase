@@ -187,7 +187,7 @@ void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
         direction_fn = direction_fn;
         float yaw = -direction_fn.x;
         float pitch = -direction_fn.y;
-        if (m_yAsixInvert)
+        if (m_yAsixInvert) 
             pitch = -pitch;
         quat q_yaw = glm::angleAxis(yaw, vector3f_t(0, 1, 0));
         quat q_pitch = glm::angleAxis(pitch, right);
