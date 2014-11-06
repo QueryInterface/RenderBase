@@ -1,13 +1,7 @@
 #pragma once
 #include <cstdint>
-//#include <memory>
 
-//template <class ClassName>
-//ClassName* CreateHandleObject()
-//{
-//    return new HandleImpl<ClassName>();
-//}
-
+#if (_MSC_VER == 1700)
 // Due to MSVC compiler issue expand of __VA_ARGS__ functions that accepts it should be 
 // wrapped with fake function. Otherwise the whole param list will go to first parameter of nested macro
 // MSVC compiler is GUANO!
@@ -139,6 +133,26 @@
 
 VARIADIC_EXPAND(MAKE_SHARED_HANDLE)
 #undef MAKE_SHARED_HANDLE
+#else
+template <typename ClassName, typename... Args>
+class HandleImpl : public ClassName
+{
+public:
+    HandleImpl(Args... args)
+        : ClassName(args...)
+    {}
+    virtual ~HandleImpl() {}
+    virtual void Release() { delete this; }
+};
+
+template <typename ClassName, typename... Args>
+std::shared_ptr<ClassName> make_shared_handle(Args... args)
+{
+    typedef HandleImpl<ClassName, Args...> THandleImpl;
+    std::shared_ptr<THandleImpl> t = make_shared<THandleImpl>(args...);
+    return static_pointer_cast<ClassName>(t);
+}
+#endif //if (_MSC_VER == 1700)
 
 #define CLONE_HANDLE(OutType, InternalType) \
     std::shared_ptr<InternalType> obj = make_shared_handle<InternalType>(std::ref(*this));  \

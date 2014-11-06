@@ -5,7 +5,6 @@
 #include "SDL_opengles2.h"
 #include "SceneElementImpl.h"
 
-using std::enable_shared_from_this;
 using std::weak_ptr;
 using std::vector;
 
@@ -13,7 +12,6 @@ using std::vector;
 class Object 
     : public IObject
     , public SceneElementImpl
-    , public enable_shared_from_this<Object> 
 {
 public:
     struct GLMeshDesc

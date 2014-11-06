@@ -1,62 +1,7 @@
 #pragma once
 #include <string>
 #include "common.h"
-
-//class RefPtr
-//{
-//public:
-//    RefPtr(RefCount* object)
-//        : m_obj(object)
-//    {
-//    }
-//    ~RefPtr()
-//    {
-//        m_obj->Release();
-//        m_obj = nullptr;
-//    }
-//    void Reset(RefCount* object)
-//    {
-//        m_obj->Release();
-//        m_obj = object;
-//    }
-//    RefPtr& operator=(RefPtr& ptr)
-//    {
-//        m_obj->Release();
-//        ptr.m_obj->AddRef();
-//        m_obj = ptr.m_obj;
-//    }
-//    RefPtr& operator=(RefCount* ptr)
-//    {
-//        m_obj->Release();
-//        m_obj = ptr;
-//    }
-//    bool operator==(const RefPtr& ptr)
-//    {
-//        return m_obj == ptr.m_obj;
-//    }
-//    bool operator!=(const RefPtr& ptr)
-//    {
-//        return m_obj != ptr.m_obj;
-//    }
-//    bool operator>(const RefPtr& ptr)
-//    {
-//        return m_obj > ptr.m_obj;
-//    }
-//    bool operator<(const RefPtr& ptr)
-//    {
-//        return m_obj < ptr.m_obj;
-//    }
-//    bool operator>=(const RefPtr& ptr)
-//    {
-//        return m_obj >= ptr.m_obj;
-//    }
-//    bool operator<=(const RefPtr& ptr)
-//    {
-//        return m_obj <= ptr.m_obj;
-//    }
-//private:
-//    RefCount* m_obj;
-//};
+#include <typeinfo>
 
 namespace Utils {
     namespace Filesystem {
@@ -67,3 +12,11 @@ namespace Utils {
         std::wstring    GetMediaFolderPath();
     };
 };
+
+template <typename T, typename V>
+std::shared_ptr<T> safe_pointer_cast(const std::shared_ptr<V>& p)
+{
+    std::shared_ptr<T> pointer = std::dynamic_pointer_cast<T>(p);
+    VE_ERROR_IF(!pointer, L"Failed to cast type %s to %s", typeid(V).name(), typeid(T).name());
+    return pointer;
+}

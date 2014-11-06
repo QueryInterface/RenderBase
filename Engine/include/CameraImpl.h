@@ -31,4 +31,4 @@ private:
     glm::mat4           m_projectionMatrix;
 };
 
-typedef std::shared_ptr<Camera> CamerPtr;
+typedef std::shared_ptr<Camera> CameraPtr;

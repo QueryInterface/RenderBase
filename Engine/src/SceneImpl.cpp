@@ -4,6 +4,7 @@
 #include "ObjectImpl.h"
 #include "CameraImpl.h"
 #include "LightImpl.h"
+#include "Utils.h"
 
 static const unsigned char g_vertexShaderSource[] = {
     #include "vshader.shader.h"
@@ -42,12 +43,12 @@ Scene::~Scene()
 
 void Scene::AddObject(IObjectPtr& object)
 {
-    m_objects.insert(static_pointer_cast<Object>(object));
+    m_objects.insert(safe_pointer_cast<Object>(object));
 }
 
 void Scene::AddLight(ILightPtr& light)
 {
-    m_lights.insert(static_pointer_cast<Light>(light));
+    m_lights.insert(safe_pointer_cast<Light>(light));
 }
 
 void Scene::SetAmbientLight(const vector3f_t& light)
@@ -57,7 +58,7 @@ void Scene::SetAmbientLight(const vector3f_t& light)
 
 void Scene::SetCamera(ICameraPtr& camera)
 {
-    m_camera = static_pointer_cast<Camera>(camera);
+    m_camera = safe_pointer_cast<Camera>(camera);
 }
 
 void Scene::Render()
