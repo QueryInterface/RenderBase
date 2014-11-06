@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0.2)
 
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES          ${CMAKE_CURRENT_LIST_DIR}/include/*.h)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0.2)
 update_compiler_settings()
 
 # list all header files from src and include folders automatically 
