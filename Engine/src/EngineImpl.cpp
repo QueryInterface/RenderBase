@@ -62,8 +62,5 @@ void EngineImpl::Run(IEngineCallbacks* callbacks)
 
 IEngine& IEngine::Instance()
 {
-    static std::unique_ptr<IEngine> s_engine;
-    if (!s_engine)
-        s_engine.reset(new EngineImpl());
-    return *s_engine.get();   
+    return Singleton<EngineImpl>();
 }

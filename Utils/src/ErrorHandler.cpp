@@ -1,5 +1,6 @@
 #include "ErrorHandler.h"
 #include "common.h"
+#include "Utils.h"
 #include <stdio.h>
 #include <stdexcept>
 #include <sstream>
@@ -23,11 +24,7 @@ void ErrorHandler::Process(ERROR_TYPE errorType, char* component, char* file, in
 	throw std::exception("");
 }
 
-ErrorHandler* ErrorHandler::Instance() {
-    if (!_instance) {
-        _instance = new ErrorHandler();
-    }
-    return _instance;
+ErrorHandler& ErrorHandler::Instance() 
+{
+    return Singleton<ErrorHandler>();
 }
-
-ErrorHandler* ErrorHandler::_instance = nullptr;

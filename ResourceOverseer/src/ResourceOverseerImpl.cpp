@@ -2,6 +2,7 @@
 #include "ErrorHandler.h"
 #include "HandleImpl.h"
 #include "tiny_obj_loader.h"
+#include "Utils.h"
 
 using std::wstring;
 using std::vector;
@@ -110,8 +111,5 @@ void ResourceOverseerImpl::SaveScript(IMeshPtr mesh, const std::wstring& path) c
 
 IResourceOverseer& IResourceOverseer::Instance()
 {
-    static std::unique_ptr<IResourceOverseer> s_resourceOverseer;
-    if (!s_resourceOverseer)
-        s_resourceOverseer.reset(new ResourceOverseerImpl());
-    return *s_resourceOverseer.get();    
+    return Singleton<ResourceOverseerImpl>();
 }
