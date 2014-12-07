@@ -7,10 +7,14 @@ using namespace ConstructorImpl;
 #include "ConstructionLibraryPrimitives.cpp"
 #include "MeshLibraryPrimitives.cpp"
 
-Constructor& Constructor::GetConstructor()
+Constructor* Constructor::Create()
 {
-    static unique_ptr<Constructor> constructor(new BuildingBerth);
-    return *(constructor.get());
+    return new BuildingBerth();
+}
+
+void Constructor::Destroy(Constructor* constructor)
+{
+	delete constructor;
 }
 
 BuildingBerth::BuildingBerth()

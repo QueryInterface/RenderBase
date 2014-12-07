@@ -14,9 +14,9 @@ class Builder:
     def __init__(self):
         self.__genTypes = set()
         if (sys.platform == 'win32'):
-            self.__genTypes.add('Visual Studio 11')
+            self.__genTypes.add('Visual Studio 12')
             self.__genTypes.add('Sublime Text 2 - Unix Makefiles')
-            self.__curGenType = 'Visual Studio 11'
+            self.__curGenType = 'Visual Studio 12'
         elif (sys.platform == 'darwin'):
             self.__genTypes.add('Xcode')
             self.__genTypes.add('Unix Makefiles')
