@@ -139,7 +139,7 @@ TEST_F(OvermindTest, ExecuteTestScript)
 
 TEST_F(OvermindTest, RegisterObject)
 {
-    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+    ILibrary& lib = m_overmind->GetConstructor().GetLibrary();
 
     ASSERT_EQ(Status::ResourceNotFound, lib.CheckObjectStatus("NewObject"));
 

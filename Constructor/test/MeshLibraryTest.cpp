@@ -2,9 +2,24 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-TEST(MeshLibraryTest, GetSpaceMesh)
+class MeshLibraryTest : public ::testing::Test
 {
-    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+public:
+	MeshLibraryTest() //: m_constructor()
+	{
+	}
+
+	~MeshLibraryTest()
+	{
+		Constructor::Destroy(m_constructor);
+	}
+protected:
+	Constructor* m_constructor = Constructor::Create();
+};
+
+TEST_F(MeshLibraryTest, GetSpaceMesh)
+{
+    ILibrary& lib = m_constructor->GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Space);
 
     IMesh::Shape desc;
@@ -17,9 +32,9 @@ TEST(MeshLibraryTest, GetSpaceMesh)
     ASSERT_EQ(0, desc.Positions.Data.size()) << "incorrect cloned object";
 }
 
-TEST(MeshLibraryTest, GetCubeMesh)
+TEST_F(MeshLibraryTest, GetCubeMesh)
 {
-    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+    ILibrary& lib = m_constructor->GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
 
     IMesh::Shape desc;
@@ -28,9 +43,9 @@ TEST(MeshLibraryTest, GetCubeMesh)
     ASSERT_EQ(108, desc.Positions.Data.size()) << "incorrect number of vertices";
 }
 
-TEST(MeshLibraryTest, GetClonedCubeMesh)
+TEST_F(MeshLibraryTest, GetClonedCubeMesh)
 {
-    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+    ILibrary& lib = m_constructor->GetLibrary();
     IMeshPtr meshCloneTemp = lib.GetMesh(ElementType::Cube).Clone();
     ILibraryMesh* meshClone = (ILibraryMesh*)meshCloneTemp.get();
     IMesh::Shape desc;
@@ -40,9 +55,9 @@ TEST(MeshLibraryTest, GetClonedCubeMesh)
     ASSERT_EQ(108, desc.Positions.Data.size()) << "incorrect number of vertices";
 }
 
-TEST(MeshLibraryTest, GetCubeMeshFace)
+TEST_F(MeshLibraryTest, GetCubeMeshFace)
 {
-    ILibrary& lib = Constructor::GetConstructor().GetLibrary();
+    ILibrary& lib = m_constructor->GetLibrary();
     const ILibraryMesh& mesh = lib.GetMesh(ElementType::Cube);
     IMesh::Shape desc;
     MeshProperties prop = {Directions::pX, vector3f_t(0,0,0)};

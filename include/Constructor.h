@@ -31,7 +31,8 @@ struct Constructor// : public Object
 
     virtual void        Reset() = 0;
 
-    static Constructor& GetConstructor();
+    static Constructor* Create();
+	static void			Destroy(Constructor* constructor);
 };
 
 // eof

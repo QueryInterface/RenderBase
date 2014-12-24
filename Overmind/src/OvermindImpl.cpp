@@ -54,7 +54,7 @@ Overmind& Overmind::Get()
 
 OvermindCerebro::OvermindCerebro()
     : m_lua(luaL_newstate())
-    , m_constructor(Constructor::GetConstructor())
+    , m_constructor(*Constructor::Create())
 {
     luaL_openlibs(m_lua);
 
@@ -67,6 +67,7 @@ OvermindCerebro::OvermindCerebro()
 OvermindCerebro::~OvermindCerebro()
 {
     lua_close(m_lua);
+	Constructor::Destroy(&m_constructor);
 }
 
 Status OvermindCerebro::ExecuteScript(std::string filename)
