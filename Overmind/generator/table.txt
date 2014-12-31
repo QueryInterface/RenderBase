@@ -1,0 +1,11 @@
+table a { double alamagusa; }
+			table     Bamboo
+			{
+				int a;
+				string babab;
+				double c12231;
+				SomeType54 d;
+			}
+			
+		table Caitung_12345 
+		{ none none; }
