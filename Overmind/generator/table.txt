@@ -5,6 +5,10 @@ table a { double alamagusa; }
 				string babab;
 				double c12231;
 				SomeType54 d;
+
+				void foo() = 0;
+				void foo1(a b) = 0;
+				int SomeExecutableFunction(int a, int b, string dob1) = 0;
 			}
 			
 		table Caitung_12345 
