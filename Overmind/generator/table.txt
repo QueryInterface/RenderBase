@@ -1,15 +1,23 @@
-table a { double alamagusa; }
+table tableA { double alamagusa; }
 			table     Bamboo
 			{
 				int a;
 				string babab;
-				double c12231;
-				SomeType54 d;
+				string lolol;
+				double c12231; //this is comment
+				tableA d;
 
-				void foo() = 0;
-				void foo1(a b) = 0;
-				int SomeExecutableFunction(int a, int b, string dob1) = 0;
+				virtual void foo() = 0; /* MUHAHA */
+				metamethod void foo1(a b) = 0;
+				metamethod int SomeExecutableFunction(int a, string dob1, int b) = 0;
 			}
-			
+
 		table Caitung_12345 
-		{ none none; }
+		{ type name; }
+
+		table Vectorized 
+		{ 
+			std::vector<int> vector;
+			std::list<int> list;
+			std::vector<Caitung_12345> list;
+		}
