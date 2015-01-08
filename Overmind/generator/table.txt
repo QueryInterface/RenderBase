@@ -1,4 +1,19 @@
-table tableA { double alamagusa; }
+enumeration Enum
+{
+    zero = 0,
+    uno,
+    dos,
+    tres,
+    quatro = 4
+};
+
+table MixedTable { 
+    double alamagusa;
+    virtual std::vector<int>& Vectorize(int i) = 0;
+    metamethod void VectorizeIt(const int& i) = 0;
+};
+
+table tableA { double alamagusa; };
 			table     Bamboo
 			{
 				int a;
@@ -8,16 +23,22 @@ table tableA { double alamagusa; }
 				tableA d;
 
 				virtual void foo() = 0; /* MUHAHA */
-				metamethod void foo1(a b) = 0;
-				metamethod int SomeExecutableFunction(int a, string dob1, int b) = 0;
-			}
+				metamethod void foo1(tableA& b) = 0;
+				metamethod int SomeExecutableFunction(const int a, string dob1, int b) = 0;
+			};
+
+		struct NonScriptableStructure
+		{
+			int field;
+			metamethod void fakeMethod(int i) = 0;
+		};
 
 		table Caitung_12345 
-		{ type name; }
+		{ type name; };
 
-		table Vectorized 
+		struct Vectorized // will be ignored by parser
 		{ 
 			std::vector<int> vector;
 			std::list<int> list;
 			std::vector<Caitung_12345> list;
-		}
+		};
