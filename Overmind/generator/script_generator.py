@@ -169,6 +169,7 @@ void parse<%($name)s>(lua_State* L, %($name)s& value, int index)
     parse(L, intermediateValue, index);
     value = intermediateValue;
 } // end of parser %($name)s
+
 """ % table)
 
 # push function
@@ -179,6 +180,7 @@ int push<%($name)s>(lua_State* L, const %($name)s& value)
 {
     push(L, (int)value);
 }
+
 """ % table)
 
 # register function
@@ -200,6 +202,7 @@ void register_%($name)s(lua_State* L)
     sourceFile.write("""
     lua_setglobal(L, "%($name)s");
 } // end of register %($name)s
+
 """ % table)
 #############################################
 # parser
@@ -228,6 +231,7 @@ void parse<%($name)s>(lua_State* L, %($name)s& table, int index)
         lua_pop(L, 1);
     } /* while */
 } // end of parser %($name)s
+
 """ % table)
 
 # push function
@@ -245,18 +249,41 @@ int push<%($name)s>(lua_State* L, const %($name)s& table)
     lua_setfield(m_lua, -2, "%s")
 """ % (record[NAME_ID], record[NAME_ID]))
 
-    sourceFile.write("\n} // end of push %($name)s\n" % table)
+    sourceFile.write("\n} // end of push %($name)s\n\n" % table)
 
+#############################################
+# functions
 def generatePushInterface(table, header, source):
     for method in table[METHOD_MARKER]:
-        source.write("\nint lua_%s(lua_State* L)\n{")
-        for parameter in method[PARAMETERS_MARKER]:
-            pass
-    
-def generateMethod(table, file):
-    file.write("""
+        source.write("\nint luaC_%($name)s(lua_State* L)" % method)
+        source.write("""
+{
+    luaL_checktype(L, 1, LUA_TUSERDATA);
+    %($name)s* pThis = (%($name)s*)lua_getluserdata(l, 1);
+    if (!pThis)
+        riseError(L, "incorrect method parameter");
+""" % table)
+        # get parameters from LUA stack
+        retvalsCount = 0 if method[TYPE_MARKER] == 'void' else 1;
+        source.write("\n    // parse function parameters from lua stack\n"); # end of function
+        for index, parameter in enumerate(method[PARAMETERS_MARKER]):
+            source.write("    %s param%s;\n    parse(L, param%s, %d)\n" % (parameter[TYPE_ID], parameter[NAME_ID], parameter[NAME_ID], index + 2))
 
-""")
+        source.write("\n    // call native function\n"); # start of function
+        source.write("    %($type)s retVal = pThis->%($name)s(" % method) if 0 != retvalsCount else source.write("    pThis->%($name)s(" % method)
+
+        # push parameters as arguments of native function
+        for index, parameter in enumerate(method[PARAMETERS_MARKER]):
+            if index < len(method[PARAMETERS_MARKER])-1:
+                source.write("%s, " % parameter[NAME_ID])
+            else:
+                source.write("%s" % parameter[NAME_ID])
+        source.write(");\n\n"); # end of function
+        # form return value if needed
+        if retvalsCount != 0:
+            source.write("    push(L, retVal);\n")
+
+        source.write("    return %d;\n}\n" % retvalsCount)
 
 # source file itself
 def generateSourceFile(tableList, headerName, source):
@@ -275,6 +302,7 @@ def generateSourceFile(tableList, headerName, source):
         else:
             generateParser(table, source)
             generatePush(table, source)
+            generatePushInterface(table, headerName, source)
 
 #############################################
 #  TABLE PARSER
