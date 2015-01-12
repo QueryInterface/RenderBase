@@ -34,28 +34,100 @@ def checkTemplates(file, lineNumber, line):
 #############################################
 #  HEADER FILE GENERATOR
 #############################################
+
+#all functions are templates. This required to push and parse complex template objects like std::vectors, etc.
 def writeHeaderPreDefinitions(file):
     file.write(
 """#include <lua.hpp>
 
 ///////////////// PRE DEFINED FUNCTIONS /////////////////
-
-#define parse_int(L, out, index)        out = lua_tointeger(L, index)
-#define parse_bool(L, out, index)       out = (bool)lua_tointeger(L, index)
-#define parse_double(L, out, index)     out = lua_tonumber(L, index)
-#define parse_float(L, out, index)      out = lua_tonumber(L, index)
-#define parse_string(L, out, index)     out = lua_tostring(L, index)
-
-#define push_int(L, in)                 lua_pushinteger(L, in)
-#define push_bool(L, in)                lua_pushinteger(L, in)
-#define push_double(L, in)              lua_pushnumber(L, in)
-#define push_float(L, in)               lua_pushnumber(L, in)
-#define push_string(L, in)              lua_pushstring(L, in)
-
+// error trigger
 inline void riseError(lua_State* L, const std::string& message)
 {
     lua_pushstring(L, message.c_str());
     lua_error(L);
+}
+
+template <class T>
+void parse<T>(lua_State* L, T& value, int index)
+{
+    riseError(L, "unknown type provided for parsing"); 
+}
+
+
+template <class T>
+void push<T>(lua_State* L, T& value)
+{
+    riseError(L, "unknown type provided for push"); 
+}
+
+///////////////////////////////////////////////////////////////////
+// DEFAULT PARSERS
+///////////////////////////////////////////////////////////////////
+template<>
+void parse<int>(lua_State* L, int& value, int index)
+{
+    value = lua_tointeger(L, index);
+}
+
+template<>
+void parse<bool>(lua_State* L, bool& value, int index)
+{
+    value = lua_tointeger(L, index);
+}
+
+template<>
+void parse<double>(lua_State* L, double& value, int index)
+{
+    value = lua_tonumber(L, index);
+}
+
+template<>
+void parse<float>(lua_State* L, float& value, int index)
+{
+    value = lua_tonumber(L, index);
+}
+
+
+template<>
+void parse<std::string>(lua_State* L, std::string& value, int index)
+{
+    value = lua_tostring(L, index);
+}
+
+///////////////////////////////////////////////////////////////////
+// DEFAULT PUSH FUNCTIONS
+///////////////////////////////////////////////////////////////////
+template <>
+void push<int>(lua_State* L, int& value)
+{
+    lua_pushinteger(L, value);
+}
+
+template <>
+void push<bool>(lua_State* L, bool& value)
+{
+    int result = 0;
+    lua_pushinteger(L, result);
+    value = !!result;
+}
+
+template <>
+void push<double>(lua_State* L, double& value)
+{
+    lua_pushnumber(L, value);
+}
+
+template <>
+void push<float>(lua_State* L, float& value)
+{
+    lua_pushnumber(L, value);
+}
+
+template <>
+void push<std::string>(lua_State* L, std::string& value)
+{
+    lua_pushstring(L, value.c_str());
 }
 
 ///////////////// GENERATED FUNCTIONS /////////////////
@@ -65,19 +137,19 @@ def generateHeaderFile(tableList, header):
     header.write("%s\n\n" % __HEADER)
 
     writeHeaderPreDefinitions(header)
-
-    for table in tableList:
-        declDictionary = {'$name' : table[NAME_MARKER], '$type' : 'table', '$registrator' : ''}
-        if table[ENUM_MARKER]:
-            declDictionary.update({'$type' : 'value'})
-            declDictionary.update({'$registrator' : 'int register_%($name)s(lua_State* L);\n' % table})
-
-        header.write(
-"""
-// Accessors for %($name)s enumeration
-%($registrator)sint parse_%($name)s(lua_State* L, %($name)s& %($type)s, int index = -1);
-int push_%($name)s(lua_State* L, const %($name)s& %($type)s);
-""" % declDictionary)
+#
+#    for table in tableList:
+#        declDictionary = {'$name' : table[NAME_MARKER], '$type' : 'table', '$registrator' : ''}
+#        if table[ENUM_MARKER]:
+#            declDictionary.update({'$type' : 'value'})
+#            declDictionary.update({'$registrator' : 'int register_%($name)s(lua_State* L);\n' % table})
+#
+#        header.write(
+#"""
+#// Accessors for %($name)s enumeration
+#%($registrator)svoid parse_%($name)s(lua_State* L, %($name)s& %($type)s, int index = -1);
+#int push_%($name)s(lua_State* L, const %($name)s& %($type)s);
+#""" % declDictionary)
         
 
 #############################################
@@ -87,28 +159,32 @@ int push_%($name)s(lua_State* L, const %($name)s& %($type)s);
 # push function
 def generateEnumParser(table, sourceFile):
     sourceFile.write("""
-int parse_%($name)s(lua_State* L, %($name)s& value, int index)
+template<>
+void parse<%($name)s>(lua_State* L, %($name)s& value, int index)
 {
     if (!lua_isinteger(L, index))
         riseError(L, "invalid type for parameter of type %($name)s");
 
-    return parse_int(L, value, index);
+    int intermediateValue = 0;
+    parse(L, intermediateValue, index);
+    value = intermediateValue;
 } // end of parser %($name)s
 """ % table)
 
 # push function
 def generateEnumPush(table, sourceFile):
     sourceFile.write("""
-int push_%($name)s(lua_State* L, const %($name)s& value)
+template<>
+int push<%($name)s>(lua_State* L, const %($name)s& value)
 {
-    return push_int(L, value);
+    push(L, (int)value);
 }
 """ % table)
 
 # register function
 def generateEnumRegistrator(table, sourceFile):
     sourceFile.write("""
-int register_%($name)s(lua_State* L)
+void register_%($name)s(lua_State* L)
 {
     lua_getglobal(L, "%($name)s");
     if (!lua_isnil(L, -1))
@@ -117,20 +193,20 @@ int register_%($name)s(lua_State* L)
 
     for record in table[FIELDS_MARKER]:
         sourceFile.write("""
-    push_int(L, %s::%s);
+    push(L, (int)%s::%s);
     lua_setfield(m_lua, -2, "%s")
 """ % (table[NAME_MARKER], record[NAME_ID], record[NAME_ID]))
 
     sourceFile.write("""
     lua_setglobal(L, "%($name)s");
-    return 0;
 } // end of register %($name)s
 """ % table)
 #############################################
 # parser
 def generateParser(table, sourceFile):
     sourceFile.write("""
-int parse_%($name)s(lua_State* L, %($name)s& table, int index)
+template<>
+void parse<%($name)s>(lua_State* L, %($name)s& table, int index)
 {
     luaL_checktype(L, -1, LUA_TTABLE);
     lua_pushnil(L);
@@ -142,41 +218,50 @@ int parse_%($name)s(lua_State* L, %($name)s& table, int index)
         sourceFile.write("""
         if (0 == field.compare(\"%s\"))
         {
-            parse_%s(L, table.%s, -1);
+            parse(L, table.%s, -1);
             lua_pop(L, 1);
             continue;
-        }""" % (record[NAME_ID], record[TYPE_ID], record[NAME_ID]))
+        }""" % (record[NAME_ID], record[NAME_ID]))
 
     sourceFile.write("""
         riseError(L, "unknown field \\"" + field + "\\" found");
         lua_pop(L, 1);
     } /* while */
-    return 0;
 } // end of parser %($name)s
 """ % table)
 
 # push function
 def generatePush(table, sourceFile):
     sourceFile.write("""
-int push_%($name)s(lua_State* L, const %($name)s& table)
+template<>
+int push<%($name)s>(lua_State* L, const %($name)s& table)
 {
     lua_newtable(L);
 """ % table)
 
     for record in table[FIELDS_MARKER]:
         sourceFile.write("""
-    push_%s(L, table.%s);
+    push(L, table.%s);
     lua_setfield(m_lua, -2, "%s")
-""" % (record[TYPE_ID], record[NAME_ID], record[NAME_ID]))
+""" % (record[NAME_ID], record[NAME_ID]))
 
-    sourceFile.write("""
-    return 0;
-} // end of push %($name)s
-""" % table)
+    sourceFile.write("\n} // end of push %($name)s\n" % table)
+
+def generatePushInterface(table, header, source):
+    for method in table[METHOD_MARKER]:
+        source.write("\nint lua_%s(lua_State* L)\n{")
+        for parameter in method[PARAMETERS_MARKER]:
+            pass
+    
+def generateMethod(table, file):
+    file.write("""
+
+""")
 
 # source file itself
 def generateSourceFile(tableList, headerName, source):
-    source.write(
+    if source.name != headerName:
+        source.write(
 """%s
 
 #include "%s"
@@ -297,7 +382,7 @@ def main():
                 enumeration  = False
 
     generateHeaderFile(tableList, scriptArgs.header)
-    generateSourceFile(tableList, scriptArgs.header.name, scriptArgs.source)
+    generateSourceFile(tableList, scriptArgs.header.name, scriptArgs.header)
 
 
 if __name__=="__main__":
