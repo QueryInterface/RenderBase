@@ -6,12 +6,12 @@ import argparse
 import re
 
 #reserved field names
-NAME_MARKER         = '$name'
-FIELDS_MARKER       = '$fields'
-METHOD_MARKER       = '$methods'
-TYPE_MARKER         = '$type'
-PARAMETERS_MARKER   = '$params'
-ENUM_MARKER         = '$is_enum'
+NAME_MARKER         = '__name'
+FIELDS_MARKER       = '__fields'
+METHOD_MARKER       = '__methods'
+TYPE_MARKER         = '__type'
+PARAMETERS_MARKER   = '__params'
+ENUM_MARKER         = '__is_enum'
 
 #general indices
 NAME_ID = 1
@@ -139,16 +139,16 @@ def generateHeaderFile(tableList, header):
     writeHeaderPreDefinitions(header)
 #
 #    for table in tableList:
-#        declDictionary = {'$name' : table[NAME_MARKER], '$type' : 'table', '$registrator' : ''}
+#        declDictionary = {'__name' : table[NAME_MARKER], '__type' : 'table', '__registrator' : ''}
 #        if table[ENUM_MARKER]:
-#            declDictionary.update({'$type' : 'value'})
-#            declDictionary.update({'$registrator' : 'int register_%($name)s(lua_State* L);\n' % table})
+#            declDictionary.update({'__type' : 'value'})
+#            declDictionary.update({'__registrator' : 'int register_%(__name)s(lua_State* L);\n' % table})
 #
 #        header.write(
 #"""
-#// Accessors for %($name)s enumeration
-#%($registrator)svoid parse_%($name)s(lua_State* L, %($name)s& %($type)s, int index = -1);
-#int push_%($name)s(lua_State* L, const %($name)s& %($type)s);
+#// Accessors for %(__name)s enumeration
+#%(__registrator)svoid parse_%(__name)s(lua_State* L, %(__name)s& %(__type)s, int index = -1);
+#int push_%(__name)s(lua_State* L, const %(__name)s& %(__type)s);
 #""" % declDictionary)
         
 
@@ -157,26 +157,26 @@ def generateHeaderFile(tableList, header):
 #############################################
 
 # push function
-def generateEnumParser(table, sourceFile):
-    sourceFile.write("""
+def generateEnumParser(table, header, source):
+    header.write("""
 template<>
-void parse<%($name)s>(lua_State* L, %($name)s& value, int index)
+void parse<%(__name)s>(lua_State* L, %(__name)s& value, int index)
 {
     if (!lua_isinteger(L, index))
-        riseError(L, "invalid type for parameter of type %($name)s");
+        riseError(L, "invalid type for parameter of type %(__name)s");
 
     int intermediateValue = 0;
     parse(L, intermediateValue, index);
     value = intermediateValue;
-} // end of parser %($name)s
+} // end of parser %(__name)s
 
 """ % table)
 
 # push function
-def generateEnumPush(table, sourceFile):
-    sourceFile.write("""
+def generateEnumPush(table, header, source):
+    header.write("""
 template<>
-int push<%($name)s>(lua_State* L, const %($name)s& value)
+int push<%(__name)s>(lua_State* L, const %(__name)s& value)
 {
     push(L, (int)value);
 }
@@ -184,32 +184,28 @@ int push<%($name)s>(lua_State* L, const %($name)s& value)
 """ % table)
 
 # register function
-def generateEnumRegistrator(table, sourceFile):
-    sourceFile.write("""
-void register_%($name)s(lua_State* L)
+def generateEnumRegistrator(table, header, source):
+    header.write("void register_%(__name)s(lua_State* L);\n" % table)
+
+    source.write("""
+void register_%(__name)s(lua_State* L)
 {
-    lua_getglobal(L, "%($name)s");
+    lua_getglobal(L, "%(__name)s");
     if (!lua_isnil(L, -1))
-        riseError(L, "enumerator %($name)s already registered");
+        riseError(L, "enumerator %(__name)s already registered");
 """ % table)
 
     for record in table[FIELDS_MARKER]:
-        sourceFile.write("""
-    push(L, (int)%s::%s);
-    lua_setfield(m_lua, -2, "%s")
-""" % (table[NAME_MARKER], record[NAME_ID], record[NAME_ID]))
+        source.write("    push(L, (int)%(__name)s" % table)
+        source.write('::%(__name)s);\n    lua_setfield(m_lua, -2, "%(__name)s")\n\n' % record)
 
-    sourceFile.write("""
-    lua_setglobal(L, "%($name)s");
-} // end of register %($name)s
-
-""" % table)
+    source.write('    lua_setglobal(L, "%(__name)s");\n} // end of register %(__name)s\n\n' % table)
 #############################################
 # parser
-def generateParser(table, sourceFile):
-    sourceFile.write("""
+def generateParser(table, header, source):
+    header.write("""
 template<>
-void parse<%($name)s>(lua_State* L, %($name)s& table, int index)
+void parse<%(__name)s>(lua_State* L, %(__name)s& table, int index)
 {
     luaL_checktype(L, -1, LUA_TTABLE);
     lua_pushnil(L);
@@ -218,48 +214,48 @@ void parse<%($name)s>(lua_State* L, %($name)s& table, int index)
         std::string field(lua_tostring(L, -2));""" % table)
 
     for record in table[FIELDS_MARKER]:
-        sourceFile.write("""
-        if (0 == field.compare(\"%s\"))
+        header.write("""
+        if (0 == field.compare(\"%(__name)s\"))
         {
-            parse(L, table.%s, -1);
+            parse(L, table.%(__name)s, -1);
             lua_pop(L, 1);
             continue;
-        }""" % (record[NAME_ID], record[NAME_ID]))
+        }""" % record)
 
-    sourceFile.write("""
+    header.write("""
         riseError(L, "unknown field \\"" + field + "\\" found");
         lua_pop(L, 1);
     } /* while */
-} // end of parser %($name)s
+} // end of parser %(__name)s
 
 """ % table)
 
 # push function
-def generatePush(table, sourceFile):
-    sourceFile.write("""
+def generatePush(table, header, source):
+    header.write("""
 template<>
-int push<%($name)s>(lua_State* L, const %($name)s& table)
+int push<%(__name)s>(lua_State* L, const %(__name)s& table)
 {
     lua_newtable(L);
 """ % table)
 
     for record in table[FIELDS_MARKER]:
-        sourceFile.write("""
-    push(L, table.%s);
-    lua_setfield(m_lua, -2, "%s")
-""" % (record[NAME_ID], record[NAME_ID]))
+        header.write("""
+    push(L, table.%(__name)s);
+    lua_setfield(m_lua, -2, "%(__name)s")
+""" % record)
 
-    sourceFile.write("\n} // end of push %($name)s\n\n" % table)
+    header.write("\n} // end of push %(__name)s\n\n" % table)
 
 #############################################
 # functions
-def generatePushInterface(table, header, source):
+def generateInterface(table, header, source):
     for method in table[METHOD_MARKER]:
-        source.write("\nint luaC_%($name)s(lua_State* L)" % method)
+        source.write("\nint luaC_%(__name)s(lua_State* L)" % method)
         source.write("""
 {
     luaL_checktype(L, 1, LUA_TUSERDATA);
-    %($name)s* pThis = (%($name)s*)lua_getluserdata(l, 1);
+    %(__name)s* pThis = (%(__name)s*)lua_getlightuserdata(L, 1);
     if (!pThis)
         riseError(L, "incorrect method parameter");
 """ % table)
@@ -267,17 +263,18 @@ def generatePushInterface(table, header, source):
         retvalsCount = 0 if method[TYPE_MARKER] == 'void' else 1;
         source.write("\n    // parse function parameters from lua stack\n"); # end of function
         for index, parameter in enumerate(method[PARAMETERS_MARKER]):
-            source.write("    %s param%s;\n    parse(L, param%s, %d)\n" % (parameter[TYPE_ID], parameter[NAME_ID], parameter[NAME_ID], index + 2))
+            source.write("    %(__type)s param%(__name)s;\n    parse(L, param%(__name)s, " % parameter)
+            source.write("%d)\n" % (index + 2))
 
         source.write("\n    // call native function\n"); # start of function
-        source.write("    %($type)s retVal = pThis->%($name)s(" % method) if 0 != retvalsCount else source.write("    pThis->%($name)s(" % method)
+        source.write("    %(__type)s retVal = pThis->%(__name)s(" % method) if 0 != retvalsCount else source.write("    pThis->%(__name)s(" % method)
 
         # push parameters as arguments of native function
         for index, parameter in enumerate(method[PARAMETERS_MARKER]):
             if index < len(method[PARAMETERS_MARKER])-1:
-                source.write("%s, " % parameter[NAME_ID])
+                source.write("%(__name)s, " % parameter)
             else:
-                source.write("%s" % parameter[NAME_ID])
+                source.write("%(__name)s" % parameter)
         source.write(");\n\n"); # end of function
         # form return value if needed
         if retvalsCount != 0:
@@ -286,23 +283,23 @@ def generatePushInterface(table, header, source):
         source.write("    return %d;\n}\n" % retvalsCount)
 
 # source file itself
-def generateSourceFile(tableList, headerName, source):
-    if source.name != headerName:
+def generateSourceFile(tableList, header, source):
+    if source.name != header:
         source.write(
 """%s
 
 #include "%s"
-""" % (__HEADER, headerName))
+""" % (__HEADER, header.name))
 
     for table in tableList:
         if table[ENUM_MARKER]:
-            generateEnumParser(table, source)
-            generateEnumPush(table, source)
-            generateEnumRegistrator(table, source)
+            generateEnumParser(table, header, source)
+            generateEnumPush(table, header, source)
+            generateEnumRegistrator(table, header, source)
         else:
-            generateParser(table, source)
-            generatePush(table, source)
-            generatePushInterface(table, headerName, source)
+            generateParser(table, header, source)
+            generatePush(table, header, source)
+            generateInterface(table, header, source)
 
 #############################################
 #  TABLE PARSER
@@ -316,23 +313,23 @@ def main():
 
     tableList = []
 
-    methodPattern = re.compile("""%s\s+   # 'metamethod' marker is mandatory
-        (\w+)\s+(\w+)\s*                  # function return type and name
+    methodPattern = re.compile("""%(__METHOD)s\s+               # 'metamethod' marker is mandatory
+        (?P<%(TYPE_MARKER)s>\w+)\s+(?P<%(NAME_MARKER)s>\w+)\s*  # function return type and name
         \(\s*
-        (.*)                              # function parameters
+        (?P<%(PARAMETERS_MARKER)s>.*)                           # function parameters
         \s*\)
-        \s*=\s*0\s*;                      # PURE marker is mandatory
-        """ % __METHOD,
+        \s*=\s*0\s*;                                        # PURE marker is mandatory
+        """ % globals(),
         re.VERBOSE)
 
     #TODO:
     # allow pointer registration in structure
-    fieldPattern = re.compile('(\w+)\s+(\w+)\s*;')
+    fieldPattern = re.compile('(?P<%(TYPE_MARKER)s>\w+)\s+(?P<%(NAME_MARKER)s>\w+)\s*;' % globals())
     enumPatter = re.compile("""
-        (\w+)                           # enumerated value name
+        (?P<%(NAME_MARKER)s>\w+)                     # enumerated value name
         (?:\s*=\s*.*)?                  # enum assigment is optional, symbol group is not captured
         \,?                             # comma is optional
-        """, 
+        """ % globals(), 
         re.VERBOSE) # enumeration field with optional assignment
 
     currentTable = {}
@@ -357,10 +354,10 @@ def main():
 
             index = 0
             if not tableStarted:
-                tableName = re.match('%s\s+(\w+)' % __TABLE, line) or re.match('%s\s+(\w+)' % __ENUM, line)
+                tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)' % (__ENUM, NAME_MARKER), line)
                 if tableName is not None:
                     enumeration = (re.search(__ENUM, line) is not None)
-                    currentTable = {NAME_MARKER : tableName.group(1), FIELDS_MARKER : [], METHOD_MARKER : [], ENUM_MARKER : enumeration}
+                    currentTable = {NAME_MARKER : tableName.groupdict()[NAME_MARKER], FIELDS_MARKER : [], METHOD_MARKER : [], ENUM_MARKER : enumeration}
                     tableStarted = True
                     line = line[tableName.span()[1]:].strip()
                 else:
@@ -374,11 +371,11 @@ def main():
             # field detected. parse it and save as a tuple (type, name)
             if parameter is not None and len(parameter.groups()) > 0:
                 # check template in translated field. non translated fields may be templates
-                if enumeration:
-                    currentTable[FIELDS_MARKER].append( ('int', parameter.groups(0)[0]) )
+                if not parameter.groupdict().has_key(TYPE_MARKER):
+                    currentTable[FIELDS_MARKER].append( {TYPE_MARKER: 'int', NAME_MARKER: parameter.groupdict()[NAME_MARKER] } )
                 else:
                     checkTemplates(file, lineNumber, line)
-                    currentTable[FIELDS_MARKER].append( parameter.groups(0) )
+                    currentTable[FIELDS_MARKER].append( parameter.groupdict() )
             else:
                 # function detected
                 # Save function as a name, typoe and list of parameters.
@@ -389,19 +386,16 @@ def main():
                     funcParams = []
                     #TODO:
                     # const parameters are not allowed yet
-                    for param in parameter.groups(0)[2].split(','):
+                    funcDesc = parameter.groupdict()
+                    for param in funcDesc[PARAMETERS_MARKER].split(','):
                         checkTemplates(file, lineNumber, param.strip())
                         param = re.sub('\s*const\s+', '', param)
+                        param = re.sub('\&', '', param)
                         funcParameter = param.strip().split(' ')
-                        funcParams.append( tuple(funcParameter) )
+                        funcParams.append( {TYPE_MARKER: funcParameter[TYPE_ID], NAME_MARKER: funcParameter[NAME_ID]} )
 
-                    currentTable[METHOD_MARKER].append(
-                            {
-                                TYPE_MARKER: parameter.groups(0)[TYPE_ID],
-                                NAME_MARKER: parameter.groups(0)[NAME_ID],
-                                PARAMETERS_MARKER: funcParams
-                            }
-                        )
+                    funcDesc[PARAMETERS_MARKER] = funcParams
+                    currentTable[METHOD_MARKER].append(funcDesc)
 
             if re.search("}", line) is not None:
                 tableList.append(currentTable)
@@ -410,7 +404,7 @@ def main():
                 enumeration  = False
 
     generateHeaderFile(tableList, scriptArgs.header)
-    generateSourceFile(tableList, scriptArgs.header.name, scriptArgs.header)
+    generateSourceFile(tableList, scriptArgs.header, scriptArgs.source)
 
 
 if __name__=="__main__":
