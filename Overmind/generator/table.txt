@@ -22,8 +22,8 @@ table tableA { double alamagusa; };
 				double c12231; //this is comment
 				tableA d;
 
-				virtual void foo() = 0; /* MUHAHA */
-				metamethod void foo1(tableA& b) = 0;
+				metamethod void foo() = 0; /* MUHAHA */
+				metamethod void foo3(tableA& b) = 0;
 				metamethod int SomeExecutableFunction(const int a, string dob1, int b) = 0;
 			};
 
