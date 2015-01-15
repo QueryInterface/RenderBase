@@ -7,14 +7,22 @@ enumeration Enum
     quatro = 4
 };
 
-table MixedTable { 
+enumeration EnumClass : unsigned int {
+    a = 0,
+    s,
+    d,
+    f,
+    r = 4
+};
+
+structure MixedTable { 
     double alamagusa;
     virtual std::vector<int>& Vectorize(int i) = 0;
     metamethod void VectorizeIt(const int& i) = 0;
 };
 
-table tableA { double alamagusa; };
-			table     Bamboo
+structure tableA { double alamagusa; };
+			structure     Bamboo
 			{
 				int a;
 				string babab;
@@ -33,7 +41,7 @@ table tableA { double alamagusa; };
 			metamethod void fakeMethod(int i) = 0;
 		};
 
-		table Caitung_12345 
+		structure Caitung_12345 
 		{ type name; };
 
 		struct Vectorized // will be ignored by parser

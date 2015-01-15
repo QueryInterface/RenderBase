@@ -5,12 +5,13 @@
 //    
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include <internal\ScriptBase.h>
 #include <Resources.h>
 #include "MathBasics.h"
 #include <vector>
 #include <cstdint>
 
-enum ElementType : unsigned int
+enumeration ElementType : unsigned int
 {
     Space   = 0,                 // empty space
     Cube,                        // simple cube
@@ -45,7 +46,7 @@ enum DirectionIndices : unsigned char
 };
 // enum represents direction of the element,
 // also the same enum is used for visible faces definitions
-enum Directions : unsigned short
+enumeration Directions : unsigned short
 {
     NO = 0x00,
 

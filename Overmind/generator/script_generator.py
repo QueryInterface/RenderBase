@@ -6,7 +6,7 @@ import argparse
 import re
 
 #keywords
-__TABLE     = 'table'
+__TABLE     = 'structure'
 __METHOD    = 'metamethod'
 __ENUM      = 'enumeration'
 
@@ -158,32 +158,11 @@ def generatePush(table, header, source):
     for record in table[FIELDS_MARKER]:
         source.write('\n    PushObject(L, "%(__name)s", table.%(__name)s);' % record)
 
-    source.write('\n\n    %(_naming)s}\n' % table)
+    source.write('\n\n    %(_naming)s\n}\n' % table)
 
 #############################################
 # enumerations
-# parser function
-def generateEnumParser(table, header, source):
-    header.write('%(_parse)s %(__name)s& value);\n' % table)
-    source.write("""
-%(_parse)s %(__name)s& value)
-{
-    if (!lua_isinteger(L, index))
-        RaiseError(L, "invalid type for parameter of type %(__name)s");
-
-    int intermediateValue = 0;
-    ParseObject(L, intermediateValue, index);
-    value = intermediateValue;
-} // end of parser %(__name)s
-
-""" % table)
-
-# push function
-def generateEnumPush(table, header, source):
-    header.write('%(_push)s %(__name)s value);\n' % table)
-    source.write('\n%(_push)s %(__name)s value)\n{\n    PushObject(L, objectName, (int)value);\n}\n' % table)
-
-# register function
+# register function, parse and push are the same as for integer
 def generateEnumRegistrator(table, header, source):
     header.write('void RegisterEnum_%(__name)s(lua_State* L);\n' % table)
     source.write("""
@@ -243,13 +222,13 @@ def generateFunctionWrappers(table, header, source):
 def generatePushObject(table, header, source):
     header.write('%(_push)s %(__name)s& pObject);\n%(_parse)s %(__name)s& value);\n' % table)
     #generate interface registration. interface table is closed, no fields can be assigned
-    source.write('\n%(_push)s %(__name)s& pObject)\n{\n    lua_newtable(L);\n    %(_forbidMetatable)s\n    %(_forbidNewIndex)s\n    %(_registerThis)s\n' % table)
+    source.write('\n%(_push)s %(__name)s& pObject)\n{\n    lua_newtable(L);\n    %(_forbidMetatable)s\n    %(_forbidNewIndex)s\n    %(_registerThis)s\n\n' % table)
 
     #register methods
     for method in table[METHOD_MARKER]:
         source.write('    lua_pushcfunction(L, lua%s_%s); lua_setfield(L, -2, "%s");\n' % (table[NAME_MARKER], method[NAME_MARKER], method[NAME_MARKER]))
 
-    source.write('\n    %(_naming)s}\n' % table)
+    source.write('\n    %(_naming)s\n}\n' % table)
     #generate parse function for interface object
     source.write("""
 %(_parse)s %(__name)s& value)
@@ -278,8 +257,6 @@ def generateSourceFile(tableList, header, source):
         source.write('\n///// %(__name)s\n' % table);
 
         if table[ENUM_MARKER]:
-            generateEnumParser(mergedTable, header, source)
-            generateEnumPush(mergedTable, header, source)
             generateEnumRegistrator(mergedTable, header, source)
         else:
             if len(table[METHOD_MARKER]) > 0:
@@ -345,12 +322,16 @@ def main():
 
             index = 0
             if not tableStarted:
-                tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)' % (__ENUM, NAME_MARKER), line)
+                tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)(?:\s*\:.)?' % (__ENUM, NAME_MARKER), line)
                 if tableName is not None:
                     enumeration = (re.search(__ENUM, line) is not None)
                     currentTable = {NAME_MARKER : tableName.groupdict()[NAME_MARKER], FIELDS_MARKER : [], METHOD_MARKER : [], ENUM_MARKER : enumeration}
                     tableStarted = True
-                    line = line[tableName.span()[1]:].strip()
+                    parameter = re.search("{",line)
+                    if parameter is not None:
+                        line = line[parameter.span()[1]:].strip()
+                    else:
+                        continue
                 else:
                     continue
 
