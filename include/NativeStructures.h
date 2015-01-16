@@ -4,26 +4,27 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include <internal/ScriptBase.h>
 
-#undef BEGIN_REFLECTION_TABLE
-#undef STRING_FIELD
-#undef VEC3_FIELD
-#undef INT_FIELD
-#undef END_REFLECTION_TABLE
+structure Vector
+{
+    float x;
+    float y;
+    float z;
+};
 
-#define BEGIN_REFLECTION_TABLE(_name) struct _name {
-#define STRING_FIELD(fieldName) std::string fieldName;
-#define VEC3_FIELD(fieldName) vector3i_t fieldName;
-#define INT_FIELD(fieldName) int fieldName;
-#define END_REFLECTION_TABLE() }
+structure ObjectProperties
+{
+    std::string name;
+    std::string meshName;
+    std::string materialName;
+    std::string elementName;
+};
 
-///////////////////////////////////////////////////////////////////////////////////
-//reflection structures
-
-#include "internal/Reflections.h"
-
-#undef BEGIN_REFLECTION_TABLE
-#undef STRING_FIELD
-#undef VEC3_FIELD
-#undef INT_FIELD
-#undef END_REFLECTION_TABLE
+structure PlacementParameters
+{
+    std::string name;
+    Vector position;
+    int orientation;
+    int placeDirection;
+};

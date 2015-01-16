@@ -4,6 +4,7 @@ update_compiler_settings()
 # list all header files from src and include folders automatically 
 file(GLOB HEADER_FILES         ${CMAKE_CURRENT_LIST_DIR}/include/*.h)
 file(GLOB PRIVATE_HEADER_FILES ${CMAKE_CURRENT_LIST_DIR}/src/*.h)
+file(GLOB INTERNAL_HEADER_FILES ${PROJECT_SOURCE_DIR}/internal/*.h)
 file(GLOB TEST_SCRIPTS         ${CMAKE_CURRENT_LIST_DIR}/test_scripts/*.lua)
 
 # list all source files from src and test folders automatically 
@@ -17,11 +18,37 @@ source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
 source_group ("Tests"               FILES ${TEST_FILES})
 source_group ("Scripts"             FILES ${TEST_SCRIPTS})
 
+# generator setup
+set(GENERATOR_PATH ${CMAKE_CURRENT_LIST_DIR}/generator/script_generator.py)
+set(GENERATED_HEADER ${PROJECT_BINARY_DIR}/ScriptEngine_gen.h)
+set(GENERATED_SOURCE ${PROJECT_BINARY_DIR}/ScriptEngine_gen.cpp)
+file(GLOB GENERATOR_SOURCES ${PROJECT_SOURCE_DIR}/include/*.h)
+
+
+add_custom_command(
+    PRE_BUILD 
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT ${GENERATED_HEADER} ${GENERATED_SOURCE}
+    COMMAND python ${GENERATOR_PATH} -ho ${GENERATED_HEADER} -so ${GENERATED_SOURCE} -fl ${GENERATOR_SOURCES}
+    DEPENDS ${GENERATOR_SOURCES} ${GENERATOR_PATH}
+    COMMENT "script files preprocessing"
+)
+
+set_source_files_properties(
+    ${GENERATED_HEADER}
+    ${GENERATED_SOURCE}
+    PROPERTIES GENERATED 1
+)
+
 # Form binaries
 add_library(Overmind STATIC
     ${HEADER_FILES}
     ${PRIVATE_HEADER_FILES}
+    ${INTERNAL_HEADER_FILES}
     ${SOURCE_FILES}
+    ${GENERATED_HEADER}
+    ${GENERATED_SOURCE}
+    ${GENERATOR_PATH}
 )
 
 add_executable(OvermindTest
@@ -43,6 +70,7 @@ set_property(
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/include
+    APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_BINARY_DIR}
 )
 
 #set property for the test executable
@@ -55,6 +83,7 @@ set_property(
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/Utils/include
     APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/include
+    APPEND PROPERTY INCLUDE_DIRECTORIES ${PROJECT_BINARY_DIR}
 )
 
 # add required definitions (tr1 tuple is not supported under VS11)

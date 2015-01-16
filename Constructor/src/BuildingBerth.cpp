@@ -56,7 +56,8 @@ Status BuildingBerth::PlaceObject(PlacementParameters& parameters)
     if (nullptr == desc)
         return Status::ResourceNotFound;
 
-    m_core.SetElement(*desc, parameters.position, (Directions)parameters.orientation, (Directions)parameters.placeDirection);
+    vector3i_t pos = vector3i_t(parameters.position.x, parameters.position.y, parameters.position.z);
+    m_core.SetElement(*desc, pos, (Directions)parameters.orientation, (Directions)parameters.placeDirection);
 
     return Status::OK;
 }

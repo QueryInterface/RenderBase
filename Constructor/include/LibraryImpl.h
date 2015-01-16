@@ -24,6 +24,7 @@ public:
     Library();
     virtual ~Library() {};
 
+
     virtual void Reset();
 
     // construction library object

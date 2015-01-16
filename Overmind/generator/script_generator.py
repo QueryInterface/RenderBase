@@ -38,88 +38,12 @@ def checkTemplates(file, lineNumber, line):
 #############################################
 
 #all functions are templates. This required to push and parse complex template objects like std::vectors, etc.
-def writeHeaderPreDefinitions(file):
-    file.write("""%(_header)s
+def writeDependencies(headers, file):
+    file.write('%(_header)s\n\n#include <internal/ScriptCommon.h>\n' % SHORTCUTS)
+    for header in headers:
+        file.write('#include <%s>\n' % header)
 
-#include <lua.hpp>
-
-///////////////////////////////////////////////////////////////////
-// ERRORS
-///////////////////////////////////////////////////////////////////
-inline void RaiseError(lua_State* L, const std::string& message)
-{
-    lua_pushstring(L, message.c_str());
-    lua_error(L);
-}
-
-///////////////////////////////////////////////////////////////////
-// DEFAULT PARSERS
-///////////////////////////////////////////////////////////////////
-inline %(_parse)s int& value)
-{
-    luaL_checktype(L, index, LUA_TNUMBER);
-    value = lua_tointeger(L, index);
-}
-
-inline %(_parse)s bool& value)
-{
-    luaL_checktype(L, index, LUA_TBOOLEAN);
-    value = !!lua_toboolean(L, index);
-}
-
-inline %(_parse)s double& value)
-{
-    luaL_checktype(L, index, LUA_TNUMBER);
-    value = lua_tonumber(L, index);
-}
-
-inline %(_parse)s float& value)
-{
-    luaL_checktype(L, index, LUA_TNUMBER);
-    value = lua_tonumber(L, index);
-}
-
-inline %(_parse)s std::string& value)
-{
-    luaL_checktype(L, index, LUA_TSTRING);
-    value = lua_tostring(L, index);
-}
-
-///////////////////////////////////////////////////////////////////
-// DEFAULT PUSH FUNCTIONS
-///////////////////////////////////////////////////////////////////
-inline %(_push)s int value)
-{
-    lua_pushinteger(L, value);
-    %(_naming)s
-}
-
-inline %(_push)s bool value)
-{
-    lua_pushboolean(L, (int)value);
-    %(_naming)s
-}
-
-inline %(_push)s double value)
-{
-    lua_pushnumber(L, value);
-    %(_naming)s
-}
-
-inline %(_push)s float value)
-{
-    lua_pushnumber(L, value);
-    %(_naming)s
-}
-
-inline %(_push)s const std::string& value)
-{
-    lua_pushstring(L, value.c_str());
-    %(_naming)s
-}
-
-///////////////// GENERATED FUNCTIONS /////////////////
-""" % SHORTCUTS)
+    file.write('\n')
 
 #############################################
 # raw tables
@@ -129,6 +53,8 @@ def generateParser(table, header, source):
     source.write("""
 %(_parse)s %(__name)s& table)
 {
+    index;
+
     luaL_checktype(L, -1, LUA_TTABLE);
     lua_pushnil(L);
     while(lua_next(L, -2))
@@ -158,11 +84,32 @@ def generatePush(table, header, source):
     for record in table[FIELDS_MARKER]:
         source.write('\n    PushObject(L, "%(__name)s", table.%(__name)s);' % record)
 
-    source.write('\n\n    %(_naming)s\n}\n' % table)
+    source.write('\n\n    %(_naming)s}\n' % table)
 
 #############################################
 # enumerations
-# register function, parse and push are the same as for integer
+# parser function
+def generateEnumParser(table, header, source):
+    header.write('%(_parse)s %(__name)s& value);\n' % table)
+    source.write("""
+%(_parse)s %(__name)s& value)
+{
+    if (!lua_isnumber(L, index))
+        RaiseError(L, "invalid type for parameter of type %(__name)s");
+
+    int intermediateValue = 0;
+    ParseObject(L, intermediateValue, index);
+    value = (%(__name)s)intermediateValue;
+} // end of parser %(__name)s
+
+""" % table)
+
+# push function
+def generateEnumPush(table, header, source):
+    header.write('%(_push)s %(__name)s value);\n' % table)
+    source.write('\n%(_push)s %(__name)s value)\n{\n    PushObject(L, objectName, (int)value);\n}\n' % table)
+
+# register function
 def generateEnumRegistrator(table, header, source):
     header.write('void RegisterEnum_%(__name)s(lua_State* L);\n' % table)
     source.write("""
@@ -193,7 +140,7 @@ def generateFunctionWrappers(table, header, source):
     luaL_checktype(L, 1, LUA_TTABLE);
     lua_getfield(L, 1, "__this");
     if (!lua_islightuserdata(L, -1))
-        RaiseError(L, "invalid first argument of the method %(__name)s);
+        RaiseError(L, "invalid first argument of the method %(__name)s");
 
     %(__name)s* pThis = (%(__name)s*)lua_touserdata(L, -1);
     lua_pop(L, 1);
@@ -222,21 +169,22 @@ def generateFunctionWrappers(table, header, source):
 def generatePushObject(table, header, source):
     header.write('%(_push)s %(__name)s& pObject);\n%(_parse)s %(__name)s& value);\n' % table)
     #generate interface registration. interface table is closed, no fields can be assigned
-    source.write('\n%(_push)s %(__name)s& pObject)\n{\n    lua_newtable(L);\n    %(_forbidMetatable)s\n    %(_forbidNewIndex)s\n    %(_registerThis)s\n\n' % table)
+    source.write('\n%(_push)s %(__name)s& pObject)\n{\n    lua_newtable(L);\n    %(_forbidMetatable)s\n    %(_forbidNewIndex)s\n    %(_registerThis)s\n' % table)
 
     #register methods
     for method in table[METHOD_MARKER]:
         source.write('    lua_pushcfunction(L, lua%s_%s); lua_setfield(L, -2, "%s");\n' % (table[NAME_MARKER], method[NAME_MARKER], method[NAME_MARKER]))
 
-    source.write('\n    %(_naming)s\n}\n' % table)
+    source.write('\n    %(_naming)s}\n' % table)
     #generate parse function for interface object
     source.write("""
 %(_parse)s %(__name)s& value)
 {
+    index;
     luaL_checktype(L, -1, LUA_TTABLE);
     lua_getfield(L, -1, "__this");
     if (!lua_islightuserdata(L, -1))
-        RaiseError(L, "invalid first argument of the method %(__name)s);
+        RaiseError(L, "invalid first argument of the method %(__name)s");
 
     value = *(%(__name)s*)lua_touserdata(L, -1);
     lua_pop(L, 1);
@@ -245,8 +193,6 @@ def generatePushObject(table, header, source):
 
 # source file itself
 def generateSourceFile(tableList, header, source):
-    writeHeaderPreDefinitions(header)
-
     if source.name != header:
         source.write('%s\n\n#include "%s"\n' % (SHORTCUTS['_header'], header.name))
 
@@ -257,6 +203,8 @@ def generateSourceFile(tableList, header, source):
         source.write('\n///// %(__name)s\n' % table);
 
         if table[ENUM_MARKER]:
+            generateEnumParser(mergedTable, header, source)
+            generateEnumPush(mergedTable, header, source)
             generateEnumRegistrator(mergedTable, header, source)
         else:
             if len(table[METHOD_MARKER]) > 0:
@@ -301,6 +249,7 @@ def main():
         re.VERBOSE) # enumeration field with optional assignment
 
     currentTable = {}
+    filesList = set([])
     for file in scriptArgs.file_list:
         lineNumber = 0
 
@@ -322,16 +271,13 @@ def main():
 
             index = 0
             if not tableStarted:
-                tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)(?:\s*\:.)?' % (__ENUM, NAME_MARKER), line)
+                tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)' % (__ENUM, NAME_MARKER), line)
                 if tableName is not None:
                     enumeration = (re.search(__ENUM, line) is not None)
                     currentTable = {NAME_MARKER : tableName.groupdict()[NAME_MARKER], FIELDS_MARKER : [], METHOD_MARKER : [], ENUM_MARKER : enumeration}
                     tableStarted = True
-                    parameter = re.search("{",line)
-                    if parameter is not None:
-                        line = line[parameter.span()[1]:].strip()
-                    else:
-                        continue
+                    line = line[tableName.span()[1]:].strip()
+                    filesList.add(file.name)
                 else:
                     continue
 
@@ -376,6 +322,7 @@ def main():
                 tableStarted = False
                 enumeration  = False
 
+    writeDependencies(filesList, scriptArgs.header)
     generateSourceFile(tableList, scriptArgs.header, scriptArgs.source)
 
 

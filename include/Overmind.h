@@ -10,10 +10,12 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include <internal\ScriptBase.h>
 #include "common.h"
 #include <string>
 
 struct Constructor;
+struct ILibrary;
 
 struct Overmind
 {

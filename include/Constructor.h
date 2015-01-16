@@ -23,7 +23,7 @@ structure Constructor// : public Object
 {
     metamethod void     NewConstruction() = 0;
     virtual bool        SetElement(ElementType type, const vector3i_t& position, Directions orientation, Directions copySettingsFrom = Directions::nY) = 0; // to be depricated
-    metamethod Status   PlaceObject(PlacementParameters& parameters) = 0;
+    virtual Status   PlaceObject(PlacementParameters& parameters) = 0;
     metamethod bool     Weld(uint32_t group1, uint32_t group2) = 0;
     virtual uint32_t    GetGroup(const vector3i_t& position) = 0;
     virtual IMesh&      GetMesh() = 0;

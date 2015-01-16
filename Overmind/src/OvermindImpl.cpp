@@ -1,6 +1,7 @@
 #include "OvermindImpl.h"
 #include "Constructor.h"
 #include "lua.hpp"
+//#include <ScriptEngine_gen.h>
 
 using namespace OvermindImpl;
 
@@ -38,7 +39,7 @@ using namespace OvermindImpl;
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "ScriptReflections.h"
+#include "ScriptEngine_gen.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -59,9 +60,6 @@ OvermindCerebro::OvermindCerebro()
     luaL_openlibs(m_lua);
 
     registerGlobals();
-    registerConstructor();
-    registerLibrary();
-    registerDirections();
 }
 
 OvermindCerebro::~OvermindCerebro()
@@ -92,85 +90,13 @@ std::string OvermindCerebro::GetLastError()
 
 void OvermindCerebro::registerGlobals()
 {
-    lua_pushlightuserdata(m_lua, this);
-    lua_setfield(m_lua, LUA_REGISTRYINDEX, "_overmind");
+    RegisterEnumerations(m_lua);
+    PushObject(m_lua, "", m_constructor);
+    SetGlobalObject(m_lua, LUA_REGISTRYINDEX, "Constructor");
 
-    lua_pushlightuserdata(m_lua, &m_constructor);
-    lua_setfield(m_lua, LUA_REGISTRYINDEX, "_constructor");
-
-    lua_pushlightuserdata(m_lua, &m_constructor.GetLibrary());
-    lua_setfield(m_lua, LUA_REGISTRYINDEX, "_library");
+    PushObject(m_lua, "", m_constructor.GetLibrary());
+    SetGlobalObject(m_lua, LUA_REGISTRYINDEX, "Library");
 }
 
-void OvermindCerebro::registerDirections()
-{
-    lua_newtable(m_lua);
-    STRUCTURE_FIELD(pX);
-    STRUCTURE_FIELD(nX);
-    STRUCTURE_FIELD(pY);
-    STRUCTURE_FIELD(nY);
-    STRUCTURE_FIELD(pZ);
-    STRUCTURE_FIELD(nZ);
-    lua_setglobal(m_lua, "Directions");
-}
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-//
-// LUA Interfaces: LIBRARY
-//
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-int LUA_LibraryNewConstruction(lua_State* L)
-{
-    return luaL_error(L, "NOT IMPLEMENTED");
-}
-
-int LUA_LibraryNewObject(lua_State* L)
-{
-    LUA_CHECK_ARGUMENTS(1);
-
-    ObjectProperties properties = {};
-    LUA_VERIFY( parseObjectProperties(L, properties) );
-
-    IConstructorObjectPtr obj(new ConstructorObjectBase(properties));
-
-    LUA_GETGLOBAL(ILibrary, library);
-    lua_pushinteger(L, (int)library->RegisterObject(properties.name, obj));
-    return 1;
-}
-
-void OvermindCerebro::registerLibrary()
-{
-    lua_newtable(m_lua);
-    INTERFACE_FUNCTION(Library, NewConstruction);
-    INTERFACE_FUNCTION(Library, NewObject);
-
-    lua_setglobal(m_lua, "Library");
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-//
-// LUA Interfaces: CONSTRUCTOR
-//
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-int LUA_ConstructorPlace(lua_State* L)
-{
-    LUA_CHECK_ARGUMENTS(1);
-
-    PlacementParameters pp = {"", vector3i_t(0,0,0), Directions::pZ, Directions::nY};
-    LUA_VERIFY( parsePlacementParameters(L, pp) );
-
-    LUA_GETGLOBAL(Constructor, constructor);
-    lua_pushinteger(L, (int)constructor->PlaceObject(pp));
-    return 1;
-}
-
-void OvermindCerebro::registerConstructor()
-{
-    lua_newtable(m_lua);
-    INTERFACE_FUNCTION(Constructor, Place);
-
-    lua_setglobal(m_lua, "Constructor");
-}
 // eof
