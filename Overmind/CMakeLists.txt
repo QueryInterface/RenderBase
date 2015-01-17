@@ -29,7 +29,7 @@ add_custom_command(
     OUTPUT ${GENERATED_HEADER} ${GENERATED_SOURCE}
     COMMAND python ${GENERATOR_PATH} -ho ${GENERATED_HEADER} -so ${GENERATED_SOURCE} -fl ${GENERATOR_SOURCES}
     DEPENDS ${GENERATOR_SOURCES} ${GENERATOR_PATH}
-    COMMENT "script files preprocessing"
+    COMMENT "--------------> Processing headers. C++ Lua translation <--------------"
 )
 
 set_source_files_properties(
