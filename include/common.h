@@ -23,20 +23,6 @@ using std::static_pointer_cast;
 
 #define UNUSED(var) var;
 
-enum class Status
-{
-    // Statuses
-    OK = 0,
-    Pending,
-
-    // TODO: maybe here we should split enum on two???
-
-    // Error codes
-    ResourceNotFound,
-    AlreadyExists,
-    ScriptFailure,
-};
-
 template<typename ClonableType>
 struct IClonable  
 {

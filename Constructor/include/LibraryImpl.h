@@ -26,6 +26,7 @@ public:
 
 
     virtual void Reset();
+    virtual Status NewObject(ObjectProperties& object);
 
     // construction library object
     virtual const ConstructionDescription* GetConstructionByName(std::string name);

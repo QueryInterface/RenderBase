@@ -11,6 +11,7 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include <internal\ScriptBase.h>
+#include <NativeStructures.h>
 #include "common.h"
 #include <string>
 

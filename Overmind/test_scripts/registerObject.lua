@@ -1,5 +1,5 @@
 
-Library.NewObject{
+Library:NewObject{
     name = "NewObject",
     elementName = "Cube",
 }

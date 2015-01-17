@@ -15,6 +15,12 @@ void Library::Reset()
     m_constructionSubscribers.clear();
 }
 
+Status Library::NewObject(ObjectProperties& object)
+{
+    IConstructorObjectPtr obj(new ConstructorObjectBase(object));
+    return RegisterObject(object.name, obj);
+}
+
 Status Library::RegisterConstruction(std::string name, IConstructablePtr& element)
 {
     auto subscribers = m_constructionSubscribers.find(name);

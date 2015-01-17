@@ -46,9 +46,6 @@ namespace OvermindImpl
 
     private:
         void registerGlobals();
-        void registerLibrary();
-        void registerConstructor();
-        void registerDirections();
 
         lua_State *m_lua;
         Constructor& m_constructor;

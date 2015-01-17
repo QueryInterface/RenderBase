@@ -90,12 +90,12 @@ std::string OvermindCerebro::GetLastError()
 
 void OvermindCerebro::registerGlobals()
 {
-    RegisterEnumerations(m_lua);
+    RegisterGlobals(m_lua);
     PushObject(m_lua, "", m_constructor);
-    SetGlobalObject(m_lua, LUA_REGISTRYINDEX, "Constructor");
+    SetGlobalObject(m_lua, "Constructor");
 
     PushObject(m_lua, "", m_constructor.GetLibrary());
-    SetGlobalObject(m_lua, LUA_REGISTRYINDEX, "Library");
+    SetGlobalObject(m_lua, "Library");
 }
 
 

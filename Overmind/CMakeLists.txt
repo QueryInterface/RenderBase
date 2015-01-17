@@ -12,8 +12,6 @@ aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/src/  SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_LIST_DIR}/test/ TEST_FILES)
 
 # files layout for all targets
-source_group ("Headers"             FILES ${HEADER_FILES})
-source_group ("Sources"             FILES ${SOURCE_FILES})
 source_group ("Private headers"     FILES ${PRIVATE_HEADER_FILES})
 source_group ("Tests"               FILES ${TEST_FILES})
 source_group ("Scripts"             FILES ${TEST_SCRIPTS})

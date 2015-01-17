@@ -20,6 +20,8 @@
 structure ILibrary
 {
     metamethod void Reset() = 0;
+    metamethod Status NewObject(ObjectProperties& object) = 0;
+
     virtual const ConstructionDescription* GetConstructionByName(std::string name) = 0;
     virtual Status RegisterConstruction(std::string name, IConstructablePtr& element) = 0;
 

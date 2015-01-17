@@ -10,6 +10,8 @@ __TABLE     = 'structure'
 __METHOD    = 'metamethod'
 __ENUM      = 'enumeration'
 
+STL_TYPES = set(['string', 'vector', 'list', 'queue'])
+
 #reserved field names
 NAME_MARKER         = '__name'
 FIELDS_MARKER       = '__fields'
@@ -84,7 +86,7 @@ def generatePush(table, header, source):
     for record in table[FIELDS_MARKER]:
         source.write('\n    PushObject(L, "%(__name)s", table.%(__name)s);' % record)
 
-    source.write('\n\n    %(_naming)s}\n' % table)
+    source.write('\n\n    %(_naming)s\n}\n' % table)
 
 #############################################
 # enumerations
@@ -111,7 +113,6 @@ def generateEnumPush(table, header, source):
 
 # register function
 def generateEnumRegistrator(table, header, source):
-    header.write('void RegisterEnum_%(__name)s(lua_State* L);\n' % table)
     source.write("""
 void RegisterEnum_%(__name)s(lua_State* L)
 {
@@ -119,8 +120,10 @@ void RegisterEnum_%(__name)s(lua_State* L)
     if (!lua_isnil(L, -1))
         RaiseError(L, "enumerator %(__name)s already registered");
 
-    %(_forbidMetatable)s            
-    %(_forbidNewIndex)s
+    lua_newtable(L);
+
+    %(_forbidMetatable)s
+    %(_forbidNewIndex)s\n
 """ % table)
     #register enumerator fields
     for record in table[FIELDS_MARKER]:
@@ -175,7 +178,7 @@ def generatePushObject(table, header, source):
     for method in table[METHOD_MARKER]:
         source.write('    lua_pushcfunction(L, lua%s_%s); lua_setfield(L, -2, "%s");\n' % (table[NAME_MARKER], method[NAME_MARKER], method[NAME_MARKER]))
 
-    source.write('\n    %(_naming)s}\n' % table)
+    source.write('\n    %(_naming)s\n}\n' % table)
     #generate parse function for interface object
     source.write("""
 %(_parse)s %(__name)s& value)
@@ -191,11 +194,22 @@ def generatePushObject(table, header, source):
 }
 """ % table)
 
+# globals generation
+
+def generateGlobalsRegistration(tableList, header, source):
+    header.write('void RegisterGlobals(lua_State* L);\n')
+    source.write('void RegisterGlobals(lua_State* L)\n{\n')
+
+    for enum in tableList:
+        source.write('    RegisterEnum_%(__name)s(L);\n' % enum)
+    source.write('}\n')
+
 # source file itself
 def generateSourceFile(tableList, header, source):
     if source.name != header:
         source.write('%s\n\n#include "%s"\n' % (SHORTCUTS['_header'], header.name))
 
+    enums = []
     for table in tableList:
         mergedTable = table
         mergedTable.update(SHORTCUTS)
@@ -206,6 +220,8 @@ def generateSourceFile(tableList, header, source):
             generateEnumParser(mergedTable, header, source)
             generateEnumPush(mergedTable, header, source)
             generateEnumRegistrator(mergedTable, header, source)
+            enums.append(mergedTable)
+
         else:
             if len(table[METHOD_MARKER]) > 0:
                 generateFunctionWrappers(mergedTable, header, source)
@@ -215,7 +231,7 @@ def generateSourceFile(tableList, header, source):
                 generateParser(mergedTable, header, source)
                 generatePush(mergedTable, header, source)
 
-        header.write("\n");
+    generateGlobalsRegistration(enums, header, source)
 
 #############################################
 #  TABLE PARSER
@@ -273,7 +289,7 @@ def main():
             if not tableStarted:
                 tableName = re.match('%s\s+(?P<%s>\w+)' % (__TABLE, NAME_MARKER), line) or re.match('%s\s+(?P<%s>\w+)' % (__ENUM, NAME_MARKER), line)
                 if tableName is not None:
-                    enumeration = (re.search(__ENUM, line) is not None)
+                    enumeration = (re.search(__ENUM, line) != None)
                     currentTable = {NAME_MARKER : tableName.groupdict()[NAME_MARKER], FIELDS_MARKER : [], METHOD_MARKER : [], ENUM_MARKER : enumeration}
                     tableStarted = True
                     line = line[tableName.span()[1]:].strip()
@@ -311,6 +327,8 @@ def main():
                             param = re.sub('\s*const\s+', '', param)
                             param = re.sub('\&', '', param)
                             funcParameter = param.strip().split(' ')
+                            if  funcParameter[0] in STL_TYPES:
+                                funcParameter[0] = 'std::' + funcParameter[0]
                             funcParams.append( {TYPE_MARKER: funcParameter[0], NAME_MARKER: funcParameter[1]} )
 
                     funcDesc[PARAMETERS_MARKER] = funcParams

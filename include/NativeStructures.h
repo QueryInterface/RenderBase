@@ -5,6 +5,17 @@
 /////////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include <internal/ScriptBase.h>
+#include <string>
+
+enumeration Status
+{
+    OK = 0,
+    Pending,
+    // Error codes
+    ResourceNotFound,
+    AlreadyExists,
+    ScriptFailure
+};
 
 structure Vector
 {
