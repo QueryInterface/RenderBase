@@ -138,7 +138,7 @@ void GameInputHandler::OnMouseMove(uint32_t x, uint32_t y)
 }
 
 // IInputHandler
-void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
+void GameInputHandler::Update(ICamera::Ptr& camera, float elapsedMs)
 {
     assert(m_rotationFunction);
     updateShift(camera, elapsedMs);
@@ -146,7 +146,7 @@ void GameInputHandler::Update(ICameraPtr& camera, float elapsedMs)
     //this->(*m_rotationFunction)(camera);
 }
 
-void GameInputHandler::updateShift(ICameraPtr& camera, float elapsedMs)
+void GameInputHandler::updateShift(ICamera::Ptr& camera, float elapsedMs)
 {
     if (m_moveFlags[MoveFlags::Forward] || m_moveFlags[MoveFlags::Up] || m_moveFlags[MoveFlags::Right])
     {
@@ -168,7 +168,7 @@ void GameInputHandler::updateShift(ICameraPtr& camera, float elapsedMs)
     }
 }
 
-void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
+void GameInputHandler::updateFreeRotation(ICamera::Ptr& camera)
 {
     if (m_mousePosCurrent != m_mousePosPrevious)
     {
@@ -197,7 +197,7 @@ void GameInputHandler::updateFreeRotation(ICameraPtr& camera)
     }    
 }
 
-void GameInputHandler::updateFPRotation(ICameraPtr& camera)
+void GameInputHandler::updateFPRotation(ICamera::Ptr& camera)
 {
     camera;
 }

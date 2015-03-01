@@ -9,10 +9,12 @@ class Camera
     , protected SceneElementImpl
 {
 public:
+    typedef std::shared_ptr<Camera> Ptr;
+
     Camera(const CameraDesc& setup);
     virtual ~Camera();
     // IClonable
-    virtual ICameraPtr Clone() const override;
+    virtual ICamera::Ptr Clone() const override;
     // ICamera
     virtual const CameraDesc&   GetDesc() const override;
     virtual void                SetFiledOfViewY(float fovy) override;
@@ -30,5 +32,3 @@ private:
     glm::mat4           m_viewMatrix;
     glm::mat4           m_projectionMatrix;
 };
-
-typedef std::shared_ptr<Camera> CameraPtr;

@@ -15,7 +15,7 @@ Camera::~Camera()
 {
 }
 
-ICameraPtr Camera::Clone() const
+ICamera::Ptr Camera::Clone() const
 {
     CLONE_HANDLE(ICamera, Camera);
 }

@@ -10,7 +10,7 @@ public:
     Light(LightType type, vector3f_t position);
     virtual ~Light();
     // IClonable
-    virtual ILightPtr       Clone() const override;
+    virtual ILight::Ptr Clone() const override;
     // ISceneElement
     scene_elements_impl;
 

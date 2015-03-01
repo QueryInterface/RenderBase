@@ -11,7 +11,7 @@ Light::~Light()
 {
 }
 
-ILightPtr Light::Clone() const
+ILight::Ptr Light::Clone() const
 {
     CLONE_HANDLE(ILight, Light);
 }

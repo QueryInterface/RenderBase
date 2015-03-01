@@ -52,7 +52,7 @@ public:
     Object(IMeshPtr mesh, ITexturePtr texture);
     virtual ~Object();
     // IClonable
-    IObjectPtr Clone() const override;
+    IObject::Ptr Clone() const override;
     // IObject
     scene_elements_impl;
     // Object
@@ -61,12 +61,12 @@ public:
     virtual IMeshPtr        GetMesh() const {return m_mesh;}
     virtual ITexturePtr     GetTexture() const {return m_texture;}
 
-    virtual void            AttachBidirectional(IObjectPtr object) override;
-    virtual void            AttachDirectional(IObjectPtr object) override;
+    virtual void            AttachBidirectional(IObject::Ptr object) override;
+    virtual void            AttachDirectional(IObject::Ptr object) override;
     virtual uint32_t        GetNumAttached() const override;
-    virtual IObjectPtr      GetAttached(uint32_t index) const override;
+    virtual IObject::Ptr      GetAttached(uint32_t index) const override;
     virtual void            Detach() override;
-    virtual void            Detach(IObjectPtr object) override;
+    virtual void            Detach(IObject::Ptr object) override;
 private:
     void                    processMesh();
 

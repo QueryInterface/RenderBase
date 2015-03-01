@@ -41,12 +41,12 @@ Scene::~Scene()
     }
 }
 
-void Scene::AddObject(IObjectPtr& object)
+void Scene::AddObject(IObject::Ptr& object)
 {
     m_objects.insert(safe_pointer_cast<Object>(object));
 }
 
-void Scene::AddLight(ILightPtr& light)
+void Scene::AddLight(ILight::Ptr& light)
 {
     m_lights.insert(safe_pointer_cast<Light>(light));
 }
@@ -56,7 +56,7 @@ void Scene::SetAmbientLight(const vector3f_t& light)
     m_ambientLight = light;
 }
 
-void Scene::SetCamera(ICameraPtr& camera)
+void Scene::SetCamera(ICamera::Ptr& camera)
 {
     m_camera = safe_pointer_cast<Camera>(camera);
 }
@@ -71,7 +71,7 @@ void Scene::Render()
     GL_CALL(glUniformMatrix4fv(m_program.UniformProjMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjectionMatrix())));
     if (!m_lights.empty())
     {
-        ILightPtr light = *m_lights.begin();
+        ILight::Ptr light = *m_lights.begin();
         GL_CALL(glUniform3fv(m_program.UniformLightPosition, 1, glm::value_ptr(light->GetPosition(CoordType::Global))));
     }
     GL_CALL(glUniform3fv(m_program.UniformAmbientLight, 1, glm::value_ptr(m_ambientLight)));

@@ -37,13 +37,13 @@ public:
     {
 
     }
-    virtual void                    SetScene(IScenePtr scene) {scene;}
+    virtual void                    SetScene(IScene::Ptr scene) {scene;}
     virtual IWindow&                GetWindow() const {return m_window;}
     virtual void                    Run(IEngineCallbacks* callbacks) {callbacks;}
 
-    virtual ILightPtr               CreateLight(LightType type, vector3f_t position) {type; position; return nullptr;};
-    virtual ICameraPtr              CreateCamera(const CameraDesc& setup) {setup; return nullptr;}
-    virtual IScenePtr               CreateScene() {return nullptr;}
+    virtual ILight::Ptr               CreateLight(LightType type, vector3f_t position) {type; position; return nullptr;};
+    virtual ICamera::Ptr              CreateCamera(const CameraDesc& setup) {setup; return nullptr;}
+    virtual IScene::Ptr               CreateScene() {return nullptr;}
 private:
     mutable WindowStub m_window;
 };

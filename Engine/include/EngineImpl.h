@@ -6,11 +6,11 @@
 class EngineImpl : public IEngine
 {
 public:
-    virtual ILightPtr               CreateLight(LightType type, vector3f_t position) override;
-    virtual ICameraPtr              CreateCamera(const CameraDesc&) override;
-    virtual IScenePtr               CreateScene() override;
+    virtual ILight::Ptr             CreateLight(LightType type, vector3f_t position) override;
+    virtual ICamera::Ptr            CreateCamera(const CameraDesc&) override;
+    virtual IScene::Ptr             CreateScene() override;
 
-    virtual void                    SetScene(IScenePtr scene) override;
+    virtual void                    SetScene(IScene::Ptr scene) override;
     virtual IWindow&                GetWindow() const override;
     virtual void                    Run(IEngineCallbacks* callbacks) override;
 protected:

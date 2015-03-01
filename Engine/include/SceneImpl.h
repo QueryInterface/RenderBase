@@ -18,10 +18,10 @@ public:
     Scene();
     ~Scene();
 
-    virtual void AddObject(IObjectPtr& object) override;
-    virtual void AddLight(ILightPtr& light) override;
+    virtual void AddObject(IObject::Ptr& object) override;
+    virtual void AddLight(ILight::Ptr& light) override;
     virtual void SetAmbientLight(const vector3f_t& light) override;
-    virtual void SetCamera(ICameraPtr& camera) override;
+    virtual void SetCamera(ICamera::Ptr& camera) override;
 
     virtual void Render();
 private:

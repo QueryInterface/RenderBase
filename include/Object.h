@@ -12,11 +12,11 @@ using std::shared_ptr;
 // 2. Directiona attachmant - A->B move of object A causes move of object B, move of object B doesn't cause move of object A 
 
 struct IObject;
-typedef shared_ptr<IObject> IObjectPtr;
+typedef shared_ptr<IObject> IObject::Ptr;
 
 struct IObject
     : public ISceneElement
-    , public IClonable<IObjectPtr>
+    , public IClonable<IObject::Ptr>
 {
     virtual void            SetCenter(const vector3f_t& m_center)                   = 0;
     virtual void            SetCenter(float x, float y, float z)                    = 0;
@@ -43,12 +43,12 @@ struct IObject
     virtual IMeshPtr        GetMesh() const                                         = 0;
     virtual ITexturePtr     GetTexture() const                                      = 0;
 
-    virtual void            AttachBidirectional(IObjectPtr object)                  = 0;
-    virtual void            AttachDirectional(IObjectPtr object)                    = 0;
+    virtual void            AttachBidirectional(IObject::Ptr object)                  = 0;
+    virtual void            AttachDirectional(IObject::Ptr object)                    = 0;
     virtual uint32_t        GetNumAttached() const                                  = 0;
-    virtual IObjectPtr      GetAttached(uint32_t index) const                       = 0;
+    virtual IObject::Ptr      GetAttached(uint32_t index) const                       = 0;
     virtual void            Detach()                                                = 0;
-    virtual void            Detach(IObjectPtr object)                               = 0;
+    virtual void            Detach(IObject::Ptr object)                               = 0;
 
-    static LIB_EXPORT IObjectPtr CALLING_CONVENTION CreateObject(IMeshPtr mesh, ITexturePtr texture);
+    static LIB_EXPORT IObject::Ptr CALLING_CONVENTION CreateObject(IMeshPtr mesh, ITexturePtr texture);
 };

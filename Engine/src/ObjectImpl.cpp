@@ -22,17 +22,17 @@ Object::~Object()
 {
 }
 
-IObjectPtr Object::Clone() const
+IObject::Ptr Object::Clone() const
 {
     CLONE_HANDLE(IObject, Object);
 }
 
-void Object::AttachBidirectional(IObjectPtr /*object*/) 
+void Object::AttachBidirectional(IObject::Ptr /*object*/) 
 {
     // TODO: implement
 }
 
-void Object::AttachDirectional(IObjectPtr /*object*/) 
+void Object::AttachDirectional(IObject::Ptr /*object*/) 
 {
     // TODO: implement
 }
@@ -43,7 +43,7 @@ uint32_t Object::GetNumAttached() const
     return 0;
 }
 
-IObjectPtr Object::GetAttached(uint32_t /*index*/) const 
+IObject::Ptr Object::GetAttached(uint32_t /*index*/) const 
 {
     // TODO: implement
     return nullptr;
@@ -54,12 +54,12 @@ void Object::Detach()
     // TODO: implement
 }
 
-void Object::Detach(IObjectPtr /*object*/) 
+void Object::Detach(IObject::Ptr /*object*/) 
 {
     // TODO: implement
 }
 
-IObjectPtr IObject::CreateObject(IMeshPtr mesh, ITexturePtr texture)
+IObject::Ptr IObject::CreateObject(IMeshPtr mesh, ITexturePtr texture)
 {
     return static_pointer_cast<IObject>(make_shared_handle<Object>(mesh, texture));
 }

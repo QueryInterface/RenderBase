@@ -20,12 +20,6 @@ struct ICamera;
 struct IObject;
 struct IWindow;
 
-typedef shared_ptr<IScene>              IScenePtr;
-typedef shared_ptr<IProgram>            IProgramPtr;
-typedef shared_ptr<ILight>              ILightPtr;
-typedef shared_ptr<ICamera>             ICameraPtr;
-typedef shared_ptr<IObject>             IObjectPtr;
-
 enum class LightType
 {
     Spot,
@@ -58,7 +52,7 @@ struct ISceneElement : public IHandle
     virtual void                Shift(CoordType type, const vector3f_t& shift)                      = 0;
     virtual void                Rotate(CoordType type, const vector3f_t& angles)                    = 0;
     virtual void                Rotate(CoordType type, const quat& q)                               = 0;
-    //// Returns position of object center after local and global transformations
+    // Returns position of object center after local and global transformations
     //virtual const vector3f_t&   GetPosition()                                                       = 0;
     // Returns position of object after global transformation
     virtual const vector3f_t&   GetPosition(CoordType type)                                         = 0;
@@ -86,9 +80,10 @@ struct IWindow
 
 // scene interfaces
 struct ILight
-    : public IClonable<ILightPtr>
+    : public IClonable< std::shared_ptr<ILight> >
     , public ISceneElement
 {
+    typedef std::shared_ptr<ILight> Ptr;
 };
 
 struct CameraDesc
@@ -103,37 +98,42 @@ struct CameraDesc
 };
 
 struct ICamera 
-    : public IClonable<ICameraPtr>
+    : public IClonable< std::shared_ptr<ICamera> >
     , public ISceneElement 
 {
+    typedef std::shared_ptr<ICamera> Ptr;
     virtual const CameraDesc& GetDesc() const = 0;
     virtual void SetFiledOfViewY(float fovy) = 0;
 };
 
 struct IObject
     : public ISceneElement
-    , public IClonable<IObjectPtr>
+    , public IClonable< std::shared_ptr<IObject> >
 {
+    typedef std::shared_ptr<IObject> Ptr;
+
     virtual IMeshPtr        GetMesh() const                                         = 0;
     virtual ITexturePtr     GetTexture() const                                      = 0;
 
-    virtual void            AttachBidirectional(IObjectPtr object)                  = 0;
-    virtual void            AttachDirectional(IObjectPtr object)                    = 0;
+    virtual void            AttachBidirectional(IObject::Ptr object)                  = 0;
+    virtual void            AttachDirectional(IObject::Ptr object)                    = 0;
     virtual uint32_t        GetNumAttached() const                                  = 0;
-    virtual IObjectPtr      GetAttached(uint32_t index) const                       = 0;
+    virtual IObject::Ptr    GetAttached(uint32_t index) const                       = 0;
     virtual void            Detach()                                                = 0;
-    virtual void            Detach(IObjectPtr object)                               = 0;
+    virtual void            Detach(IObject::Ptr object)                               = 0;
 
-    static LIB_EXPORT IObjectPtr CALLING_CONVENTION CreateObject(IMeshPtr mesh, ITexturePtr texture);
+    static LIB_EXPORT IObject::Ptr CALLING_CONVENTION CreateObject(IMeshPtr mesh, ITexturePtr texture);
 };
 
 // Base level of all objects
 struct IScene : public IHandle
 {
-    virtual void AddObject(IObjectPtr& object)              = 0;
-    virtual void AddLight(ILightPtr& light)                 = 0;
+    typedef std::shared_ptr<IScene> Ptr;
+
+    virtual void AddObject(IObject::Ptr& object)              = 0;
+    virtual void AddLight(ILight::Ptr& light)                 = 0;
     virtual void SetAmbientLight(const vector3f_t& light)   = 0;
-    virtual void SetCamera(ICameraPtr& camera)              = 0;
+    virtual void SetCamera(ICamera::Ptr& camera)              = 0;
 };
 
 struct IEngineCallbacks
@@ -143,13 +143,13 @@ struct IEngineCallbacks
 
 struct IEngine
 {
-    virtual void                    SetScene(IScenePtr scene)                           = 0;
-    virtual IWindow&                GetWindow() const                                   = 0;
-    virtual void                    Run(IEngineCallbacks* callbacks)                    = 0;
+    virtual void                   SetScene(IScene::Ptr scene)                           = 0;
+    virtual IWindow&               GetWindow() const                                   = 0;
+    virtual void                   Run(IEngineCallbacks* callbacks)                    = 0;
 
-    virtual ILightPtr               CreateLight(LightType type, vector3f_t position)    = 0;
-    virtual ICameraPtr              CreateCamera(const CameraDesc& setup)               = 0;
-    virtual IScenePtr               CreateScene()                                       = 0;
+    virtual ILight::Ptr            CreateLight(LightType type, vector3f_t position)    = 0;
+    virtual ICamera::Ptr           CreateCamera(const CameraDesc& setup)               = 0;
+    virtual IScene::Ptr            CreateScene()                                       = 0;
 
     static LIB_EXPORT IEngine&  CALLING_CONVENTION Instance();
 };

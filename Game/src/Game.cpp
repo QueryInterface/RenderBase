@@ -67,9 +67,9 @@ void Game::InitScene0()
     ITexturePtr texture0 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     ITexturePtr texture1 = m_resourceOverseer.LoadTexture(Utils::Internal::GetMediaFolderPath() + L"Textures/Smile.png");
     // // Create objects
-    IObjectPtr object0 = IObject::CreateObject(mesh, texture0);
+    IObject::Ptr object0 = IObject::CreateObject(mesh, texture0);
     object0->SetPosition(CoordType::Global, vector3f_t(-3, -3, 7));
-    IObjectPtr object1 = IObject::CreateObject(mesh, texture1);
+    IObject::Ptr object1 = IObject::CreateObject(mesh, texture1);
     object1->SetPosition(CoordType::Global, vector3f_t(3, 3, 7));
     m_objects.push_back(object0);
     m_objects.push_back(object1);
@@ -89,7 +89,7 @@ void Game::InitScene1()
     Constructor& builder = m_overmind.GetConstructor();
     IMeshPtr mesh = nullptr;
     mesh.reset(&builder.GetMesh());
-    IObjectPtr object0 = IObject::CreateObject(mesh, nullptr);
+    IObject::Ptr object0 = IObject::CreateObject(mesh, nullptr);
     BBox bbox = builder.GetBoundingBox();
     vector3i_t center = (bbox.RBB + bbox.LFT) / 2;
     object0->SetPosition(CoordType::Local, vector3f_t(-center.x, -center.y, -center.z));
@@ -101,7 +101,7 @@ void Game::InitScene1()
 void Game::Start()
 {
 
-    for (IObjectPtr& object : m_objects)
+    for (IObject::Ptr& object : m_objects)
     {
         m_scene->AddObject(object);
     }
@@ -119,7 +119,7 @@ void Game::OnSceneUpdate()
     m_inputHandler.Update(m_camera, elapsedTime);
 
     vector3f_t pos;
-    /*    for (IObjectPtr& object : m_objects)
+    /*    for (IObject::Ptr& object : m_objects)
     {
     pos = object->GetPosition(CoordType::Global);
     object->Shift(CoordType::Global, vector3f_t(0, 0, -7));

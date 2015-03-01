@@ -20,19 +20,19 @@ public:
     // IEngineCallbacks
     void OnSceneUpdate() override;
 private:
-    void centerObject(IObjectPtr& obj);
+    void centerObject(IObject::Ptr& obj);
 
     PREVENT_COPY(Game);
 
-    IEngine&                m_engine;
-    IWindow&                m_window;
-    IResourceOverseer&      m_resourceOverseer;
-    IScenePtr               m_scene;
-    ICameraPtr              m_camera;
-    ILightPtr               m_light;
-    IObjectPtr              m_lightShape;
-    std::vector<IObjectPtr> m_objects;
+    IEngine&                  m_engine;
+    IWindow&                  m_window;
+    IResourceOverseer&        m_resourceOverseer;
+    IScene::Ptr               m_scene;
+    ICamera::Ptr              m_camera;
+    ILight::Ptr               m_light;
+    IObject::Ptr              m_lightShape;
+    std::vector<IObject::Ptr> m_objects;
 
-    IInputHandler&          m_inputHandler;
-    Overmind&               m_overmind;
+    IInputHandler&            m_inputHandler;
+    Overmind&                 m_overmind;
 };
