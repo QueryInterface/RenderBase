@@ -2,12 +2,12 @@ import sys
 import os
 import traceback
 import glob
-from optparse import OptionParser
-sys.path.append("./Scripts")
-import utils
 from subprocess import call
 import ntpath
 import shutil
+from optparse import OptionParser
+sys.path.append("./Scripts")
+import utils
 
 
 class Builder:
@@ -41,9 +41,12 @@ class Builder:
         # Unpack of 3rdParty
         #self.__unpack('qt')
         self.__unpack('SDL')
-        self.__unpack('WindowsKits')
         self.__unpack('tinyobjloader')
         self.__unpack('GLM')
+        self.__unpack('boost')
+        if (sys.platform == 'win32'):
+            self.__unpack('WindowsKits')
+
         # CMake generation
         print "Generating project " + self.__curGenType + "..."
         self.__outPath = './_build/' + self.__curGenType
@@ -79,7 +82,7 @@ class Builder:
                 if not os.path.exists(dstPath) or not os.path.isdir(dstPath):
                     os.makedirs(dstPath)
                 utils.Unzip(f, dstPath)
-            # Extract tar files
+            # Extract bz2 files
             files = glob.glob(srcPath + "*.bz2")
             for f in files:
                 basename = ntpath.basename(f)
@@ -87,7 +90,16 @@ class Builder:
                 dstPathForBz2 = dstPath + basename
                 if not os.path.exists(dstPathForBz2) or not os.path.isdir(dstPathForBz2):
                     os.makedirs(dstPathForBz2)
-                utils.Untar(f, dstPathForBz2)
+                utils.Untar(f, dstPathForBz2, utils.TarModes.bz2)
+            # Extract tar.gz files
+            files = glob.glob(srcPath + "*.tar.gz")
+            for f in files:
+                basename = ntpath.basename(f)
+                basename = os.path.splitext(basename)[0]
+                dstPathForBz2 = dstPath + basename
+                if not os.path.exists(dstPathForBz2) or not os.path.isdir(dstPathForBz2):
+                    os.makedirs(dstPathForBz2)
+                utils.Untar(f, dstPathForBz2, utils.TarModes.tar_gz)
 
         print "Unpacking " + module + "...DONE"
 

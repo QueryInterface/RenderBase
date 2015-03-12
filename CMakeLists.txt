@@ -10,6 +10,7 @@ check_apple_platform()
 # Global variables
 set(3RDPARTY_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdParty)
 set(SDL_DIR ${3RDPARTY_DIR}/_unpack/SDL/SDL2)
+set(BOOST_DIR ${3RDPARTY_DIR}/_unpack/boost/boost.tar/boost)
 set(ANGLE_DIR ${3RDPARTY_DIR}/angle)
 set(OBJ_LOADER_DIR ${3RDPARTY_DIR}/_unpack/tinyobjloader)
 set(GLM_DIR ${3RDPARTY_DIR}/_unpack/GLM)
@@ -88,5 +89,8 @@ add_custom_target(copy_media_folder
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${MEDIA_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/Media/
     COMMENT "Copying Media folder to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>" VERBATIM
 )
-set_property (TARGET copy_angle_libraries	PROPERTY FOLDER "3rdParty")
+if (WIN32)
+    set_property (TARGET copy_angle_libraries	PROPERTY FOLDER "3rdParty")
+endif()
 set_property (TARGET copy_media_folder		PROPERTY FOLDER "3rdParty")
+

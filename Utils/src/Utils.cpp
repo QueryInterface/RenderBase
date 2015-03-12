@@ -1,14 +1,19 @@
 #include "Utils.h"
-#include <direct.h>
 #include "ErrorHandler.h"
 #ifdef _WIN32
+    //#include <direct.h>
     #include <Windows.h>
+#elif __APPLE__
+    #include <mach-o/dyld.h>
+    #include <unistd.h>
+    #include <codecvt>
+    #include <locale>
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Utils::FileSystem //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Utils::Filesystem::DirectoryExists(const std::wstring& dir) {
+bool Utils::Filesystem::DirectoryExists(const std::string& dir) {
 #ifdef _WIN32
     DWORD attributes = GetFileAttributesW(dir.c_str());
     if (attributes == INVALID_FILE_ATTRIBUTES)
@@ -16,30 +21,36 @@ bool Utils::Filesystem::DirectoryExists(const std::wstring& dir) {
     if (attributes & FILE_ATTRIBUTE_DIRECTORY)
         return true;
     return false;
-#endif //_WIN32
+#elif __APPLE__
+    int res = access(dir.c_str(), R_OK);
+    if (res < 0 && errno == ENOENT)
+        return false;
+    return true;
+#endif
 };
 
-std::wstring Utils::Filesystem::GetWorkingDirectory() {
-#ifdef _WIN32
-    std::wstring workingDir;
+std::string Utils::Filesystem::GetWorkingDirectory() {
+    std::string workingDir;
     workingDir.resize(FILENAME_MAX);
+#ifdef _WIN32
     _wgetcwd(&workingDir.front(), workingDir.size());
-    // Used to adjust size of string
-    workingDir = std::wstring(workingDir.c_str());
+#elif __APPLE__
+    uint32_t inoutSize = workingDir.size();
+    _NSGetExecutablePath(&workingDir.front(), &inoutSize);
+#endif
     return workingDir;
-#endif //_WIN32
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Utils::Internal ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::wstring Utils::Internal::GetMediaFolderPath() {
+std::string Utils::Internal::GetMediaFolderPath() {
     if (Utils::Filesystem::DirectoryExists(L"Media/")) {
-        return Utils::Filesystem::GetWorkingDirectory() + std::wstring(L"/Media/");
+        return Utils::Filesystem::GetWorkingDirectory() + std::string("/Media/");
     }
     if (Utils::Filesystem::DirectoryExists(L"../Media")) {
-        return Utils::Filesystem::GetWorkingDirectory() + std::wstring(L"/../Media/");
+        return Utils::Filesystem::GetWorkingDirectory() + std::string("/../Media/");
     }
-    VE_ERROR(L"Failed to find media folder");
-    return std::wstring(L"");
+    VE_ERROR("Failed to find media folder");
+    return std::string("");
 }

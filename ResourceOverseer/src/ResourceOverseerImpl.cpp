@@ -4,7 +4,7 @@
 #include "tiny_obj_loader.h"
 #include "Utils.h"
 
-using std::wstring;
+using std::string;
 using std::vector;
 
 //Mesh
@@ -12,10 +12,10 @@ Mesh::Mesh()
 {
 }
 
-Mesh::Mesh(const std::wstring& path)
+Mesh::Mesh(const std::string& path)
 {
     size_t pos = path.find_last_of(L".");
-    std::wstring ext = path.substr(pos + 1, path.length() - pos - 1);
+    std::string ext = path.substr(pos + 1, path.length() - pos - 1);
     if (0 == ext.compare(L"obj"))
     {
         parseObj(path);
@@ -40,7 +40,7 @@ const IMesh::Desc& Mesh::GetDesc() const
     return m_desc;
 }
 
-void Mesh::parseObj(const std::wstring& path)
+void Mesh::parseObj(const std::string& path)
 {
     std::vector<tinyobj::shape_t> shapes;
     std::string err = tinyobj::LoadObj(shapes, path.c_str());
@@ -77,34 +77,34 @@ ResourceOverseerImpl::~ResourceOverseerImpl()
 
 }
 
-IMeshPtr ResourceOverseerImpl::LoadMesh(const wstring& path)
+IMeshPtr ResourceOverseerImpl::LoadMesh(const string& path)
 {
     return make_shared_handle<Mesh>(path);
 }
 
-ITexturePtr ResourceOverseerImpl::LoadTexture(const wstring& path)
+ITexturePtr ResourceOverseerImpl::LoadTexture(const string& path)
 {
     path;
     return nullptr;
 }
 
-IScriptPtr ResourceOverseerImpl::LoadScript(const wstring& path)
+IScriptPtr ResourceOverseerImpl::LoadScript(const string& path)
 {
     path;
     return nullptr;
 }
 
-void ResourceOverseerImpl::SaveMesh(IMeshPtr mesh, const std::wstring& path) const
+void ResourceOverseerImpl::SaveMesh(IMeshPtr mesh, const std::string& path) const
 {
     mesh;path;
 }
 
-void ResourceOverseerImpl::SaveTexture(IMeshPtr mesh, const std::wstring& path) const
+void ResourceOverseerImpl::SaveTexture(IMeshPtr mesh, const std::string& path) const
 {
     mesh;path;
 }
 
-void ResourceOverseerImpl::SaveScript(IMeshPtr mesh, const std::wstring& path) const
+void ResourceOverseerImpl::SaveScript(IMeshPtr mesh, const std::string& path) const
 {
     mesh;path;
 }

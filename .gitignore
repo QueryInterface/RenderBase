@@ -215,3 +215,4 @@ pip-log.txt
 3rdParty/freetype/include/ftconfig.h
 _build
 3rdParty/_unpack
+.idea
